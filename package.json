@@ -2,6 +2,7 @@
   "name": "unforged",
   "version": "0.1.0",
   "private": true,
+  "description": "Unforged: privacy-preserving trust infrastructure for digital evidence, built on Midnight.",
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [

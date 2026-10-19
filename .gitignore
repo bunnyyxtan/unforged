@@ -18,3 +18,7 @@ docs/DECK-OUTLINE.md
 .claude/
 web/dist/
 contract/src/unforged[0-9]*.compact
+
+# Deployment
+.vercel/
+.compactc/

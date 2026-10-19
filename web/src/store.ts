@@ -140,7 +140,7 @@ async function deployDemoPool() {
   try {
     const pool = await Pool.deploy(MIN_POOL, new TextEncoder().encode(SIM_ORIGIN).length, THRESHOLD, APPROVERS.length);
     const reporters: Reporter[] = [];
-    const names = ["Kharkiv desk", "Gaza stringer", "Lagos fixer", "Manipur reporter", "Caracas photo", "Dhaka citizen", "Tbilisi student"];
+    const names = Array.from({ length: 7 }, (_, i) => `Field contributor ${String(i + 1).padStart(2, "0")}`);
     for (const name of names) {
       const key = new SoftPasskey(SIM_RP, SIM_ORIGIN);
       const index = await pool.enroll(key.device());

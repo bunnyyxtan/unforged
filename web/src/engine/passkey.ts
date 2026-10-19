@@ -8,7 +8,7 @@ import type { DeviceSecret, P256Point, P256Signature, PreparedAssertion, WebAuth
 import { base64url, bigintFrom, equal, fromBase64url, random, utf8 } from "./bytes";
 
 /** The WebAuthn profile fixes the origin length at compile time; we ship one contract per length. */
-export const ORIGIN_LENGTHS = [21, 28] as const; // http://localhost:5173 · https://bunnyyxtan.github.io
+export const ORIGIN_LENGTHS = [21, 28] as const; // compiled variants, e.g. http://localhost:5173 · https://evidence.example.org
 export const supportedOrigin = (origin: string) => (ORIGIN_LENGTHS as readonly number[]).includes(utf8(origin).length);
 
 export function policyFor(rpId: string, origin: string): WebAuthnPolicy {

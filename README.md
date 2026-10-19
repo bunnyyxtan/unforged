@@ -130,6 +130,10 @@ The Compact compiler is unavailable natively on Windows. CI uploads generated co
 gh run download <run-id> -n managed -D contract/src/managed
 ```
 
+### Deploy
+
+The repository deploys to Vercel as a static site. `vercel.json` runs [`scripts/vercel-build.sh`](scripts/vercel-build.sh), which installs the pinned Compact 0.35.0 compiler on the Linux build image, compiles the contract and builds `web/dist`. Real passkeys need a contract variant compiled for the deployment origin's byte length (`node contract/scripts/variant.mjs <length>`); simulated credentials work on any origin.
+
 ## Current assurance level
 
 | Claim | Wave 2 evidence | Production gate |
@@ -156,6 +160,7 @@ Read the [Roadmap](docs/ROADMAP.md), [PRD](docs/PRD.md), [Business model](docs/B
 contract/            Compact contract, witnesses and simulator tests
 web/                 React workspace: capture, desk, verification, assurance, pool, relay
 tools/               Offline verifier for the draft authorization assertion
+scripts/             Deployment build (Vercel)
 docs/                Product, architecture, security, design and business evidence
 .github/workflows/   Reproducible Compact compile, test and web-build checks
 ```

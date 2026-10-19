@@ -1,6 +1,6 @@
 // WebAuthn's origin length is a compile-time parameter of the Passport module.
 // Generate one contract per deployment origin length, e.g.
-//   21: http://localhost:5173        28: https://bunnyyxtan.github.io
+//   21: http://localhost:5173        28: https://evidence.example.org
 // Usage: node scripts/variant.mjs 28   → src/unforged28.compact (git-ignored)
 import { readFileSync, writeFileSync } from "node:fs";
 

@@ -2,6 +2,7 @@
   "name": "@unforged/web",
   "version": "0.1.0",
   "private": true,
+  "description": "Unforged evidence operations workspace (capture, desk, verify, assurance, pool, relay).",
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
