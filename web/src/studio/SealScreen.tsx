@@ -96,7 +96,7 @@ function Onboarding() {
             ) : (
               <div className="status status-info">
                 <Icon name="info" />
-                <p><strong>Real passkeys need a supported address.</strong>Open the hosted demo or http://localhost:5173. The contract's passkey check is compiled for those addresses.</p>
+                <p><strong>Passkeys aren't enabled on this address yet.</strong>Use the evaluation credential below. It runs the same contract path with a labeled software key.</p>
               </div>
             )}
             {busy === "passkey" && <p className="meta" style={{ margin: 0 }}>Approve the system prompt. If you see a QR code, you can scan it with your phone.</p>}

@@ -6,8 +6,9 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "compact": "compactc --feature-zkir-v3 --skip-zk src/unforged.compact src/managed/unforged && npm run compact:28",
+    "compact": "compactc --feature-zkir-v3 --skip-zk src/unforged.compact src/managed/unforged && npm run compact:28 && npm run compact:31",
     "compact:28": "node scripts/variant.mjs 28 && compactc --feature-zkir-v3 --skip-zk src/unforged28.compact src/managed/unforged28",
+    "compact:31": "node scripts/variant.mjs 31 && compactc --feature-zkir-v3 --skip-zk src/unforged31.compact src/managed/unforged31",
     "compact:keys": "compactc --feature-zkir-v3 src/unforged.compact src/managed/unforged",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"

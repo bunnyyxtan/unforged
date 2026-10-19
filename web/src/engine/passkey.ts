@@ -8,12 +8,12 @@ import type { DeviceSecret, P256Point, P256Signature, PreparedAssertion, WebAuth
 import { base64url, bigintFrom, equal, fromBase64url, random, utf8 } from "./bytes";
 
 /** The WebAuthn profile fixes the origin length at compile time; we ship one contract per length. */
-export const ORIGIN_LENGTHS = [21, 28] as const; // compiled variants, e.g. http://localhost:5173 · https://evidence.example.org
+export const ORIGIN_LENGTHS = [21, 28, 31] as const; // 21: http://localhost:5173 · 31: https://unforged-web.vercel.app · 28: https://evidence.example.org (tests)
 export const supportedOrigin = (origin: string) => (ORIGIN_LENGTHS as readonly number[]).includes(utf8(origin).length);
 
 export function policyFor(rpId: string, origin: string): WebAuthnPolicy {
   if (!supportedOrigin(origin)) {
-    throw new Error(`Unsupported origin length for "${origin}". Open http://localhost:5173 or the hosted demo.`);
+    throw new Error(`Real passkeys are not enabled for "${origin}" yet.`);
   }
   return { rp_id_hash: nobleSha256(utf8(rpId)), origin: utf8(origin) };
 }

@@ -5,10 +5,11 @@
 import { createCircuitContext, createConstructorContext, type StateValue } from "@midnight-ntwrk/compact-runtime";
 import * as Unforged21 from "../../../contract/src/managed/unforged/contract/index.js";
 import * as Unforged28 from "../../../contract/src/managed/unforged28/contract/index.js";
+import * as Unforged31 from "../../../contract/src/managed/unforged31/contract/index.js";
 import type { Ledger } from "../../../contract/src/managed/unforged/contract/index.js";
 
 type ContractModule = typeof Unforged21;
-const VARIANTS: Record<number, ContractModule> = { 21: Unforged21, 28: Unforged28 as unknown as ContractModule };
+const VARIANTS: Record<number, ContractModule> = { 21: Unforged21, 28: Unforged28 as unknown as ContractModule, 31: Unforged31 as unknown as ContractModule };
 import { witnesses, type DeviceSecret, type PreparedAssertion, type UnforgedPrivateState } from "../../../contract/src/witnesses";
 import { fromHex, random, toHex } from "./bytes";
 
