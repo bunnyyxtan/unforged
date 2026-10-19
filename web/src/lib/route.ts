@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 export type Route =
   | { page: "home" }
   | { page: "studio"; tab: StudioTab };
-export type StudioTab = "seal" | "desk" | "verify" | "attacks" | "pool" | "relay";
+export type StudioTab = "start" | "seal" | "desk" | "verify" | "attacks" | "pool" | "relay";
 
-const TABS: StudioTab[] = ["seal", "desk", "verify", "attacks", "pool", "relay"];
+const TABS: StudioTab[] = ["start", "seal", "desk", "verify", "attacks", "pool", "relay"];
 
 function parse(hash: string): Route {
   const m = hash.match(/^#\/studio(?:\/(\w+))?/);
   if (!m) return { page: "home" };
-  const tab = (TABS as string[]).includes(m[1] ?? "") ? (m[1] as StudioTab) : "seal";
+  const tab = (TABS as string[]).includes(m[1] ?? "") ? (m[1] as StudioTab) : "start";
   return { page: "studio", tab };
 }
 

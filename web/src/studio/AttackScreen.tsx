@@ -99,9 +99,9 @@ export function AttackScreen() {
     <div className="attack-lab">
       <header className="attack-head">
         <div>
-          <p className="label attack-kicker">UNFORGED / ASSURANCE / THREAT EXERCISES</p>
-          <h1 className="display">Trust must survive <em>an adversary.</em></h1>
-          <p className="lede">Exercise the failure paths an editor, source-protection lead, or verifier needs to understand before relying on a seal.</p>
+          <p className="label attack-kicker">FOR TEAMS / SAFETY TESTS</p>
+          <h1 className="display">Try to <em>cheat the seal.</em></h1>
+          <p className="lede">Press the button and ten different cheats are attempted. Every one should be refused. Pick any test to see what it tries.</p>
         </div>
         <button className="btn btn-primary" onClick={() => void runAll()} disabled={all || running} aria-busy={all}>
           {all ? <><span className="spinner" /> Running suite</> : <>Run all ten <Icon name="arrow" size={17} /></>}

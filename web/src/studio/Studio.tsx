@@ -5,6 +5,7 @@ import { Icon, Mark } from "../components/Icon";
 import { href, type StudioTab } from "../lib/route";
 import { useTheme } from "../lib/theme";
 import { bootstrap, useStore } from "../store";
+import { StartScreen } from "./StartScreen";
 import { SealScreen } from "./SealScreen";
 import { VerifyScreen } from "./VerifyScreen";
 import { AttackScreen } from "./AttackScreen";
@@ -12,13 +13,17 @@ import { PoolScreen } from "./PoolScreen";
 import { DeskScreen } from "./DeskScreen";
 import { RelayScreen } from "./RelayScreen";
 
-const NAV: { tab: StudioTab; label: string; icon: "seal" | "desk" | "verify" | "attack" | "pool" | "relay" }[] = [
-  { tab: "seal", label: "Capture", icon: "seal" },
-  { tab: "desk", label: "Desk", icon: "desk" },
-  { tab: "verify", label: "Verification", icon: "verify" },
-  { tab: "attacks", label: "Assurance", icon: "attack" },
-  { tab: "pool", label: "Trust pool", icon: "pool" },
-  { tab: "relay", label: "Relay", icon: "relay" },
+type NavItem = { tab: StudioTab; label: string; hint: string; icon: "home" | "seal" | "verify" | "desk" | "attack" | "pool" | "relay" };
+const MAIN: NavItem[] = [
+  { tab: "start", label: "Start here", hint: "How this works", icon: "home" },
+  { tab: "seal", label: "Seal a photo", hint: "Protect a photo", icon: "seal" },
+  { tab: "verify", label: "Check a photo", hint: "Is it sealed?", icon: "verify" },
+];
+const MORE: NavItem[] = [
+  { tab: "desk", label: "Review desk", hint: "Editors approve photos", icon: "desk" },
+  { tab: "pool", label: "Members", hint: "Who can seal", icon: "pool" },
+  { tab: "relay", label: "Privacy relay", hint: "Hides timing", icon: "relay" },
+  { tab: "attacks", label: "Safety tests", hint: "Try to break it", icon: "attack" },
 ];
 
 /** Show a placeholder only if loading actually takes noticeable time. */
@@ -60,9 +65,9 @@ export function Studio({ tab }: { tab: StudioTab }) {
       <header className="studio-bar">
         <a className="wordmark" href="#/" aria-label="Unforged home"><Mark size={20} />Unforged</a>
         <span className="studio-divider" aria-hidden="true" />
-        <span className="studio-name">Evidence operations</span>
+        <span className="studio-name">Practice studio</span>
         <span className="chip chip-ok pool-chip" title="This evaluation pool runs the compiled Compact contract locally">
-          <span className="dot" />{s.ready ? `Local runtime · ${phones} credentials` : "Starting runtime…"}
+          <span className="dot" />{s.ready ? "Practice mode" : "Getting ready…"}
         </span>
         <span className="spacer" />
         <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
@@ -71,21 +76,16 @@ export function Studio({ tab }: { tab: StudioTab }) {
       </header>
 
       <nav className="studio-rail" aria-label="Workspace">
-        <span className="rail-section label">Workflow</span>
-        {NAV.map((n) => (
-          <a key={n.tab} href={href({ page: "studio", tab: n.tab })} aria-current={tab === n.tab ? "page" : undefined}>
-            <Icon name={n.icon} size={20} />
-            <span>{n.label}</span>
-            {tab === n.tab && !reduce && <motion.span layoutId="rail-mark" className="rail-mark" transition={{ duration: 0.22, ease: [0.2, 0.7, 0.2, 1] }} />}
-            {tab === n.tab && reduce && <span className="rail-mark" />}
-          </a>
-        ))}
+        {MAIN.map((n) => <RailLink key={n.tab} item={n} tab={tab} reduce={!!reduce} />)}
+        <details className="rail-more" open={MORE.some((m) => m.tab === tab) || undefined}>
+          <summary><span className="rail-section label">For teams and experts</span></summary>
+          {MORE.map((n) => <RailLink key={n.tab} item={n} tab={tab} reduce={!!reduce} />)}
+        </details>
         <div className="rail-runtime">
           <span className="rail-runtime-mark"><Icon name="ledger" size={16} /></span>
-          <div><strong>Evaluation runtime</strong><span>Compact 0.35 · ledger 9</span></div>
-          <span className="rail-live" aria-label="Runtime ready" />
+          <div><strong>Practice mode</strong><span>Everything runs in your browser</span></div>
+          <span className="rail-live" aria-label="Ready" />
         </div>
-        <p className="rail-note meta">State is held in this browser. Reloading creates a fresh evaluation pool.</p>
       </nav>
 
       <main id="studio-main" className="studio-main has-field dot-lattice" tabIndex={-1}>
@@ -106,6 +106,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
               exit={reduce ? { opacity: 0 } : { opacity: 0, y: -4 }}
               transition={{ duration: 0.18, ease: [0.2, 0.7, 0.2, 1] }}
             >
+              {tab === "start" && <StartScreen />}
               {tab === "seal" && <SealScreen />}
               {tab === "desk" && <DeskScreen />}
               {tab === "verify" && <VerifyScreen />}
@@ -117,6 +118,18 @@ export function Studio({ tab }: { tab: StudioTab }) {
         )}
       </main>
     </div>
+  );
+}
+
+function RailLink({ item, tab, reduce }: { item: NavItem; tab: StudioTab; reduce: boolean }) {
+  const on = tab === item.tab;
+  return (
+    <a href={href({ page: "studio", tab: item.tab })} aria-current={on ? "page" : undefined}>
+      <Icon name={item.icon} size={20} />
+      <span>{item.label}</span>
+      {on && !reduce && <motion.span layoutId="rail-mark" className="rail-mark" transition={{ duration: 0.22, ease: [0.2, 0.7, 0.2, 1] }} />}
+      {on && reduce && <span className="rail-mark" />}
+    </a>
   );
 }
 

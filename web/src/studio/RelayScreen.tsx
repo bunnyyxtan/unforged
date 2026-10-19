@@ -6,7 +6,7 @@ import { PageHead } from "./Studio";
 const VIEWS = [
   { who: "Relay operator", sees: "When a finished submission arrived", never: "Contributor key, identity or which file is theirs after shuffling" },
   { who: "Public ledger", sees: "A batch of seals in shuffled order, each stamped with an hour window", never: "Arrival order, exact capture second or signer" },
-  { who: "Evidence desk", sees: "The sealed file, its case and assurance level", never: "Which pool member submitted it" },
+  { who: "Review desk", sees: "The sealed file, its case and assurance level", never: "Which pool member submitted it" },
 ];
 
 export function RelayScreen() {
@@ -18,9 +18,9 @@ export function RelayScreen() {
   return (
     <>
       <PageHead
-        eyebrow="PRIVACY OPERATIONS / 06"
-        title="Submission relay"
-        purpose="Zero-knowledge hides the signer from the ledger; timing can still betray them. The relay batches submissions, shuffles their order and publishes capture time to the hour before anything reaches the contract."
+        eyebrow="FOR TEAMS"
+        title="Privacy relay"
+        purpose="Even when a seal hides your name, the time you sent it could give you away. The relay waits, mixes photos together and rounds the time to the hour."
       />
       <dl className="desk-metrics">
         <div><dt>Batches released</dt><dd>{String(s.batches.length).padStart(2, "0")}</dd></div>

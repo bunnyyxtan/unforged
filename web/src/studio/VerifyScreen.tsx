@@ -103,12 +103,12 @@ export function VerifyScreen() {
 
   return (
     <>
-      <PageHead eyebrow="EVIDENCE OPERATIONS / 03" title="Verification desk" purpose="Resolve one exact file against the pool registry, then export a review record with the privacy and trust boundaries made explicit." />
+      <PageHead title="Check a photo" purpose="Drop a photo in. We tell you if it has a seal, and whether it has been changed since." />
       <div className="verify">
         <div className="verify-intake">
           <div className="verify-section-head">
-            <div><span className="label">EVIDENCE INPUT</span><h2 className="title">Select the file under review</h2></div>
-            <span className="verify-local"><Icon name="lock" size={14} /> Browser-local</span>
+            <div><h2 className="title">1. Choose the photo to check</h2></div>
+            <span className="verify-local"><Icon name="lock" size={14} /> Stays on your device</span>
           </div>
           <label
             className={`dropzone${over ? " over" : ""}`}
@@ -119,7 +119,7 @@ export function VerifyScreen() {
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { void onFiles(e.target.files); e.target.value = ""; }} />
             <span className="icon-wrap"><Icon name="upload" size={24} /></span>
             <span className="title">{checking ? `Checking ${file}…` : "Drop a photo, or choose a file"}</span>
-            <span className="meta">The original bytes are fingerprinted locally. Nothing is uploaded.</span>
+            <span className="meta">Nothing is uploaded. Your photo never leaves this device.</span>
           </label>
           {readError && (
             <div className="status status-error" role="alert">
@@ -129,7 +129,7 @@ export function VerifyScreen() {
           )}
           {s.seals.length > 0 ? (
             <div className="verify-recents">
-              <span className="label">RECENT SESSION EVIDENCE</span>
+              <span className="label">PHOTOS YOU SEALED TODAY</span>
               <div className="thumbs">
                 {s.seals.slice(0, 10).map((r) => (
                   <button key={r.id} onClick={() => void check(r.bytes, `${r.id}.jpg`)} aria-label={`Verify ${r.id}`}>
@@ -139,17 +139,13 @@ export function VerifyScreen() {
               </div>
             </div>
           ) : (
-            <div className="verify-empty-session"><Icon name="info" size={16} /><p>No session evidence yet. <a href={href({ page: "studio", tab: "seal" })}>Capture and seal a file</a>, or inspect any external image.</p></div>
+            <div className="verify-empty-session"><Icon name="info" size={16} /><p>You have not sealed anything yet. <a href={href({ page: "studio", tab: "seal" })}>Seal a photo</a>, or drop in any photo to check it.</p></div>
           )}
-          <dl className="verify-pipeline">
-            <div><dt>01</dt><dd><strong>Fingerprint</strong><span>SHA-256 exact bytes</span></dd></div>
-            <div><dt>02</dt><dd><strong>Resolve</strong><span>Pool seal registry</span></dd></div>
-            <div><dt>03</dt><dd><strong>Review</strong><span>Decision boundary</span></dd></div>
-          </dl>
+          
         </div>
 
         <section className="result" aria-live="polite" aria-label="Verification result">
-          <div className="verify-section-head result-head"><div><span className="label">REVIEW OUTPUT</span><h2 className="title">Evidence assessment</h2></div><span className="data">LOCAL / V1</span></div>
+          <div className="verify-section-head result-head"><div><h2 className="title">2. The answer</h2></div></div>
           <div className="result-body">
           <AnimatePresence mode="wait" initial={false}>
             {checking && (
@@ -161,13 +157,9 @@ export function VerifyScreen() {
             )}
             {!result && !checking && (
               <motion.div key="empty" className="stack" style={{ "--gap": "16px" } as React.CSSProperties} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <div className="result-awaiting"><span className="result-crosshair"><Icon name="verify" size={26} /></span><span className="label">AWAITING EVIDENCE</span><h3>Ready for an exact-file check.</h3><p>Choose a file to resolve its fingerprint, credential acceptance, and signer privacy as one review.</p></div>
-                <dl className="result-capabilities">
-                  <div><dt><Icon name="check" size={15} /> Integrity</dt><dd>Exact-byte registry match</dd></div>
-                  <div><dt><Icon name="check" size={15} /> Authority</dt><dd>Accepted pool credential</dd></div>
-                  <div><dt><Icon name="check" size={15} /> Privacy</dt><dd>Signer remains undisclosed</dd></div>
-                </dl>
-                <div className="result-boundary"><Icon name="info" size={16} /><p>Scene truth and source context remain editorial judgments.</p></div>
+                <div className="result-awaiting"><span className="result-crosshair"><Icon name="verify" size={26} /></span><h3>Choose a photo and the answer shows up here.</h3><p>We look for a seal and tell you if the photo is exactly the one that was sealed.</p></div>
+                
+                
               </motion.div>
             )}
 
@@ -177,11 +169,19 @@ export function VerifyScreen() {
                 <div className="verdict">
                   <Seal fp={result.fp} id={result.id} size={128} />
                   <div className="stack" style={{ "--gap": "6px" } as React.CSSProperties}>
-                    <span className="chip chip-seal" style={{ justifySelf: "start" }}><Icon name="check" size={14} /> Seal found</span>
-                    <h2 className="headline">Sealed.</h2>
-                    <span className="data" style={{ color: "var(--text-2)" }}>{file}</span>
+                    <span className="chip chip-ok" style={{ justifySelf: "start" }}><Icon name="check" size={14} /> Seal is real</span>
+                    <h2 className="headline">Yes, this photo is sealed.</h2>
+                    <span className="meta">{file}</span>
                   </div>
                 </div>
+                <ul className="facts big-facts">
+                  <li><Icon name="check" size={20} /><span><b>Not changed.</b> This is exactly the photo that was sealed.</span></li>
+                  <li><Icon name="check" size={20} /><span><b>Approved by a trusted group.</b> One of {result.poolSize} members approved it. Nobody can tell which one.</span></li>
+                  <li><Icon name="check" size={20} /><span><b>Sealed around {new Date(result.takenAt * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.</b></span></li>
+                </ul>
+                <p className="meta" style={{ margin: 0 }}>A seal does not say what the photo shows or whether the scene is true. It only says the file is original and was approved.</p>
+                <details className="more-details">
+                  <summary>See the full report</summary>
                 <div className="stack" style={{ "--gap": "10px" } as React.CSSProperties}>
                   <span className="label">SECURITY REPORT</span>
                   <Report evidence={evidence!} />
@@ -231,24 +231,25 @@ export function VerifyScreen() {
                     <div><dt>Recompute</dt><dd>SHA-256 of the original bytes must equal <span className="data">{toHex(result.fp)}</span></dd></div>
                   </dl>
                 )}
+                              </details>
               </motion.div>
             )}
 
             {result?.kind === "none" && (
               <motion.div key={`n-${toHex(result.fp)}`} className="stack" style={{ "--gap": "18px" } as React.CSSProperties}
                 initial={reduce ? { opacity: 0 } : { opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.22 }}>
-                <span className="chip" style={{ justifySelf: "start" }}>No seal found</span>
-                <h2 className="headline" style={{ fontSize: "clamp(1.9rem, 1.4rem + 1.2vw, 2.5rem)" }}>No seal for this file.</h2>
+                <span className="chip chip-warn" style={{ justifySelf: "start" }}>No seal found</span>
+                <h2 className="headline" style={{ fontSize: "clamp(1.9rem, 1.4rem + 1.2vw, 2.5rem)" }}>This photo has no seal.</h2>
                 <p className="body-2" style={{ margin: 0 }}>
-                  That doesn't mean it's fake. It means this exact file wasn't sealed in this pool. The usual reasons:
+                  That does not mean it is fake. It only means this exact photo was never sealed here. Common reasons:
                 </p>
                 <ul className="facts" style={{ color: "var(--text-2)" }}>
-                  <li><Icon name="info" size={16} /> It was edited, cropped or re-compressed after sealing (messaging apps often do this).</li>
-                  <li><Icon name="info" size={16} /> It was never captured with Unforged, including any AI-generated image.</li>
+                  <li><Icon name="info" size={16} /> It was changed after sealing. Even cropping, or sending it through a chat app, counts.</li>
+                  <li><Icon name="info" size={16} /> It was never sealed with Unforged at all.</li>
                 </ul>
-                <dl className="kv"><div><dt>Fingerprint checked</dt><dd className="data">{toHex(result.fp)}</dd></div></dl>
+                <details className="more-details"><summary>Technical detail</summary><dl className="kv"><div><dt>Photo code (SHA-256)</dt><dd className="data">{toHex(result.fp)}</dd></div></dl></details>
                 <div className="cluster">
-                  <label className="btn btn-secondary">Try another file<input type="file" accept="image/*" className="sr-only" onChange={(e) => { void onFiles(e.target.files); e.target.value = ""; }} /></label>
+                  <label className="btn btn-secondary">Check another photo<input type="file" accept="image/*" className="sr-only" onChange={(e) => { void onFiles(e.target.files); e.target.value = ""; }} /></label>
                   <a className="btn btn-quiet" href={href({ page: "studio", tab: "seal" })}>Seal a photo</a>
                 </div>
               </motion.div>

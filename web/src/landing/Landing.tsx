@@ -10,6 +10,7 @@ import { useTheme } from "../lib/theme";
 
 const BASE = import.meta.env.BASE_URL;
 const studio = href({ page: "studio", tab: "seal" });
+const start = href({ page: "studio", tab: "start" });
 const verify = href({ page: "studio", tab: "verify" });
 const attacks = href({ page: "studio", tab: "attacks" });
 const desk = href({ page: "studio", tab: "desk" });
@@ -46,7 +47,7 @@ function Masthead() {
           <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
             <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
           </button>
-          <a className="btn btn-primary btn-sm" href={studio}>Open the studio</a>
+          <a className="btn btn-primary btn-sm" href={start}>Try it now</a>
         </div>
       </div>
     </header>
@@ -350,7 +351,7 @@ function Closing() {
       <Reveal className="stack" >
         <h2 id="closing-title" className="display" style={{ fontSize: "clamp(2.6rem, 1.4rem + 4.6vw, 5.2rem)" }}>Publish the evidence.<br /><em>Protect the witness.</em></h2>
         <div className="cluster" style={{ marginTop: "var(--s-5)" }}>
-          <a className="btn btn-primary" href={studio}>Open the studio <Icon name="arrow" size={18} /></a>
+          <a className="btn btn-primary" href={start}>Try it now <Icon name="arrow" size={18} /></a>
           <a className="btn btn-quiet" href="https://github.com/bunnyyxtan/unforged" target="_blank" rel="noreferrer">Read the code on GitHub</a>
         </div>
       </Reveal>

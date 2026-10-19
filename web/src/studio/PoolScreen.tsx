@@ -27,7 +27,7 @@ export function PoolScreen() {
 
   return (
     <>
-      <PageHead eyebrow="TRUST OPERATIONS / 05" title="Independent Press Pool" purpose="Operate the credential set that can issue private seals. Pool policy protects the anonymity floor while preserving an auditable administrative state." />
+      <PageHead eyebrow="FOR TEAMS" title="Members" purpose="This is the trusted group that can seal photos. You can see how many members there are and remove one. You never see who sealed what." />
       <div className="pool-console">
         <section className="pool-command" aria-label="Pool summary">
           <div className="pool-identity">

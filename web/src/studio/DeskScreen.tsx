@@ -30,9 +30,9 @@ export function DeskScreen() {
   return (
     <>
       <PageHead
-        eyebrow="EVIDENCE OPERATIONS / 02"
-        title="Evidence desk"
-        purpose="Every sealed submission arrives as a case. Review what cryptography established, record the human judgment, and publish a package readers can verify. Contributors stay withheld from the desk."
+        eyebrow="FOR TEAMS"
+        title="Review desk"
+        purpose="Sealed photos arrive here as cases. An editor checks each one, decides whether to publish, and the contributor stays hidden the whole time."
       />
       <dl className="desk-metrics">
         <div><dt>Open</dt><dd>{String(count(["new", "review"])).padStart(2, "0")}</dd></div>
@@ -45,9 +45,9 @@ export function DeskScreen() {
       {s.cases.length === 0 ? (
         <div className="desk-empty">
           <Icon name="desk" size={28} />
-          <h2 className="title">No submissions yet</h2>
-          <p className="meta">Sealed captures arrive here automatically.</p>
-          <a className="btn btn-primary" href={href({ page: "studio", tab: "seal" })}>Capture and seal <Icon name="arrow" size={18} /></a>
+          <h2 className="title">Nothing to review yet</h2>
+          <p className="meta">Seal a photo and it shows up here automatically.</p>
+          <a className="btn btn-primary" href={href({ page: "studio", tab: "seal" })}>Seal a photo <Icon name="arrow" size={18} /></a>
         </div>
       ) : (
         <div className="desk">

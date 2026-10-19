@@ -6,6 +6,7 @@ import "./styles/base.css";
 import "./landing/landing.css";
 import "./studio/studio.css";
 import "./studio/desk.css";
+import "./studio/start.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

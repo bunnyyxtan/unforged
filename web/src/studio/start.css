@@ -1,0 +1,66 @@
+/* ---- Start screen and simplified navigation ---- */
+.rail-more { display: none; }
+.rail-more summary { list-style: none; cursor: pointer; }
+.rail-more summary::-webkit-details-marker { display: none; }
+@media (min-width: 900px) {
+  .rail-more { display: block; margin-top: var(--s-4); padding-top: var(--s-3); border-top: 1px solid var(--line-soft); }
+  .rail-more summary { padding: 6px 0; }
+  .rail-more summary .rail-section { display: flex; justify-content: space-between; align-items: center; margin: 0 var(--s-3) var(--s-1); }
+  .rail-more summary .rail-section::after { content: "+"; font-size: 1rem; }
+  .rail-more[open] summary .rail-section::after { content: "−"; }
+  .rail-more a { padding-block: 9px; font-size: .9375rem; }
+}
+.start { display: grid; gap: var(--s-8); max-width: 980px; margin-inline: auto; }
+.start-hero { display: grid; gap: var(--s-4); padding-top: var(--s-4); }
+.start-hero .display { font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.4rem); }
+.start-hero .display em { color: var(--seal); font-weight: 700; }
+.start-hero .lede { max-width: 56ch; font-size: 1.1875rem; line-height: 1.55; margin: 0; color: var(--text-2); }
+.start-actions { display: grid; gap: var(--s-4); margin-top: var(--s-4); }
+@media (min-width: 720px) { .start-actions { grid-template-columns: 1fr 1fr; } }
+.start-card { display: grid; gap: 8px; align-content: start; padding: var(--s-6); border: 1px solid var(--line); background: var(--surface); color: var(--text); text-decoration: none; box-shadow: var(--shadow-raised); transition: transform var(--dur-base) var(--ease-out), border-color var(--dur-base) var(--ease-out); min-height: 200px; }
+.start-card strong { font: 700 1.75rem/1.1 var(--font-display); letter-spacing: -0.03em; }
+.start-card > span:not(.start-card-icon):not(.start-card-go) { color: var(--text-2); font-size: 1.0625rem; line-height: 1.45; }
+.start-card-icon { width: 52px; height: 52px; display: grid; place-items: center; border-radius: 50%; background: var(--action-tint); color: var(--action); margin-bottom: var(--s-2); }
+.start-card-go { margin-top: auto; padding-top: var(--s-4); display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--action); font-size: 1.0625rem; }
+.start-card-primary { border-color: var(--action); border-width: 2px; }
+.start-card-primary .start-card-icon { background: var(--action); color: var(--action-text); }
+@media (hover: hover) { .start-card:hover { transform: translateY(-3px); border-color: var(--action); } }
+.start-sample { justify-self: start; display: inline-flex; align-items: center; gap: 6px; color: var(--action); font-weight: 500; text-decoration: none; padding-block: 4px; border-bottom: 1px solid currentColor; }
+.start-section { display: grid; gap: var(--s-4); }
+.start-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-3); }
+@media (min-width: 720px) { .start-steps { grid-template-columns: repeat(3, 1fr); } }
+.start-steps li { position: relative; display: grid; gap: 6px; align-content: start; padding: var(--s-5); background: var(--surface); border: 1px solid var(--line-soft); }
+.start-steps li > svg { color: var(--action); }
+.start-steps strong { font-size: 1.1875rem; }
+.start-steps li > span:last-child { color: var(--text-2); line-height: 1.45; }
+.start-step-n { position: absolute; top: var(--s-4); right: var(--s-4); font: 700 2.4rem/1 var(--font-display); color: var(--line); }
+.start-words { margin: 0; display: grid; border: 1px solid var(--line-soft); background: var(--surface); }
+.start-words > div { display: grid; gap: 4px; padding: var(--s-4) var(--s-5); border-top: 1px solid var(--line-soft); }
+.start-words > div:first-child { border-top: 0; }
+@media (min-width: 720px) { .start-words > div { grid-template-columns: 160px 1fr; gap: var(--s-5); } }
+.start-words dt { font-weight: 700; }
+.start-words dd { margin: 0; color: var(--text-2); line-height: 1.5; }
+.start-more { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--s-2); }
+@media (min-width: 720px) { .start-more { grid-template-columns: 1fr 1fr; } }
+.start-more a { display: grid; grid-template-columns: 1fr auto; gap: 2px var(--s-3); align-items: center; padding: var(--s-4); border: 1px solid var(--line-soft); background: var(--surface); color: var(--text); text-decoration: none; }
+.start-more a span { grid-column: 1; color: var(--text-2); font-size: .9375rem; }
+.start-more a svg { grid-column: 2; grid-row: 1 / span 2; color: var(--action); }
+@media (hover: hover) { .start-more a:hover { border-color: var(--action); } }
+
+/* ---- Guided seal flow ---- */
+.ready-card { display: grid; justify-items: center; gap: var(--s-3); text-align: center; padding: var(--s-9) var(--s-5); max-width: 520px; margin: var(--s-8) auto; border: 1px solid var(--line-soft); background: var(--surface); }
+.step-bar { grid-column: 1 / -1; list-style: none; margin: 0 0 var(--s-2); padding: 0; display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-5); }
+.step-bar li { display: inline-flex; align-items: center; gap: 10px; color: var(--text-3); font-weight: 500; font-size: 1.0625rem; }
+.step-bar li.now { color: var(--text); font-weight: 700; }
+.step-bar li.done { color: var(--ok); }
+.step-n { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 50%; border: 2px solid currentColor; font: 700 .875rem/1 var(--font-ui); }
+.step-bar li.now .step-n { background: var(--action); border-color: var(--action); color: var(--action-text); }
+.step-bar li.done .step-n { background: var(--ok); border-color: var(--ok); color: #fff; }
+.btn-big { --h: 56px; font-size: 1.0625rem; padding-inline: var(--s-5); }
+.done-mark { width: 60px; height: 60px; display: grid; place-items: center; border-radius: 50%; background: var(--ok); color: #fff; }
+.more-details { border-top: 1px solid var(--line-soft); padding-top: var(--s-3); display: grid; gap: var(--s-3); }
+.more-details > summary { cursor: pointer; font-weight: 600; color: var(--action); padding-block: 6px; }
+.more-details[open] > summary { margin-bottom: var(--s-2); }
+.big-facts { gap: 14px; font-size: 1.0625rem; line-height: 1.45; }
+.big-facts li svg { color: var(--ok); margin-top: 2px; }
+.darkroom .btn-quiet { color: #f1eadf; text-decoration: underline; text-underline-offset: 4px; }
