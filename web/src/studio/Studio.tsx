@@ -1,5 +1,6 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect, useState, type ReactNode } from "react";
+import { Field } from "../components/Field";
 import { Icon, Mark } from "../components/Icon";
 import { href, type StudioTab } from "../lib/route";
 import { useTheme } from "../lib/theme";
@@ -87,7 +88,8 @@ export function Studio({ tab }: { tab: StudioTab }) {
         <p className="rail-note meta">State is held in this browser. Reloading creates a fresh evaluation pool.</p>
       </nav>
 
-      <main id="studio-main" className="studio-main" tabIndex={-1}>
+      <main id="studio-main" className="studio-main has-field dot-lattice" tabIndex={-1}>
+        <Field place="studio" />
         {s.error && (
           <div className="status status-error" role="alert">
             <Icon name="alert" />

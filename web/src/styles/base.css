@@ -135,3 +135,19 @@ hr.rule { border: 0; border-top: 1px solid var(--line); margin: 0; }
 .kv dt { color: var(--text-2); font-size: var(--t-small); }
 .kv dd { margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 520px) { .kv > div { grid-template-columns: 1fr; gap: 2px; } }
+
+/* ---- Security-print backdrop ---- */
+.field { position: absolute; z-index: 0; pointer-events: none; color: var(--seal); opacity: var(--field-opacity, 0.2); }
+.field svg { width: 100%; height: 100%; display: block; }
+.field-hero { width: min(1000px, 90vw); aspect-ratio: 1; right: -26%; opacity: calc(var(--field-opacity, 0.2) * 0.85); top: 50%; translate: 0 -50%; -webkit-mask-image: radial-gradient(closest-side, #000 38%, transparent 100%); mask-image: radial-gradient(closest-side, #000 38%, transparent 100%); }
+.field-right { width: min(760px, 90vw); aspect-ratio: 1; right: -14%; top: 50%; translate: 0 -50%; -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent 100%); mask-image: radial-gradient(closest-side, #000 30%, transparent 100%); }
+.field-left { width: min(760px, 90vw); aspect-ratio: 1; left: -18%; top: 50%; translate: 0 -50%; -webkit-mask-image: radial-gradient(closest-side, #000 30%, transparent 100%); mask-image: radial-gradient(closest-side, #000 30%, transparent 100%); }
+.field-studio { width: 760px; aspect-ratio: 1; right: -220px; top: -180px; opacity: calc(var(--field-opacity, 0.2) * 0.8); -webkit-mask-image: radial-gradient(closest-side, #000 25%, transparent 100%); mask-image: radial-gradient(closest-side, #000 25%, transparent 100%); }
+.has-field { position: relative; isolation: isolate; overflow-x: clip; }
+.has-field > :not(.field):not(.reg-marks) { position: relative; z-index: 1; }
+
+/* Fine ruled paper and a dot lattice give blank areas a printed texture. */
+.paper-rules { background-image: repeating-linear-gradient(0deg, transparent 0 31px, color-mix(in srgb, var(--line-soft) 55%, transparent) 31px 32px); }
+.dot-lattice { background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--text-3) 22%, transparent) 1px, transparent 1.2px); background-size: 24px 24px; }
+@media (prefers-reduced-motion: no-preference) { .field-hero svg { animation: field-turn 240s linear infinite; } }
+@keyframes field-turn { to { transform: rotate(360deg); } }

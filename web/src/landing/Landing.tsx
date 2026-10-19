@@ -1,3 +1,4 @@
+import { Field } from "../components/Field";
 import { motion, useReducedMotion } from "motion/react";
 import { useEffect, useState } from "react";
 import { Seal } from "../components/Seal";
@@ -57,7 +58,8 @@ function Hero() {
   const reduce = useReducedMotion();
   const hex = fp ? toHex(fp) : "";
   return (
-    <section className="hero rail" aria-labelledby="hero-title">
+    <section className="hero rail has-field" aria-labelledby="hero-title">
+      <Field place="hero" />
       <div className="hero-copy">
         <motion.p className="label" initial={reduce ? false : { opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
           Source-safe evidence infrastructure · Built with Midnight
@@ -138,7 +140,8 @@ function TradeOff() {
     { k: "Signature", v: "Valid" },
   ];
   return (
-    <section className="section rail tradeoff" aria-labelledby="tradeoff-title">
+    <section className="section rail has-field tradeoff" aria-labelledby="tradeoff-title">
+      <Field place="right" />
       <Reveal className="section-head">
         <h2 id="tradeoff-title" className="headline">A useful provenance record should not become <em>a source list.</em></h2>
         <p className="body-2">
@@ -181,7 +184,8 @@ function HowItWorks() {
     { n: "03", icon: "verify" as const, t: "Review the evidence", d: "An editor or reader checks the exact bytes, stated time and pool record. The result answers a narrow provenance question; scene truth and camera origin need separate checks." },
   ];
   return (
-    <section id="how" className="section rail" aria-labelledby="how-title">
+    <section id="how" className="section rail has-field" aria-labelledby="how-title">
+      <Field place="left" />
       <Reveal className="section-head">
         <h2 id="how-title" className="headline">One file. <em>A chain of accountable decisions.</em></h2>
       </Reveal>
@@ -210,7 +214,8 @@ function Workflow() {
     { number: "06", role: "PLATFORM", title: "Carry the proof into C2PA", description: "A draft org.unforged.authorization assertion exports today. Verify API, capture SDK and CMS plugins follow.", action: "Run the threat lab", to: attacks, icon: "code" as const, state: "Draft profile" },
   ];
   return (
-    <section id="workflow" className="section rail newsroom-workflow" aria-labelledby="workflow-title">
+    <section id="workflow" className="section rail has-field newsroom-workflow" aria-labelledby="workflow-title">
+      <Field place="right" />
       <Reveal className="workflow-intro">
         <span className="label">THE PLATFORM</span>
         <h2 id="workflow-title" className="headline">Six products. <em>One trust boundary.</em></h2>
@@ -234,7 +239,8 @@ function Workflow() {
 
 function Ledger() {
   return (
-    <section className="section rail" aria-labelledby="ledger-title">
+    <section className="section rail has-field" aria-labelledby="ledger-title">
+      <Field place="left" />
       <Reveal className="section-head">
         <h2 id="ledger-title" className="headline">What the chain sees, <em>and what it never will.</em></h2>
         <p className="body-2">Midnight lets a contract verify private inputs and publish selected results. The current browser build runs that compiled contract on a local ledger; this is the intended public-network disclosure boundary.</p>
@@ -277,7 +283,8 @@ function Forgeries() {
     ["One approver approves the same credential twice", "ALREADY_APPROVED"],
   ];
   return (
-    <section id="proof" className="section rail" aria-labelledby="proof-title">
+    <section id="proof" className="section rail has-field" aria-labelledby="proof-title">
+      <Field place="right" />
       <div className="forgeries">
         <Reveal className="section-head" >
           <h2 id="proof-title" className="headline">Put every claim <em>under pressure.</em></h2>
@@ -313,7 +320,8 @@ function BuiltOnMidnight() {
     ["License", "Apache-2.0"],
   ];
   return (
-    <section id="midnight" className="section rail" aria-labelledby="midnight-title">
+    <section id="midnight" className="section rail has-field" aria-labelledby="midnight-title">
+      <Field place="left" />
       <div className="spec">
         <Reveal className="section-head">
           <h2 id="midnight-title" className="headline">Private verification <em>is the product.</em></h2>
@@ -337,7 +345,8 @@ function BuiltOnMidnight() {
 function Closing() {
   const fp = usePhotoFingerprint(`${BASE}media/umbrella.jpg`);
   return (
-    <section className="closing rail" aria-labelledby="closing-title">
+    <section className="closing rail has-field" aria-labelledby="closing-title">
+      <Field place="right" />
       <Reveal className="stack" >
         <h2 id="closing-title" className="display" style={{ fontSize: "clamp(2.6rem, 1.4rem + 4.6vw, 5.2rem)" }}>Publish the evidence.<br /><em>Protect the witness.</em></h2>
         <div className="cluster" style={{ marginTop: "var(--s-5)" }}>

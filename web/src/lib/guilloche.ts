@@ -17,7 +17,7 @@ function polarPath(r: (t: number) => number, steps = 540): string {
   return d + "Z";
 }
 
-function band(bytes: Uint8Array, offset: number, radius: number, depth: number, lines: number): Band {
+function band(bytes: Uint8Array, offset: number, radius: number, depth: number, lines: number, steps = 540): Band {
   const b = (i: number) => bytes[(offset + i) % bytes.length];
   const k1 = 14 + (b(0) % 18);        // 14..31 outer lobes
   const k2 = 3 + (b(1) % 9);          // 3..11 slow wave
@@ -26,17 +26,17 @@ function band(bytes: Uint8Array, offset: number, radius: number, depth: number, 
   const delta = (Math.PI * 2) / lines / (1.6 + (b(4) / 255));
   const phase = (b(5) / 255) * Math.PI * 2;
   const paths = Array.from({ length: lines }, (_, i) =>
-    polarPath((t) => radius + a * Math.sin(k1 * t + phase + i * delta) + c * Math.sin(k2 * t - i * delta)),
+    polarPath((t) => radius + a * Math.sin(k1 * t + phase + i * delta) + c * Math.sin(k2 * t - i * delta), steps),
   );
   return { paths };
 }
 
 /** Two woven bands plus a fine centre rosette, all from the fingerprint. */
-export function guilloche(fp: Uint8Array) {
+export function guilloche(fp: Uint8Array, steps = 540) {
   return {
-    outer: band(fp, 0, 66, 9, 12),
-    inner: band(fp, 8, 38, 7, 10),
-    core: band(fp, 16, 16, 5, 7),
+    outer: band(fp, 0, 66, 9, 12, steps),
+    inner: band(fp, 8, 38, 7, 10, steps),
+    core: band(fp, 16, 16, 5, 7, steps),
   };
 }
 
