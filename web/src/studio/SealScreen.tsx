@@ -321,6 +321,9 @@ function Capture() {
             <a className="btn btn-primary" href={href({ page: "studio", tab: "verify" })} onClick={() => sessionStorage.setItem("unforged:verify", sealed.id)}>
               Verify this photo <Icon name="arrow" size={18} />
             </a>
+            <a className="btn btn-quiet" href={href({ page: "studio", tab: "desk" })}>
+              Open {sealed.caseId} in the Desk <Icon name="arrow" size={18} />
+            </a>
           </>
         ) : (
           <>

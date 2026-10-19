@@ -4,7 +4,9 @@ import { Icon } from "../components/Icon";
 import { Seal } from "../components/Seal";
 import { toHex } from "../engine/bytes";
 import { href } from "../lib/route";
+import { c2paAssertion, downloadJson, type Evidence } from "../lib/evidence";
 import { useStore, verifyBytes, type VerifyResult } from "../store";
+import { Ladder, Report } from "./EvidenceReport";
 import { PageHead } from "./Studio";
 
 type View = "world" | "private" | "yourself";
@@ -67,7 +69,11 @@ export function VerifyScreen() {
     if (rec) void check(rec.bytes, `${rec.id}.jpg`);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const mine = result?.kind === "sealed" && s.seals.some((r) => toHex(r.fp) === toHex(result.fp));
+  const mine = result?.kind === "sealed" && !!result.record?.byYou;
+  const evidence: Evidence | undefined = result?.kind === "sealed" ? {
+    id: result.id, fp: result.fp, takenAt: result.takenAt, epoch: result.epoch, poolSize: result.poolSize, removedSince: result.removedSince,
+    poolAddress: s.pool!.address, level: result.record?.level, case: s.cases.find((c) => c.sealId === result.id),
+  } : undefined;
 
   function exportReview() {
     if (!result || result.kind !== "sealed") return;
@@ -82,6 +88,8 @@ export function VerifyScreen() {
       poolEpoch: String(result.epoch),
       currentPoolSize: result.poolSize,
       devicesRemovedSinceSeal: result.removedSince,
+      assurance: evidence?.level ?? "not stated",
+      editorialCase: evidence?.case ? { id: evidence.case.id, status: evidence.case.status } : null,
       checks: ["exact file fingerprint matched a local seal", "the local seal was accepted by the compiled contract", "the assertion contained a user-verification flag"],
       notEstablished: ["camera sensor origin", "truth of scene or context", "public-chain inclusion", "source anonymity against network or timing observers"],
     };
@@ -95,7 +103,7 @@ export function VerifyScreen() {
 
   return (
     <>
-      <PageHead eyebrow="EVIDENCE OPERATIONS / 02" title="Verification desk" purpose="Resolve one exact file against the pool registry, then export a review record with the privacy and trust boundaries made explicit." />
+      <PageHead eyebrow="EVIDENCE OPERATIONS / 03" title="Verification desk" purpose="Resolve one exact file against the pool registry, then export a review record with the privacy and trust boundaries made explicit." />
       <div className="verify">
         <div className="verify-intake">
           <div className="verify-section-head">
@@ -174,16 +182,18 @@ export function VerifyScreen() {
                     <span className="data" style={{ color: "var(--text-2)" }}>{file}</span>
                   </div>
                 </div>
-                <ul className="facts">
-                  <li><Icon name="check" size={16} /><span>Approved by one of <b>{result.poolSize} credentials</b> in this pool</span></li>
-                  <li><Icon name="check" size={16} /><span>User-verification flag required; stated capture time {new Date(result.takenAt * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</span></li>
-                  <li><Icon name="check" size={16} /> This exact file matches the sealed fingerprint, byte for byte</li>
-                </ul>
-                <div className="review-boundary">
-                  <div><span className="label">ESTABLISHED HERE</span><p>File match, accepted pool membership, verified assertion flags and a seal record with an undisclosed signer.</p></div>
-                  <div><span className="label">STILL FOR THE EDITOR</span><p>Camera origin, scene truth, context, source safety beyond the public record and any external chain inclusion.</p></div>
+                <div className="stack" style={{ "--gap": "10px" } as React.CSSProperties}>
+                  <span className="label">SECURITY REPORT</span>
+                  <Report evidence={evidence!} />
                 </div>
-                <button className="btn btn-secondary" style={{ justifySelf: "start" }} onClick={exportReview}><Icon name="download" size={17} /> Download local review</button>
+                <div className="stack" style={{ "--gap": "8px" } as React.CSSProperties}>
+                  <span className="label">ASSURANCE LEVEL</span>
+                  <Ladder level={evidence!.level} />
+                </div>
+                <div className="cluster">
+                  <button className="btn btn-secondary" onClick={exportReview}><Icon name="download" size={17} /> Local review</button>
+                  <button className="btn btn-secondary" onClick={() => downloadJson(`${result.id}-c2pa-assertion.json`, c2paAssertion(evidence!))}><Icon name="download" size={17} /> C2PA assertion (draft)</button>
+                </div>
                 {result.removedSince > 0 && (
                   <div className="status status-warn">
                     <Icon name="info" />

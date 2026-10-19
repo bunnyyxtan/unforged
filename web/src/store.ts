@@ -28,8 +28,21 @@ export type Me = {
   soft?: SoftPasskey;
 };
 
+/** Assurance ladder (docs/ARCHITECTURE.md). Wave 2 clients reach L0 or L1. */
+export type Level = "L0" | "L1";
+export const LEVELS: { id: string; name: string; basis: string }[] = [
+  { id: "L0", name: "Software credential", basis: "Test key generated in the browser" },
+  { id: "L1", name: "WebAuthn approval", basis: "Platform passkey with user presence and verification" },
+  { id: "L2", name: "Device-bound key", basis: "Non-exportable hardware key" },
+  { id: "L3", name: "Attested application", basis: "Hardware and app integrity attestation" },
+  { id: "L4", name: "C2PA capture credential", basis: "Signed manifest from supported capture hardware" },
+  { id: "L5", name: "Sensor and trusted time", basis: "Sensor evidence, trusted time and controlled edits" },
+];
+
 export type SealRecord = {
   times?: StageTimes;
+  level: Level;
+  caseId: string;
   id: string;
   fp: Uint8Array;
   url: string;
@@ -37,12 +50,34 @@ export type SealRecord = {
   takenAt: number;
   epoch: bigint;
   byYou: boolean; // known only on this device, never on chain
+  title: string;
   privateInputs: { label: string; value: string }[];
 };
 
 export type VerifyResult =
-  | { kind: "sealed"; fp: Uint8Array; id: string; takenAt: number; epoch: bigint; poolSize: number; removedSince: number }
+  | { kind: "sealed"; fp: Uint8Array; id: string; takenAt: number; epoch: bigint; poolSize: number; removedSince: number; record?: SealRecord }
   | { kind: "none"; fp: Uint8Array };
+
+// ------------------------------------------------------------- evidence desk
+
+export type CaseStatus = "new" | "review" | "approved" | "held" | "published";
+export const CHECKS = [
+  "Visual inspection for manipulation beyond the exact-file scope",
+  "Date and place corroborated by an independent source",
+  "Context and caption confirmed",
+  "Contributor safety reviewed before publication",
+] as const;
+
+export type EvidenceCase = {
+  id: string;
+  sealId: string;
+  title: string;
+  receivedAt: number;
+  status: CaseStatus;
+  checks: boolean[];
+  note?: string;
+  log: { at: number; actor: string; text: string }[];
+};
 
 type State = {
   ready: boolean;
@@ -51,10 +86,11 @@ type State = {
   reporters: Reporter[];
   me?: Me;
   seals: SealRecord[];
+  cases: EvidenceCase[];
   version: number;
 };
 
-let state: State = { ready: false, reporters: [], seals: [], version: 0 };
+let state: State = { ready: false, reporters: [], seals: [], cases: [], version: 0 };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
   state = { ...state, ...patch, version: state.version + 1 };
@@ -90,12 +126,87 @@ async function deployDemoPool() {
       const index = await pool.enroll(key.device());
       reporters.push({ name, key, index, revoked: false, commitment: toHex(pool.commitmentOf(key.device())) });
     }
-    set({ ready: true, pool, reporters });
+    set({ pool, reporters });
+    await seedSubmissions(pool, reporters);
+    set({ ready: true });
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && realPasskeysAvailable()) await enrollMe(JSON.parse(saved) as StoredCredential);
   } catch (e) {
     set({ ready: true, error: (e as Error).message });
   }
+}
+
+let caseNo = 1040;
+function openCase(record: SealRecord, via: string) {
+  const c: EvidenceCase = {
+    id: record.caseId,
+    sealId: record.id,
+    title: record.title,
+    receivedAt: Date.now(),
+    status: "new",
+    checks: CHECKS.map(() => false),
+    log: [{ at: Date.now(), actor: "Intake", text: `Received ${record.id} via ${via}. Pool seal verified; contributor withheld.` }],
+  };
+  set({ seals: [record, ...state.seals], cases: [c, ...state.cases] });
+}
+
+/**
+ * Sample submissions: two CC0 photographs sealed by simulated pool credentials
+ * through the same compiled circuit, so the Desk opens with real cases.
+ */
+async function seedSubmissions(pool: Pool, reporters: Reporter[]) {
+  const samples = [
+    { file: "umbrella.jpg", title: "Street protest, umbrella line", by: reporters[0] },
+    { file: "crossing.jpg", title: "Night crossing, central district", by: reporters[3] },
+  ];
+  for (const sample of samples) {
+    try {
+      const url = `${import.meta.env.BASE_URL}media/${sample.file}`;
+      const res = await fetch(url);
+      if (!res.ok) continue;
+      const bytes = new Uint8Array(await res.arrayBuffer());
+      const fp = await sha256(bytes);
+      const takenAt = pool.now() - 1;
+      await pool.seal(sample.by.key.device(), sample.by.key.assert(pool.challengeFor(fp)), fp, takenAt);
+      openCase(
+        { id: sealId(fp), caseId: `EC-${++caseNo}`, fp, url, bytes, takenAt, epoch: pool.ledger.epoch, byYou: false, level: "L0", title: sample.title, privateInputs: [] },
+        "pool relay (sample, simulated credential)",
+      );
+    } catch {
+      /* samples are optional; the workspace works without them */
+    }
+  }
+}
+
+export function toggleCheck(caseId: string, i: number) {
+  set({
+    cases: state.cases.map((c) => {
+      if (c.id !== caseId) return c;
+      const checks = c.checks.map((v, j) => (j === i ? !v : v));
+      return {
+        ...c,
+        checks,
+        status: c.status === "new" ? "review" : c.status,
+        log: [...c.log, { at: Date.now(), actor: "Desk editor", text: `${checks[i] ? "Completed" : "Reopened"}: ${CHECKS[i]}` }],
+      };
+    }),
+  });
+}
+
+const DECISION: Record<CaseStatus, string> = {
+  new: "Returned to intake",
+  review: "Opened for review",
+  approved: "Approved for publication",
+  held: "Held",
+  published: "Published with public verification package",
+};
+
+export function decide(caseId: string, status: CaseStatus, note?: string) {
+  set({
+    cases: state.cases.map((c) =>
+      c.id !== caseId ? c : { ...c, status, note, log: [...c.log, { at: Date.now(), actor: "Desk editor", text: note ? `${DECISION[status]}: ${note}` : DECISION[status] }] },
+    ),
+  });
 }
 
 /** Turn this device into an enrolled camera (real passkey when possible). */
@@ -164,6 +275,9 @@ export async function sealPhoto(
   times.proof = clock() - t;
   const record: SealRecord = {
     times: times as StageTimes,
+    level: me.mode === "passkey" ? "L1" : "L0",
+    caseId: `EC-${++caseNo}`,
+    title: "Field capture, this device",
     id: sealId(fp),
     fp,
     url,
@@ -179,7 +293,7 @@ export async function sealPhoto(
       { label: "Authenticator data", value: short(toHex(assertion.authenticatorData)) },
     ],
   };
-  set({ seals: [record, ...state.seals] });
+  openCase(record, me.mode === "passkey" ? "capture client (passkey)" : "capture client (evaluation credential)");
   onStage(3, times);
   return record;
 }
@@ -198,6 +312,7 @@ export async function verifyBytes(bytes: Uint8Array): Promise<VerifyResult> {
     epoch: seal.epoch,
     poolSize: Number(l.deviceCount),
     removedSince: Number(l.epoch - seal.epoch),
+    record: state.seals.find((r) => r.id === sealId(fp)),
   };
 }
 

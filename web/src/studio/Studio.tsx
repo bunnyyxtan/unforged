@@ -8,9 +8,11 @@ import { SealScreen } from "./SealScreen";
 import { VerifyScreen } from "./VerifyScreen";
 import { AttackScreen } from "./AttackScreen";
 import { PoolScreen } from "./PoolScreen";
+import { DeskScreen } from "./DeskScreen";
 
-const NAV: { tab: StudioTab; label: string; icon: "seal" | "verify" | "attack" | "pool" }[] = [
+const NAV: { tab: StudioTab; label: string; icon: "seal" | "desk" | "verify" | "attack" | "pool" }[] = [
   { tab: "seal", label: "Capture", icon: "seal" },
+  { tab: "desk", label: "Desk", icon: "desk" },
   { tab: "verify", label: "Verification", icon: "verify" },
   { tab: "attacks", label: "Assurance", icon: "attack" },
   { tab: "pool", label: "Trust pool", icon: "pool" },
@@ -102,6 +104,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
               transition={{ duration: 0.18, ease: [0.2, 0.7, 0.2, 1] }}
             >
               {tab === "seal" && <SealScreen />}
+              {tab === "desk" && <DeskScreen />}
               {tab === "verify" && <VerifyScreen />}
               {tab === "attacks" && <AttackScreen />}
               {tab === "pool" && <PoolScreen />}
