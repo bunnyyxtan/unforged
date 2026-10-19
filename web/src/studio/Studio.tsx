@@ -67,7 +67,6 @@ export function Studio({ tab }: { tab: StudioTab }) {
         <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
           <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
         </button>
-        <a className="btn btn-quiet btn-sm back-link" href="#/"><Icon name="back" size={16} /> Site</a>
       </header>
 
       <nav className="studio-rail" aria-label="Workspace">
