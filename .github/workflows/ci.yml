@@ -1,0 +1,51 @@
+name: CI
+
+permissions: {}
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  contract:
+    name: Compile & test contract
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      # Direct release download: avoids the installer's unauthenticated GitHub API calls.
+      - name: Install Compact compiler 0.35.0
+        run: |
+          curl -fsSL -o compactc.zip \
+            https://github.com/midnightntwrk/compact/releases/download/compactc-v0.35.0/compactc_v0.35.0_x86_64-unknown-linux-musl.zip
+          mkdir -p "$HOME/compactc" && unzip -q compactc.zip -d "$HOME/compactc"
+          echo "$HOME/compactc" >> "$GITHUB_PATH"
+          ls "$HOME/compactc"
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: '24'
+
+      - run: npm install
+
+      - name: Compile Compact contract (ZKIR v3, P-256)
+        working-directory: contract
+        run: npm run compact
+
+      - name: Typecheck
+        working-directory: contract
+        run: npm run typecheck
+
+      - name: Test (compact-runtime simulator)
+        working-directory: contract
+        run: npm test
+
+      # Generated code for machines without the Compact compiler (e.g. Windows).
+      - uses: actions/upload-artifact@v4
+        with:
+          name: managed
+          path: contract/src/managed

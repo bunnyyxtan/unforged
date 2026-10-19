@@ -1,0 +1,23 @@
+{
+  "name": "@unforged/contract",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "compact": "compactc --feature-zkir-v3 --skip-zk src/unforged.compact src/managed/unforged",
+    "compact:keys": "compactc --feature-zkir-v3 src/unforged.compact src/managed/unforged",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@midnight-ntwrk/compact-runtime": "0.20.0",
+    "@noble/curves": "2.4.0",
+    "@noble/hashes": "2.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.0"
+  }
+}

@@ -1,0 +1,15 @@
+node_modules/
+dist/
+reports/
+coverage/
+contract/src/managed/
+.env
+
+# private strategy notes, never published
+notes/
+
+# local agent working files
+AGENTS.md
+CLAUDE.md
+MEMORY.md
+docs/DECK-OUTLINE.md
