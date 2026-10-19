@@ -260,27 +260,27 @@ function Ledger() {
 
 function Forgeries() {
   const rows = [
-    ["A phone outside the pool tries to seal a fake", "NOT_ENROLLED"],
-    ["A photo is edited and the original signature reused", "BAD_SIGNATURE"],
-    ["A signature is replayed from another pool", "BAD_SIGNATURE"],
-    ["A look-alike site tricks a passkey into signing", "BAD_SIGNATURE"],
-    ["Malware signs without the user's face or fingerprint", "UV_REQUIRED"],
-    ["A photo is backdated by two days", "BAD_TIME"],
-    ["A stolen phone tries after it was removed", "NOT_ENROLLED"],
-    ["A pool too small to hide anyone", "POOL_TOO_SMALL"],
+    ["Change a sealed file and check it again", "NO_SEAL"],
+    ["A credential outside the pool tries to seal", "NOT_ENROLLED"],
+    ["Reuse a signature for different pixels", "BAD_SIGNATURE"],
+    ["A second signer claims the same file", "ALREADY_SEALED"],
+    ["Backdate a stated capture time by two days", "BAD_TIME"],
+    ["Submit without user verification", "UV_REQUIRED"],
+    ["Sign from a look-alike website", "BAD_SIGNATURE"],
+    ["Seal after the credential is revoked", "NOT_ENROLLED"],
   ];
   return (
     <section id="proof" className="section rail" aria-labelledby="proof-title">
       <div className="forgeries">
         <Reveal className="section-head" >
-          <h2 id="proof-title" className="headline">Forgeries fail inside the proof, <em>not in the interface.</em></h2>
+          <h2 id="proof-title" className="headline">Put every claim <em>under pressure.</em></h2>
           <p className="body-2">Seven cases challenge compiled Compact circuits with real P-256 assertions; the changed-file case challenges the fingerprint lookup. Run them and inspect the observed response.</p>
           <a className="btn btn-secondary" style={{ justifySelf: "start" }} href={attacks}>Run the attacks yourself <Icon name="arrow" size={18} /></a>
         </Reveal>
         <Reveal delay={0.1}>
           <table className="press-table">
-            <caption className="sr-only">Attacks and the contract's refusal codes</caption>
-            <thead><tr><th scope="col">Attempt</th><th scope="col">Contract response</th></tr></thead>
+            <caption className="sr-only">Threat exercises and their observed refusal codes</caption>
+            <thead><tr><th scope="col">Attempt</th><th scope="col">Observed response</th></tr></thead>
             <tbody>
               {rows.map(([a, c]) => (
                 <tr key={a}><td>{a}</td><td><span className="refusal">{c}</span></td></tr>
