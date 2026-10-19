@@ -352,7 +352,7 @@ function Closing() {
         <h2 id="closing-title" className="display" style={{ fontSize: "clamp(2.6rem, 1.4rem + 4.6vw, 5.2rem)" }}>Publish the evidence.<br /><em>Protect the witness.</em></h2>
         <div className="cluster" style={{ marginTop: "var(--s-5)" }}>
           <a className="btn btn-primary" href={start}>Try it now <Icon name="arrow" size={18} /></a>
-          <a className="btn btn-quiet" href="https://github.com/bunnyyxtan/unforged" target="_blank" rel="noreferrer">Read the code on GitHub</a>
+          <a className="btn btn-quiet" href="https://github.com/bunnyyxtan/unforgedds" target="_blank" rel="noreferrer">Read the code on GitHub</a>
         </div>
       </Reveal>
       {fp && (
