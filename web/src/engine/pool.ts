@@ -108,7 +108,7 @@ export function refusalCode(e: unknown): string {
   for (const code of ["ALREADY_SEALED", "NOT_ENROLLED", "BAD_SIGNATURE", "BAD_TIME", "POOL_TOO_SMALL", "NOT_ADMIN", "POOL_FULL"]) {
     if (m.includes(code)) return code;
   }
-  if (/UP and UV/.test(m)) return "NO_BIOMETRIC";
+  if (/UP and UV/.test(m)) return "UV_REQUIRED";
   if (/RP mismatch/.test(m)) return "WRONG_WEBSITE";
   if (/different photo or pool/.test(m)) return "BAD_SIGNATURE";
   return "REFUSED";

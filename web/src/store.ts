@@ -29,6 +29,7 @@ export type Me = {
 };
 
 export type SealRecord = {
+  times?: StageTimes;
   id: string;
   fp: Uint8Array;
   url: string;
@@ -119,25 +120,50 @@ export function forgetPasskey() {
   try { localStorage.removeItem(STORAGE_KEY); } catch { /* ignore */ }
 }
 
-/** Seal a captured photo. `onStep` reports progress for the timeline. */
-export async function sealPhoto(bytes: Uint8Array, url: string, onStep: (i: number) => void): Promise<SealRecord> {
+export type StageTimes = { fingerprint: number; signature: number; proof: number };
+
+/**
+ * Seal a captured photo. Stages are reported as they really happen, with their
+ * measured durations. No artificial waiting is added (UX.md: honest waiting).
+ */
+export async function sealPhoto(
+  bytes: Uint8Array,
+  url: string,
+  onStage: (stage: number, times: Partial<StageTimes>) => void,
+): Promise<SealRecord> {
   const pool = state.pool!;
   const me = state.me!;
-  const pause = (ms: number) => new Promise((r) => setTimeout(r, ms));
-  onStep(0);
+  const times: Partial<StageTimes> = {};
+  const clock = () => performance.now();
+  // Yield one frame so each stage is painted before CPU-bound work starts.
+  // Background tabs pause rAF, so a short timeout guarantees progress.
+  const frame = () =>
+    new Promise((r) => {
+      const t = setTimeout(r, 34);
+      requestAnimationFrame(() => { clearTimeout(t); r(null); });
+    });
+
+  onStage(0, times);
+  await frame();
+  let t = clock();
   const fp = await sha256(bytes);
-  await pause(450);
-  onStep(1);
+  times.fingerprint = clock() - t;
+
+  onStage(1, times);
+  await frame();
+  t = clock();
   const challenge = pool.challengeFor(fp);
   const assertion = me.mode === "passkey" ? await realAssertion(me.stored!, challenge) : me.soft!.assert(challenge);
-  if (me.mode === "simulated") await pause(500);
-  onStep(2);
-  await pause(250);
+  times.signature = clock() - t;
+
+  onStage(2, times);
+  await frame();
+  t = clock();
   const takenAt = pool.now() - 1;
   await pool.seal(me.device, assertion, fp, takenAt);
-  onStep(3);
-  await pause(450);
+  times.proof = clock() - t;
   const record: SealRecord = {
+    times: times as StageTimes,
     id: sealId(fp),
     fp,
     url,
@@ -154,7 +180,7 @@ export async function sealPhoto(bytes: Uint8Array, url: string, onStep: (i: numb
     ],
   };
   set({ seals: [record, ...state.seals] });
-  onStep(4);
+  onStage(3, times);
   return record;
 }
 
