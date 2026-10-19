@@ -1,6 +1,7 @@
 import { motion, useReducedMotion } from "motion/react";
 import { useId, useMemo } from "react";
 import { guilloche } from "../lib/guilloche";
+import { markGeometry } from "./Icon";
 
 type Props = {
   fp: Uint8Array;
@@ -43,9 +44,9 @@ export function Seal({ fp, id, size = 200, draw = false, caption = "SEALED ON MI
       <circle r="96" strokeWidth="1.6" />
       <circle r="86.5" strokeWidth="0.6" />
       <circle r="24" strokeWidth="0.6" />
+      {markGeometry(1.45).map((p, i) => (p.kind === "circle" ? <circle key={`m${i}`} r={p.r} strokeWidth={p.w} /> : <line key={`m${i}`} x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2} strokeWidth={p.w} />))}
       {g.outer.paths.map((d, i) => line(d, `o${i}`, 0.05 + i * 0.025, 0.42))}
       {g.inner.paths.map((d, i) => line(d, `i${i}`, 0.35 + i * 0.025, 0.42))}
-      {g.core.paths.map((d, i) => line(d, `c${i}`, 0.6 + i * 0.03, 0.38))}
     </>
   );
 
