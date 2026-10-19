@@ -26,20 +26,24 @@ export function PoolScreen() {
 
   return (
     <>
-      <PageHead title="Independent Press Pool" purpose="A local source-pool evaluation. Admins can remove credentials; the seal registry does not disclose which credential approved a file. Production enrollment and access controls remain to be built." />
-      <div className="stack" style={{ "--gap": "24px" } as React.CSSProperties}>
-        <section className="panel pool-summary" aria-label="Pool summary">
-          <PoolRing size={phones} min={MIN_POOL} px={132} />
-          <dl className="kv">
-            <div><dt>Enrolled phones</dt><dd><b>{phones}</b>, sealing allowed from {MIN_POOL}</dd></div>
-            <div><dt>Seals recorded</dt><dd><b>{String(l.sealCount)}</b></dd></div>
-            <div><dt>Removals (epoch)</dt><dd><b>{String(l.epoch)}</b></dd></div>
-            <div><dt>Network fees</dt><dd>Sponsored by the pool. Reporters never hold tokens.</dd></div>
+      <PageHead eyebrow="TRUST OPERATIONS / 04" title="Independent Press Pool" purpose="Operate the credential set that can issue private seals. Pool policy protects the anonymity floor while preserving an auditable administrative state." />
+      <div className="pool-console">
+        <section className="pool-command" aria-label="Pool summary">
+          <div className="pool-identity">
+            <PoolRing size={phones} min={MIN_POOL} px={136} />
+            <div><span className="label">POOL STATUS</span><h2>Operational</h2><p>{phones} active credentials can issue seals without exposing which one signed.</p></div>
+          </div>
+          <dl className="pool-stat-grid">
+            <div><dt>Credentials</dt><dd>{phones.toString().padStart(2, "0")}</dd><span>minimum {MIN_POOL}</span></div>
+            <div><dt>Seals issued</dt><dd>{String(l.sealCount).padStart(2, "0")}</dd><span>current browser</span></div>
+            <div><dt>Policy epoch</dt><dd>{String(l.epoch).padStart(2, "0")}</dd><span>revocation state</span></div>
           </dl>
+          <div className="pool-policy"><Icon name="lock" size={18} /><div><span className="label">FEE & ACCESS POLICY</span><strong>Pool-sponsored operation</strong><p>Reporters do not need tokens. Production sponsorship and administrator controls are roadmap work.</p></div></div>
         </section>
 
-        <section aria-labelledby="devices-title" className="stack" style={{ "--gap": "12px" } as React.CSSProperties}>
-          <h2 id="devices-title" className="title">Enrolled devices</h2>
+        <section aria-labelledby="devices-title" className="device-registry">
+          <div className="registry-head"><div><span className="label">CREDENTIAL REGISTRY</span><h2 id="devices-title" className="title">Enrolled devices</h2></div><span className="chip chip-ok"><span className="dot" />{phones} active</span></div>
+          <div className="device-table-wrap">
           <table className="device-table">
             <thead><tr><th scope="col">Admin's label</th><th scope="col" className="col-commit">Local commitment</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>
@@ -73,13 +77,14 @@ export function PoolScreen() {
               ))}
             </tbody>
           </table>
+          </div>
           {atFloor && <p className="meta" style={{ margin: 0 }}>Removal is paused: the pool is at its anonymity floor of {MIN_POOL} phones. Removing more would stop everyone from sealing.</p>}
           {confirm !== undefined && <p className="meta" style={{ margin: 0 }}>Removing a phone can't be undone in this demo. Its earlier seals stay valid; new seals from it will fail.</p>}
         </section>
 
-        <div className="status status-info">
+        <div className="pool-privacy">
           <Icon name="lock" />
-          <p><strong>What this registry withholds</strong>The seal does not contain a signer-to-file link, location or hardware identifier. Admins can know enrollment identities, and timing or network data can still reveal a source without operational protections. The local ledger stores opaque credential commitments.</p>
+          <div><span className="label">PRIVACY BOUNDARY</span><h3>Identity is governed; authorship stays private.</h3><p>The registry stores opaque credential commitments. A seal contains no signer-to-file link, location, or hardware identifier. Administrators may know enrollment identities, while timing and network metadata still require operational safeguards.</p></div>
         </div>
       </div>
     </>

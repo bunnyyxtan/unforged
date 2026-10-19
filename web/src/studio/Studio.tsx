@@ -10,10 +10,10 @@ import { AttackScreen } from "./AttackScreen";
 import { PoolScreen } from "./PoolScreen";
 
 const NAV: { tab: StudioTab; label: string; icon: "seal" | "verify" | "attack" | "pool" }[] = [
-  { tab: "seal", label: "Seal", icon: "seal" },
-  { tab: "verify", label: "Verify", icon: "verify" },
-  { tab: "attacks", label: "Attack lab", icon: "attack" },
-  { tab: "pool", label: "Pool", icon: "pool" },
+  { tab: "seal", label: "Capture", icon: "seal" },
+  { tab: "verify", label: "Verification", icon: "verify" },
+  { tab: "attacks", label: "Assurance", icon: "attack" },
+  { tab: "pool", label: "Trust pool", icon: "pool" },
 ];
 
 /** Show a placeholder only if loading actually takes noticeable time. */
@@ -27,12 +27,13 @@ function useDelayed(active: boolean, ms = 300) {
   return show;
 }
 
-export function PageHead({ title, purpose, aside }: { title: string; purpose: string; aside?: ReactNode }) {
+export function PageHead({ title, purpose, aside, eyebrow }: { title: string; purpose: string; aside?: ReactNode; eyebrow?: string }) {
   return (
     <header className="page-head">
-      <div className="stack" style={{ "--gap": "6px" } as React.CSSProperties}>
+      <div className="page-head-copy">
+        {eyebrow && <span className="label page-eyebrow">{eyebrow}</span>}
         <h1 className="heading">{title}</h1>
-        <p className="meta" style={{ margin: 0, maxWidth: "62ch" }}>{purpose}</p>
+        <p>{purpose}</p>
       </div>
       {aside}
     </header>
@@ -54,9 +55,9 @@ export function Studio({ tab }: { tab: StudioTab }) {
       <header className="studio-bar">
         <a className="wordmark" href="#/" aria-label="Unforged home"><Mark size={20} />Unforged</a>
         <span className="studio-divider" aria-hidden="true" />
-        <span className="studio-name">Workspace</span>
+        <span className="studio-name">Evidence operations</span>
         <span className="chip chip-ok pool-chip" title="This evaluation pool runs the compiled Compact contract locally">
-          <span className="dot" />{s.ready ? `Local evaluation · ${phones} credentials` : "Starting local pool…"}
+          <span className="dot" />{s.ready ? `Local runtime · ${phones} credentials` : "Starting runtime…"}
         </span>
         <span className="spacer" />
         <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
@@ -66,6 +67,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
       </header>
 
       <nav className="studio-rail" aria-label="Workspace">
+        <span className="rail-section label">Workflow</span>
         {NAV.map((n) => (
           <a key={n.tab} href={href({ page: "studio", tab: n.tab })} aria-current={tab === n.tab ? "page" : undefined}>
             <Icon name={n.icon} size={20} />
@@ -74,7 +76,12 @@ export function Studio({ tab }: { tab: StudioTab }) {
             {tab === n.tab && reduce && <span className="rail-mark" />}
           </a>
         ))}
-        <p className="rail-note meta">Compiled Compact contract, local runtime. Reloading resets this evaluation pool.</p>
+        <div className="rail-runtime">
+          <span className="rail-runtime-mark"><Icon name="ledger" size={16} /></span>
+          <div><strong>Evaluation runtime</strong><span>Compact 0.35 · ledger 9</span></div>
+          <span className="rail-live" aria-label="Runtime ready" />
+        </div>
+        <p className="rail-note meta">State is held in this browser. Reloading creates a fresh evaluation pool.</p>
       </nav>
 
       <main id="studio-main" className="studio-main" tabIndex={-1}>

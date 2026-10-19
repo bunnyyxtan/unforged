@@ -31,8 +31,9 @@ export function SealScreen() {
   return (
     <>
       <PageHead
+        eyebrow={s.me ? "Field capture / Current session" : "Credential enrollment / Step 1 of 3"}
         title={s.me ? "Seal a photo" : "Set up this device"}
-        purpose={s.me ? `Capture a file, approve its fingerprint with ${s.me.mode === "passkey" ? "your passkey" : "a local test signer"}, and create a record the desk can check without a public signer identity.` : "Enroll a passkey in the source pool. This browser exercise creates no account; production enrollment will require newsroom approval."}
+        purpose={s.me ? `Capture, approve and record exact bytes without placing a signer identity in the seal.` : "Create a private credential for the Independent Press Pool. No account, wallet or seed phrase."}
       />
       {s.me ? <Capture /> : <Onboarding />}
     </>
@@ -66,21 +67,30 @@ function Onboarding() {
 
   return (
     <div className="onboard">
-      <ol className="progress-steps" aria-label="Setup progress">
-        <li aria-current="step"><span className="n">1</span>Enroll this device</li>
-        <li><span className="n">2</span>Take a photo</li>
-        <li><span className="n">3</span>Seal it</li>
-      </ol>
+      <aside className="setup-rail" aria-label="Setup progress">
+        <span className="label">First evidence</span>
+        <ol className="progress-steps">
+          <li aria-current="step"><span className="n">01</span><span><b>Authorize</b><small>Create a private pool credential</small></span></li>
+          <li><span className="n">02</span><span><b>Capture</b><small>Choose camera or evaluation frame</small></span></li>
+          <li><span className="n">03</span><span><b>Record</b><small>Approve the exact fingerprint</small></span></li>
+        </ol>
+        <div className="setup-promise">
+          <Icon name="lock" size={18} />
+          <p><strong>Your credential stays private.</strong><span>The seal names the pool, never the member who approved it.</span></p>
+        </div>
+      </aside>
 
-      <div className="stack" style={{ "--gap": "16px" } as React.CSSProperties}>
-        <div className="choices">
-          <section className="panel choice primary" aria-labelledby="c-passkey">
-            <h2 id="c-passkey" className="title"><Icon name="chip" /> Use a passkey</h2>
-            <p className="body-2" style={{ margin: 0 }}>
-              Creates a passkey with Windows Hello, Face ID, Touch ID or your phone. The pool records a commitment, not the public key. Some passkeys sync between devices; device-bound attestation is a production milestone.
-            </p>
+      <div className="enrollment-workspace">
+        <section className="enrollment-primary" aria-labelledby="c-passkey">
+          <div className="enrollment-copy">
+            <span className="chip chip-ok"><span className="dot" /> Recommended assurance</span>
+            <span className="enrollment-icon"><Icon name="chip" size={24} /></span>
+            <div>
+              <h2 id="c-passkey" className="headline">Authorize with a passkey.</h2>
+              <p>Use Windows Hello, Face ID, Touch ID or a nearby phone. The contract receives a salted commitment and never publishes the key.</p>
+            </div>
             {real ? (
-              <button className="btn btn-primary" onClick={() => enroll(false)} aria-busy={busy === "passkey"} disabled={!!busy}>
+              <button className="btn btn-primary enrollment-action" onClick={() => enroll(false)} aria-busy={busy === "passkey"} disabled={!!busy}>
                 {busy === "passkey" ? <><span className="spinner" /> Waiting for your approval…</> : "Enroll with a passkey"}
               </button>
             ) : (
@@ -90,18 +100,29 @@ function Onboarding() {
               </div>
             )}
             {busy === "passkey" && <p className="meta" style={{ margin: 0 }}>Approve the system prompt. If you see a QR code, you can scan it with your phone.</p>}
-          </section>
+          </div>
+          <div className="enrollment-assurance" aria-label="What happens during enrollment">
+            <span className="label">ENROLLMENT RECEIPT</span>
+            <dl>
+              <div><dt><Icon name="fingerprint" size={17} /> Approval</dt><dd>System prompt required</dd></div>
+              <div><dt><Icon name="lock" size={17} /> Published</dt><dd>Salted commitment only</dd></div>
+              <div><dt><Icon name="ledger" size={17} /> Policy</dt><dd>Pool membership circuit</dd></div>
+            </dl>
+            <p>Device-bound capture attestation is a later assurance level. This step proves credential approval.</p>
+          </div>
+        </section>
 
-          <section className="panel choice" aria-labelledby="c-sim">
-            <h2 id="c-sim" className="title"><Icon name="seal" /> Use a simulated phone</h2>
-            <p className="body-2" style={{ margin: 0 }}>
-              A software signer that exercises the same contract path. Use it when this device has no passkey or camera. It is never production identity evidence.
-            </p>
-            <button className="btn btn-secondary" onClick={() => enroll(true)} aria-busy={busy === "simulated"} disabled={!!busy}>
-              {busy === "simulated" ? <><span className="spinner" /> Enrolling…</> : "Enroll a simulated phone"}
-            </button>
-          </section>
-        </div>
+        <section className="evaluation-path" aria-labelledby="c-sim">
+          <span className="evaluation-symbol"><Icon name="seal" size={20} /></span>
+          <div>
+            <span className="label">NO PASSKEY OR CAMERA?</span>
+            <h2 id="c-sim" className="title">Continue in evaluation mode</h2>
+            <p>Creates a local software credential and exercises the same Compact circuit. It carries L0 assurance and is never presented as hardware evidence.</p>
+          </div>
+          <button className="btn btn-secondary" onClick={() => enroll(true)} aria-busy={busy === "simulated"} disabled={!!busy}>
+            {busy === "simulated" ? <><span className="spinner" /> Creating credential…</> : "Use evaluation credential"}
+          </button>
+        </section>
 
         {problem && (
           <div className="status status-error" role="alert">
@@ -110,13 +131,18 @@ function Onboarding() {
           </div>
         )}
 
-        <div className="sunken pool-preview" style={{ display: "flex", gap: 20, alignItems: "center", padding: 20, flexWrap: "wrap" }}>
-          <PoolRing size={phones} min={MIN_POOL} px={84} />
-          <div className="stack" style={{ "--gap": "4px" } as React.CSSProperties}>
-            <span className="title">Independent Press Pool <span className="chip" style={{ marginLeft: 6 }}>demo</span></span>
-            <span className="meta">Your seals will read "one of {phones + 1} credentials". The registry does not disclose which credential made a seal; the operator may still know enrollment identities.</span>
+        <section className="pool-readiness" aria-label="Pool readiness">
+          <div className="pool-readiness-title">
+            <PoolRing size={phones} min={MIN_POOL} px={78} />
+            <div><span className="label">ACTIVE TRUST POOL</span><strong>Independent Press Pool</strong><span>Local evaluation environment</span></div>
           </div>
-        </div>
+          <dl className="pool-metrics">
+            <div><dt>Current set</dt><dd>{phones} credentials</dd></div>
+            <div><dt>After enrollment</dt><dd>{phones + 1} credentials</dd></div>
+            <div><dt>Public claim</dt><dd>One authorized member</dd></div>
+            <div><dt>Signer identity</dt><dd>Withheld from record</dd></div>
+          </dl>
+        </section>
       </div>
     </div>
   );

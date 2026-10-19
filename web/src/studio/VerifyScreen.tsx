@@ -95,9 +95,13 @@ export function VerifyScreen() {
 
   return (
     <>
-      <PageHead title="Verification desk" purpose="Check an exact file against this pool's local seal registry. The file stays in your browser. A match supports an editorial decision; it does not establish that the scene is true." />
+      <PageHead eyebrow="EVIDENCE OPERATIONS / 02" title="Verification desk" purpose="Resolve one exact file against the pool registry, then export a review record with the privacy and trust boundaries made explicit." />
       <div className="verify">
-        <div className="stack" style={{ "--gap": "16px" } as React.CSSProperties}>
+        <div className="verify-intake">
+          <div className="verify-section-head">
+            <div><span className="label">EVIDENCE INPUT</span><h2 className="title">Select the file under review</h2></div>
+            <span className="verify-local"><Icon name="lock" size={14} /> Browser-local</span>
+          </div>
           <label
             className={`dropzone${over ? " over" : ""}`}
             onDragOver={(e) => { e.preventDefault(); setOver(true); }}
@@ -107,7 +111,7 @@ export function VerifyScreen() {
             <input type="file" accept="image/*" className="sr-only" onChange={(e) => { void onFiles(e.target.files); e.target.value = ""; }} />
             <span className="icon-wrap"><Icon name="upload" size={24} /></span>
             <span className="title">{checking ? `Checking ${file}…` : "Drop a photo, or choose a file"}</span>
-            <span className="meta">JPEG, PNG or any image. Exact bytes are checked in this browser.</span>
+            <span className="meta">The original bytes are fingerprinted locally. Nothing is uploaded.</span>
           </label>
           {readError && (
             <div className="status status-error" role="alert">
@@ -116,8 +120,8 @@ export function VerifyScreen() {
             </div>
           )}
           {s.seals.length > 0 ? (
-            <div className="stack" style={{ "--gap": "10px" } as React.CSSProperties}>
-              <span className="meta">Or check one you sealed in this session</span>
+            <div className="verify-recents">
+              <span className="label">RECENT SESSION EVIDENCE</span>
               <div className="thumbs">
                 {s.seals.slice(0, 10).map((r) => (
                   <button key={r.id} onClick={() => void check(r.bytes, `${r.id}.jpg`)} aria-label={`Verify ${r.id}`}>
@@ -127,13 +131,18 @@ export function VerifyScreen() {
               </div>
             </div>
           ) : (
-            <p className="meta" style={{ margin: 0 }}>
-              No sealed photos yet in this session. <a href={href({ page: "studio", tab: "seal" })}>Seal one</a>, then drop it here, or drop any other photo to see an unsealed result.
-            </p>
+            <div className="verify-empty-session"><Icon name="info" size={16} /><p>No session evidence yet. <a href={href({ page: "studio", tab: "seal" })}>Capture and seal a file</a>, or inspect any external image.</p></div>
           )}
+          <dl className="verify-pipeline">
+            <div><dt>01</dt><dd><strong>Fingerprint</strong><span>SHA-256 exact bytes</span></dd></div>
+            <div><dt>02</dt><dd><strong>Resolve</strong><span>Pool seal registry</span></dd></div>
+            <div><dt>03</dt><dd><strong>Review</strong><span>Decision boundary</span></dd></div>
+          </dl>
         </div>
 
-        <section className="panel result" aria-live="polite" aria-label="Verification result">
+        <section className="result" aria-live="polite" aria-label="Verification result">
+          <div className="verify-section-head result-head"><div><span className="label">REVIEW OUTPUT</span><h2 className="title">Evidence assessment</h2></div><span className="data">LOCAL / V1</span></div>
+          <div className="result-body">
           <AnimatePresence mode="wait" initial={false}>
             {checking && (
               <motion.div key="checking" className="stack" style={{ "--gap": "16px" } as React.CSSProperties} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
@@ -144,13 +153,13 @@ export function VerifyScreen() {
             )}
             {!result && !checking && (
               <motion.div key="empty" className="stack" style={{ "--gap": "16px" } as React.CSSProperties} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-                <h2 className="title">What the desk can check</h2>
-                <ul className="facts">
-                  <li><Icon name="check" size={16} /> This exact file matches a fingerprint in the pool registry.</li>
-                  <li><Icon name="check" size={16} /> A pool credential assertion with a user-verification flag was accepted.</li>
-                  <li><Icon name="check" size={16} /> The public record does not reveal which signer approved it.</li>
-                </ul>
-                <p className="meta" style={{ margin: 0 }}>Always review the scene, source context and capture pipeline separately. This browser version runs on a local ledger.</p>
+                <div className="result-awaiting"><span className="result-crosshair"><Icon name="verify" size={26} /></span><span className="label">AWAITING EVIDENCE</span><h3>Ready for an exact-file check.</h3><p>Choose a file to resolve its fingerprint, credential acceptance, and signer privacy as one review.</p></div>
+                <dl className="result-capabilities">
+                  <div><dt><Icon name="check" size={15} /> Integrity</dt><dd>Exact-byte registry match</dd></div>
+                  <div><dt><Icon name="check" size={15} /> Authority</dt><dd>Accepted pool credential</dd></div>
+                  <div><dt><Icon name="check" size={15} /> Privacy</dt><dd>Signer remains undisclosed</dd></div>
+                </dl>
+                <div className="result-boundary"><Icon name="info" size={16} /><p>Scene truth and source context remain editorial judgments.</p></div>
               </motion.div>
             )}
 
@@ -235,6 +244,7 @@ export function VerifyScreen() {
               </motion.div>
             )}
           </AnimatePresence>
+          </div>
         </section>
       </div>
     </>
