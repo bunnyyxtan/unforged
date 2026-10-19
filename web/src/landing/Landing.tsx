@@ -37,7 +37,7 @@ function Masthead() {
   return (
     <header className="masthead">
       <div className="rail masthead-row">
-        <a className="wordmark" href="#/" aria-label="Unforged home"><Mark />Unforged</a>
+        <a className="wordmark" href={href({ page: "home" })} aria-label="Unforged home"><Mark />Unforged</a>
         <nav aria-label="Sections" className="masthead-nav">
           <a href="#workflow">Workflow</a>
           <a href="#proof">Proof</a>

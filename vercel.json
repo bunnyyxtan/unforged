@@ -4,6 +4,7 @@
   "installCommand": "npm install",
   "buildCommand": "bash scripts/vercel-build.sh",
   "outputDirectory": "web/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
   "headers": [
     {
       "source": "/(.*)",

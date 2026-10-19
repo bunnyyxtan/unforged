@@ -107,7 +107,7 @@ npm install
 npm run dev -w web
 ```
 
-Open `http://localhost:5173`.
+Open `http://localhost:5173`. Screens use clean paths: `/app` (start), `/app/seal`, `/app/check`, `/app/review`, `/app/members`, `/app/relay` and `/app/safety`. Deployed hosts must rewrite unknown paths to `index.html` (`vercel.json` does).
 
 ```bash
 # Windows: tests use generated code downloaded from CI

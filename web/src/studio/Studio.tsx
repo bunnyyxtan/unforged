@@ -64,7 +64,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
     <div className={`studio${s.me ? "" : " signed-out"}`}>
       <a className="skip" href="#studio-main">Skip to content</a>
       <header className="studio-bar">
-        <a className="wordmark" href="#/" aria-label="Unforged home"><Mark size={20} />Unforged</a>
+        <a className="wordmark" href={href({ page: "home" })} aria-label="Unforged home"><Mark size={20} />Unforged</a>
         <span className="studio-divider" aria-hidden="true" />
         <span className="studio-name">Workspace</span>
         
