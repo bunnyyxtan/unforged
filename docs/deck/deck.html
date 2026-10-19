@@ -3,40 +3,40 @@
 <head>
 <meta charset="utf-8" />
 <title>Unforged · Deck</title>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
 <style>
   @page { size: 13.333in 7.5in; margin: 0; }
-  :root { --bg:#0e0d0c; --surface:#171513; --surface2:#1d1a17; --ink:#ede8de; --muted:#9a938a; --seal:#ff5a36; --sealed:#3fc79a; --line:#2a2724; --danger:#ff6b5e; }
+  :root { --bg:#f7f3ea; --surface:#fdfbf6; --surface2:#efe9dc; --ink:#14110d; --muted:#564e43; --seal:#98202b; --action:#1d3f75; --sealed:#2c5a37; --line:#d3c9b4; --danger:#9b2d16; --danger-tint:#f6e0d8; }
   * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   html, body { margin: 0; background: #000; }
-  body { font: 20px/1.45 Inter, sans-serif; color: var(--ink); }
+  body { font: 20px/1.45 'Schibsted Grotesk', sans-serif; color: var(--ink); }
   .slide { width: 13.333in; height: 7.5in; padding: 0.7in 0.85in; background: var(--bg); position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
-  .slide::after { content: attr(data-n); position: absolute; right: 0.85in; bottom: 0.4in; font: 13px JetBrains Mono, monospace; color: var(--muted); }
-  .brand { position: absolute; left: 0.85in; bottom: 0.4in; font: 15px Inter; color: var(--muted); display: flex; gap: 8px; align-items: center; }
-  .brand i { width: 14px; height: 14px; border-radius: 50%; background: var(--seal); display: inline-block; box-shadow: inset 0 0 0 3px var(--seal), inset 0 0 0 4.5px var(--bg); }
+  .slide::after { content: attr(data-n); position: absolute; right: 0.85in; bottom: 0.4in; font: 13px 'IBM Plex Mono', monospace; color: var(--muted); }
+  .brand { position: absolute; left: 0.85in; bottom: 0.4in; font: 15px 'Schibsted Grotesk'; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+  .brand i { width: 14px; height: 14px; border-radius: 50%; background: var(--seal); display: inline-block; box-shadow: inset 0 0 0 2px var(--seal), inset 0 0 0 4px var(--bg); background: var(--bg); border: 1.5px solid var(--seal); }
   .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
-  h1, h2 { font-family: "Instrument Serif", serif; font-weight: 400; margin: 0; letter-spacing: -0.015em; }
+  h1, h2 { font-family: "Newsreader", serif; font-weight: 400; margin: 0; letter-spacing: -0.015em; }
   h1 { font-size: 96px; line-height: .98; }
   h2 { font-size: 58px; line-height: 1.02; margin-bottom: 22px; }
-  em { color: var(--seal); }
+  em { color: var(--action); font-style: italic; }
   .muted { color: var(--muted); }
-  .mono { font-family: "JetBrains Mono", monospace; font-size: .85em; }
+  .mono { font-family: "IBM Plex Mono", monospace; font-size: .85em; }
   .grid { display: grid; gap: 22px; }
   .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; box-shadow: 0 18px 40px -26px rgba(20,17,13,.35); }
   .card h3 { margin: 0 0 6px; font-size: 21px; }
   .card p { margin: 0; color: var(--muted); font-size: 17px; }
-  .big { font-family: "Instrument Serif", serif; font-size: 64px; line-height: 1; color: var(--ink); }
-  .big small { display: block; font: 15px Inter; color: var(--muted); margin-top: 8px; }
+  .big { font-family: "Newsreader", serif; font-size: 64px; line-height: 1; color: var(--ink); }
+  .big small { display: block; font: 15px 'Schibsted Grotesk'; color: var(--muted); margin-top: 8px; }
   table { width: 100%; border-collapse: collapse; font-size: 17px; }
   th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
   th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
   .ok { color: var(--sealed); font-weight: 700; } .no { color: var(--danger); font-weight: 700; }
-  .code { font: 600 14px JetBrains Mono, monospace; color: var(--danger); background: #2d1311; padding: 2px 8px; border-radius: 6px; }
-  img.shot { width: 100%; max-height: 2.25in; object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); display: block; }
+  .code { font: 500 13px 'IBM Plex Mono', monospace; color: var(--danger); background: var(--danger-tint); padding: 3px 8px; border-radius: 4px; }
+  img.shot { width: 100%; max-height: 2.25in; box-shadow: 0 18px 40px -26px rgba(20,17,13,.45); object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); display: block; }
   .step { display: grid; grid-template-columns: 54px 1fr; gap: 14px; align-items: start; }
-  .step b.n { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--seal); display: grid; place-items: center; font: 26px "Instrument Serif"; color: var(--seal); }
-  .card p.quote, .quote { font-family: "Instrument Serif", serif; font-size: 36px; line-height: 1.18; color: var(--ink); }
+  .step b.n { width: 54px; height: 54px; border-radius: 50%; border: 1.5px solid var(--seal); display: grid; place-items: center; font: 26px "Newsreader"; color: var(--seal); }
+  .card p.quote, .quote { font-family: "Newsreader", serif; font-size: 36px; line-height: 1.18; color: var(--ink); }
   .src { font-size: 12.5px; color: var(--muted); margin-top: auto; padding-top: 12px; }
   ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
   ul.clean li::before { content: "✓  "; color: var(--sealed); font-weight: 700; }
@@ -52,13 +52,13 @@
 <!-- 1. Title -->
 <section class="slide" data-n="01">
   <svg class="stamp" viewBox="0 0 120 120"><defs><path id="r" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
-    <circle cx="60" cy="60" r="56" fill="none" stroke="#ff5a36" stroke-width="3"/><circle cx="60" cy="60" r="35" fill="none" stroke="#ff5a36" stroke-width="1.5"/>
-    <text fill="#ff5a36" font-family="JetBrains Mono" font-size="8.2" letter-spacing="1.2"><textPath href="#r">UF-7K3Q-9D2M · UNFORGED · UF-7K3Q-9D2M · UNFORGED ·</textPath></text>
-    <text x="60" y="60" text-anchor="middle" fill="#ff5a36" font-family="Instrument Serif" font-size="17">SEALED</text>
-    <text x="60" y="74" text-anchor="middle" fill="#ff5a36" font-family="Inter" font-size="6.5" letter-spacing="1">ON MIDNIGHT</text></svg>
+    <circle cx="60" cy="60" r="56" fill="none" stroke="#98202b" stroke-width="3"/><circle cx="60" cy="60" r="35" fill="none" stroke="#98202b" stroke-width="1.5"/>
+    <text fill="#98202b" font-family="IBM Plex Mono" font-size="8.2" letter-spacing="1.2"><textPath href="#r">UF-7K3Q-9D2M · UNFORGED · UF-7K3Q-9D2M · UNFORGED ·</textPath></text>
+    <text x="60" y="60" text-anchor="middle" fill="#98202b" font-family="Newsreader" font-size="17">SEALED</text>
+    <text x="60" y="74" text-anchor="middle" fill="#98202b" font-family="Schibsted Grotesk" font-size="6.5" letter-spacing="1">ON MIDNIGHT</text></svg>
   <div style="margin-top:auto">
     <div class="eyebrow">Unforged · Midnight Buildathon · Wave 2</div>
-    <h1>Prove it's real.<br/><em><i>Keep who took it secret.</i></em></h1>
+    <h1>Proof a photo is real.<br/><em><i>Not proof of who took it.</i></em></h1>
     <p class="muted" style="font-size:24px;max-width:9in;margin:26px 0 0">Anonymous, hardware-signed photo seals. A phone's secure chip signs the photo; a zero-knowledge proof on Midnight shows it came from one of a pool's enrolled phones, never which one.</p>
   </div>
   <div style="height:0.4in"></div>
@@ -225,7 +225,7 @@
 <section class="slide" data-n="10">
   <div style="margin:auto 0">
     <div class="eyebrow">Unforged</div>
-    <h1 style="font-size:84px">Seal reality.<br/><em><i>Protect the people who capture it.</i></em></h1>
+    <h1 style="font-size:84px">Seal what's real.<br/><em style="color:var(--seal)"><i>Protect who saw it.</i></em></h1>
     <p style="margin-top:30px;font-size:22px"><span class="pill">github.com/bunnyyxtan/unforged</span><span class="pill">Built on Midnight</span><span class="pill">Apache-2.0</span></p>
   </div>
   <div class="brand"><i></i>bunnyy · Midnight Buildathon 2026</div>
