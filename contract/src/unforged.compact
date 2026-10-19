@@ -1,0 +1,127 @@
+// SPDX-License-Identifier: Apache-2.0
+//
+// Unforged: anonymous, hardware-signed photo seals.
+//
+// A pool admin enrolls devices as opaque commitments in a Merkle tree. To seal
+// a photo, a device's passkey (P-256, held in the phone's secure chip) signs a
+// challenge bound to this pool and the photo's SHA-256 fingerprint. The seal
+// circuit proves, in zero knowledge, that the signer is SOME enrolled device:
+// the key, salt, Merkle path, signature and authenticator data stay private.
+// Only the fingerprint, the capture time and a pool epoch become public.
+//
+// Compile: compact compile +0.35.0 --feature-zkir-v3 (P-256 needs ZKIR v3).
+
+pragma language_version >= 0.27.0;
+
+import CompactStandardLibrary;
+include "webauthn";
+// Origins are exactly 21 bytes, e.g. "http://localhost:5173" or "https://unforged.site".
+import WebAuthn<21>;
+
+export { WebAuthnPolicy };
+
+export struct Seal {
+  takenAt: Uint<64>;   // capture time claimed by the device, seconds since epoch
+  epoch: Uint<64>;     // pool epoch (number of revocations) when sealed
+}
+
+// ---- Public ledger ---------------------------------------------------------
+
+export ledger admin: Bytes<32>;                              // H(adminSecret)
+export ledger minPoolSize: Uint<16>;                         // anonymity floor
+export ledger devices: HistoricMerkleTree<16, Bytes<32>>;    // device commitments
+export ledger deviceCount: Counter;                          // active devices
+export ledger epoch: Counter;                                // bumps on every revocation
+export ledger seals: Map<Bytes<32>, Seal>;                   // fingerprint -> seal
+export ledger sealCount: Counter;
+
+// A photo must be sealed within this many seconds of its claimed capture time.
+// Generous to allow offline capture; the claimed time can never be in the future.
+export pure circuit sealWindow(): Uint<64> {
+  return 86400;
+}
+
+// ---- Private inputs (never leave the prover) --------------------------------
+
+witness adminSecret(): Bytes<32>;
+witness deviceKey(): Secp256r1Point;
+witness deviceSalt(): Bytes<32>;
+witness devicePolicy(): WebAuthnPolicy;
+witness devicePath(leaf: Bytes<32>): MerkleTreePath<16, Bytes<32>>;
+witness assertionData(challenge: Bytes<32>): Bytes<37>;
+witness assertionSignature(challenge: Bytes<32>): Secp256r1EcdsaSignature;
+
+// ---- Derivations (shared with the client via pureCircuits) ------------------
+
+export pure circuit adminCommitment(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "unforged:admin:v1"), secret]);
+}
+
+export pure circuit deviceCommitment(pk: Secp256r1Point, salt: Bytes<32>, policy: WebAuthnPolicy): Bytes<32> {
+  return persistentHash<[Bytes<32>, Bytes<32>, Bytes<32>, Bytes<32>, WebAuthnPolicy]>([
+    pad(32, "unforged:device:v1"), salt,
+    secp256r1PointX(pk) as Bytes<32>, secp256r1PointY(pk) as Bytes<32>, policy
+  ]);
+}
+
+export pure circuit sealChallenge(pool: ContractAddress, fingerprint: Bytes<32>): Bytes<32> {
+  return persistentHash<[Bytes<32>, ContractAddress, Bytes<32>]>([
+    pad(32, "unforged:seal:v1"), pool, fingerprint
+  ]);
+}
+
+// ---- Circuits ----------------------------------------------------------------
+
+constructor(minimumPoolSize: Uint<16>) {
+  admin = disclose(adminCommitment(adminSecret()));
+  minPoolSize = disclose(minimumPoolSize);
+}
+
+circuit requireAdmin(): [] {
+  assert(adminCommitment(adminSecret()) == admin, "NOT_ADMIN");
+}
+
+// Add a device. The commitment is opaque: it reveals nothing about the key.
+export circuit enroll(commitment: Bytes<32>): [] {
+  requireAdmin();
+  assert(!devices.isFull(), "POOL_FULL");
+  devices.insert(disclose(commitment));
+  deviceCount.increment(1);
+}
+
+// Remove the device at `index` (the admin's own enrolment record). Resetting
+// the root history invalidates every path issued before the revocation, so the
+// revoked device can no longer prove membership.
+export circuit revoke(index: Uint<16>): [] {
+  requireAdmin();
+  devices.insertIndexDefault(disclose(index) as Uint<64>);
+  devices.resetHistory();
+  deviceCount.decrement(1);
+  epoch.increment(1);
+}
+
+// Seal a photo. Public: fingerprint, takenAt. Private: everything about the device.
+export circuit seal(fingerprint: Bytes<32>, takenAt: Uint<64>): [] {
+  const fp = disclose(fingerprint);
+  const t = disclose(takenAt);
+  assert(!seals.member(fp), "ALREADY_SEALED");
+  assert(deviceCount.read() >= minPoolSize, "POOL_TOO_SMALL");
+  assert(blockTimeGte(t) && blockTimeLt((t + sealWindow()) as Uint<64>), "BAD_TIME");
+
+  // 1. The device is one of the enrolled devices (which one stays hidden).
+  const pk = deviceKey();
+  const policy = devicePolicy();
+  const leaf = deviceCommitment(pk, deviceSalt(), policy);
+  const path = devicePath(leaf);
+  assert(path.leaf == leaf, "NOT_ENROLLED");
+  assert(devices.checkRoot(disclose(merkleTreePathRoot<16, Bytes<32>>(path))), "NOT_ENROLLED");
+
+  // 2. Its passkey signed exactly this photo for exactly this pool, with the
+  //    user present and verified (face / fingerprint).
+  const challenge = sealChallenge(kernel.self(), fp);
+  assert(webauthn_verify(challenge, policy, assertionData(challenge), assertionSignature(challenge), pk),
+         "BAD_SIGNATURE");
+
+  seals.insert(fp, Seal { takenAt: t, epoch: epoch.read() });
+  sealCount.increment(1);
+}
