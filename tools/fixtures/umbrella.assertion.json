@@ -1,0 +1,46 @@
+{
+  "label": "org.unforged.authorization.v0",
+  "profile": "DRAFT · local evaluation · not embedded in or signed as a C2PA claim",
+  "data": {
+    "binding": {
+      "alg": "sha256",
+      "hash": "-zt5YssFi1b262iqtAA6f47_vcmHxnwGBpUNBj3dsok",
+      "hex": "fb3b7962cb058b56f6eb68aab4003a7f8effbdc987c67c0606950d063dddb289",
+      "scope": "exact asset bytes (hard binding)"
+    },
+    "authorization": {
+      "network": "midnight-local · ledger 9 runtime",
+      "contract": "local-evaluation-pool",
+      "circuit": "seal",
+      "pool": "Independent Press Pool",
+      "policyEpoch": "0",
+      "anonymityFloor": 5,
+      "poolSizeAtVerification": 7,
+      "result": "member-of-pool, signer withheld"
+    },
+    "assurance": {
+      "level": "L0",
+      "basis": "Test key generated in the browser",
+      "claim": "asserted by capture client"
+    },
+    "time": {
+      "stated": "2026-10-19T09:00:00.000Z",
+      "precision": "1 h (relay)",
+      "bound": "ledger time window 86400 s"
+    },
+    "relay": {
+      "batch": 1,
+      "shuffled": true
+    },
+    "signer": {
+      "disclosure": "withheld"
+    },
+    "editorial": null,
+    "notEstablished": [
+      "camera sensor origin",
+      "scene truth or context",
+      "public-chain inclusion",
+      "network or timing anonymity"
+    ]
+  }
+}
