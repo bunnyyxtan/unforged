@@ -120,7 +120,7 @@ Capture SDK, Verify API, CMS plugin, CLI, C2PA bridge, self-hosting controls and
 
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| CA-1 | I capture or generate an evaluation frame | Camera path is offered; test frame is explicitly labeled |
+| CA-1 | I capture, upload or generate an evaluation frame | Camera, file upload and a labeled test frame are offered; uploads are sealed as the original bytes |
 | CA-2 | I approve exact bytes | WebAuthn or test signer signs a domain-bound fingerprint challenge |
 | CA-3 | I see real progress | Fingerprint, signature, proof and record stages show measured durations where available |
 | CA-4 | I receive a bounded result | Result states exact-file approval and signer omission; no camera-origin claim |

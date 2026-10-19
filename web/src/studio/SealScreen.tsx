@@ -165,7 +165,8 @@ function Capture() {
   const reduce = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream>();
-  const [shot, setShot] = useState<{ bytes: Uint8Array; url: string; test: boolean }>();
+  const [shot, setShot] = useState<{ bytes: Uint8Array; url: string; test: boolean; name?: string }>();
+  const [dragging, setDragging] = useState(false);
   const [stage, setStage] = useState(-1);
   const [times, setTimes] = useState<Partial<StageTimes>>({});
   const [sealed, setSealed] = useState<SealRecord>();
@@ -188,14 +189,31 @@ function Capture() {
     } catch (e) {
       const name = (e as Error).name;
       setCameraIssue(name === "NotAllowedError"
-        ? "Camera access was blocked. Allow it in your browser's site settings, or use a test shot."
-        : "No camera was found on this device. Use a test shot instead.");
+        ? "Camera access was blocked. Allow it in your browser's site settings, or upload a photo instead."
+        : "No camera was found on this device. Upload a photo instead.");
     }
   }
 
   async function keep(canvas: HTMLCanvasElement, test: boolean) {
     const blob = await new Promise<Blob>((r) => canvas.toBlob((b) => r(b!), "image/jpeg", 0.92));
     setShot({ bytes: new Uint8Array(await blob.arrayBuffer()), url: URL.createObjectURL(blob), test });
+    setSealed(undefined); setStage(-1); setTimes({}); setProblem(undefined);
+  }
+
+  /** Seal the file exactly as chosen: the original bytes, never re-encoded. */
+  async function useFile(file?: File) {
+    if (!file) return;
+    setCameraIssue(undefined);
+    if (!file.type.startsWith("image/")) {
+      setCameraIssue("That file isn't an image. Choose a JPEG, PNG or WebP photo.");
+      return;
+    }
+    const bytes = new Uint8Array(await file.arrayBuffer());
+    if (bytes.length === 0) {
+      setCameraIssue("That file is empty. Choose another photo.");
+      return;
+    }
+    setShot({ bytes, url: URL.createObjectURL(file), test: false, name: file.name });
     setSealed(undefined); setStage(-1); setTimes({}); setProblem(undefined);
   }
 
@@ -228,7 +246,7 @@ function Capture() {
     if (!shot) return;
     setProblem(undefined);
     try {
-      const rec = await sealPhoto(shot.bytes, shot.url, (st, t) => { setStage(st); setTimes({ ...t }); });
+      const rec = await sealPhoto(shot.bytes, shot.url, (st, t) => { setStage(st); setTimes({ ...t }); }, shot.name ? `Uploaded file · ${shot.name}` : undefined);
       setSealed(rec);
       navigator.vibrate?.(20);
     } catch (e) {
@@ -247,12 +265,17 @@ function Capture() {
   return (
     <div className="capture">
       <div className="darkroom">
-        <div className="viewfinder">
-          {shot ? <img src={shot.url} alt="The photo you just took" /> : stream ? <video ref={video} playsInline muted aria-label="Camera preview" /> : (
+        <div
+          className={`viewfinder${dragging ? " dragging" : ""}`}
+          onDragOver={(e) => { if (!shot && !stream) { e.preventDefault(); setDragging(true); } }}
+          onDragLeave={() => setDragging(false)}
+          onDrop={(e) => { e.preventDefault(); setDragging(false); if (!shot && !stream) void useFile(e.dataTransfer.files[0]); }}
+        >
+          {shot ? <img src={shot.url} alt={shot.name ? `Uploaded file ${shot.name}` : "The photo you just took"} /> : stream ? <video ref={video} playsInline muted aria-label="Camera preview" /> : (
             <div className="vf-empty">
               <Icon name="camera" size={28} />
               <span className="serif" style={{ font: "700 1.5rem/1.1 var(--font-display)", letterSpacing: "-0.03em", color: "#f1eadf" }}>The darkroom is ready.</span>
-              <p>Capture in the browser, or generate a test frame. The file can be sealed here; browser capture alone cannot attest the camera sensor.</p>
+              <p>Take a photo, upload one from your device, or generate a test frame. Uploads are sealed byte for byte. The seal approves the exact file; it cannot attest which camera made it.</p>
             </div>
           )}
           <span className="vf-corner tl" /><span className="vf-corner tr" /><span className="vf-corner bl" /><span className="vf-corner br" />
@@ -269,7 +292,11 @@ function Capture() {
           {!stream && !shot && (
             <>
               <button className="btn btn-primary" onClick={openCamera}><Icon name="camera" size={18} /> Open camera</button>
-              <button className="btn btn-secondary" onClick={testShot}>Use a test shot</button>
+              <label className="btn btn-secondary">
+                <Icon name="upload" size={18} /> Upload a photo
+                <input type="file" accept="image/*" className="sr-only" onChange={(e) => { void useFile(e.target.files?.[0]); e.target.value = ""; }} />
+              </label>
+              <button className="btn btn-quiet" onClick={testShot}>Use a test shot</button>
             </>
           )}
           {stream && (
@@ -281,7 +308,7 @@ function Capture() {
           )}
           {shot && !running && !sealed && (
             <>
-              <button className="btn btn-secondary" onClick={reset}>Retake</button>
+              <button className="btn btn-secondary" onClick={reset}>Start over</button>
               <button className="btn btn-primary" onClick={seal}>
                 <Icon name="fingerprint" size={18} /> {s.me?.mode === "passkey" ? "Seal with your passkey" : "Seal this photo"}
               </button>

@@ -296,6 +296,7 @@ export async function sealPhoto(
   bytes: Uint8Array,
   url: string,
   onStage: (stage: number, times: Partial<StageTimes>) => void,
+  title = "Field capture, this device",
 ): Promise<SealRecord> {
   const pool = state.pool!;
   const me = state.me!;
@@ -331,7 +332,7 @@ export async function sealPhoto(
     times: times as StageTimes,
     level: me.mode === "passkey" ? "L1" : "L0",
     caseId: `EC-${++caseNo}`,
-    title: "Field capture, this device",
+    title,
     batch,
     id: sealId(fp),
     fp,
