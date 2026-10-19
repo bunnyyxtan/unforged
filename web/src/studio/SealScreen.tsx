@@ -5,7 +5,7 @@ import { Seal } from "../components/Seal";
 import { PoolRing } from "../components/PoolRing";
 import { refusalCode } from "../engine/pool";
 import { href } from "../lib/route";
-import { enrollMe, MIN_POOL, RELAY_BATCH, realPasskeysAvailable, sealPhoto, useStore, type SealRecord, type StageTimes } from "../store";
+import { APPROVERS, enrollMe, MIN_POOL, RELAY_BATCH, THRESHOLD, realPasskeysAvailable, sealPhoto, useStore, type SealRecord, type StageTimes } from "../store";
 import { PageHead } from "./Studio";
 import { toast } from "./toast";
 
@@ -52,7 +52,7 @@ function Onboarding() {
     setProblem(undefined);
     try {
       await enrollMe(undefined, simulated);
-      toast(simulated ? "Local test credential enrolled" : "Passkey enrolled in the local pool");
+      toast(simulated ? `Test credential approved by ${THRESHOLD} of ${APPROVERS.length} approvers` : `Passkey approved by ${THRESHOLD} of ${APPROVERS.length} approvers`);
     } catch (e) {
       const err = e as Error;
       setProblem(
@@ -106,7 +106,7 @@ function Onboarding() {
             <dl>
               <div><dt><Icon name="fingerprint" size={17} /> Approval</dt><dd>System prompt required</dd></div>
               <div><dt><Icon name="lock" size={17} /> Published</dt><dd>Salted commitment only</dd></div>
-              <div><dt><Icon name="ledger" size={17} /> Policy</dt><dd>Pool membership circuit</dd></div>
+              <div><dt><Icon name="ledger" size={17} /> Policy</dt><dd>{THRESHOLD} of {APPROVERS.length} anonymous approvers</dd></div>
             </dl>
             <p>Device-bound capture attestation is a later assurance level. This step proves credential approval.</p>
           </div>

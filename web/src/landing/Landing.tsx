@@ -11,6 +11,9 @@ const BASE = import.meta.env.BASE_URL;
 const studio = href({ page: "studio", tab: "seal" });
 const verify = href({ page: "studio", tab: "verify" });
 const attacks = href({ page: "studio", tab: "attacks" });
+const desk = href({ page: "studio", tab: "desk" });
+const pool = href({ page: "studio", tab: "pool" });
+const relay = href({ page: "studio", tab: "relay" });
 
 /** The real SHA-256 of the hero photograph, computed in the browser. */
 function usePhotoFingerprint(path: string) {
@@ -199,17 +202,19 @@ function HowItWorks() {
 
 function Workflow() {
   const stations = [
-    { number: "01", role: "FIELD", title: "Protect the contributor", description: "The source approves an exact file with a pool credential. The public record carries no signer identifier.", action: "Enter capture", to: studio, icon: "camera" as const },
-    { number: "02", role: "EDITORIAL", title: "Make a bounded decision", description: "The desk checks the file match and approval, then separately reviews context and the capture pipeline.", action: "Open verification", to: verify, icon: "verify" as const },
-    { number: "03", role: "PUBLIC", title: "Let the claim be challenged", description: "A reader can use the same file and inspect the same seal facts without requesting access to the source.", action: "Check a file", to: verify, icon: "fingerprint" as const },
-    { number: "04", role: "SECURITY", title: "Respond when trust changes", description: "A compromised credential can be revoked. Adversarial cases make the refusal boundary visible to the team.", action: "Open threat lab", to: attacks, icon: "attack" as const },
+    { number: "01", role: "CAPTURE", title: "Protect the contributor", description: "A pool credential approves the exact file. Assurance level L0 or L1 today; device attestation and C2PA capture credentials next.", action: "Enter capture", to: studio, icon: "camera" as const, state: "Live · L0–L1" },
+    { number: "02", role: "DESK", title: "Review evidence as a case", description: "Established, asserted, human-reviewed and unresolved claims side by side, with a checklist, hold reasons and a decision log.", action: "Open the desk", to: desk, icon: "desk" as const, state: "Live" },
+    { number: "03", role: "TRUST POOLS", title: "Govern who can approve", description: "Credentials join only after 2 of 3 anonymous approvers sign off. Revocation and the anonymity floor are enforced in the circuit.", action: "Open the pool", to: pool, icon: "pool" as const, state: "Live · threshold" },
+    { number: "04", role: "VERIFY", title: "Let anyone challenge the claim", description: "An eight-line security report for any file: what was established, what was asserted and what still needs an editor.", action: "Check a file", to: verify, icon: "verify" as const, state: "Live" },
+    { number: "05", role: "RELAY", title: "Remove the timing trail", description: "Submissions are batched, shuffled and stamped to the hour before they reach the contract.", action: "Open the relay", to: relay, icon: "relay" as const, state: "Live · local" },
+    { number: "06", role: "PLATFORM", title: "Carry the proof into C2PA", description: "A draft org.unforged.authorization assertion exports today. Verify API, capture SDK and CMS plugins follow.", action: "Run the threat lab", to: attacks, icon: "code" as const, state: "Draft profile" },
   ];
   return (
     <section id="workflow" className="section rail newsroom-workflow" aria-labelledby="workflow-title">
       <Reveal className="workflow-intro">
-        <span className="label">A PRODUCT FOR EDITORIAL TEAMS</span>
-        <h2 id="workflow-title" className="headline">From the field to the front page. <em>One trust boundary at every step.</em></h2>
-        <p className="body-2">Unforged is being built as evidence infrastructure for organizations that must verify a contribution without turning the provenance system into a source directory. These four stations are explorable in the current local build.</p>
+        <span className="label">THE PLATFORM</span>
+        <h2 id="workflow-title" className="headline">Six products. <em>One trust boundary.</em></h2>
+        <p className="body-2">Unforged is evidence infrastructure for organizations that must verify a contribution without turning provenance into a source directory. Each product below runs in the current evaluation build against the compiled Compact contract.</p>
       </Reveal>
       <div className="workflow-stations">
         {stations.map((station, index) => (
@@ -217,7 +222,7 @@ function Workflow() {
             <a className="workflow-station" href={station.to}>
               <span className="workflow-number">{station.number}</span>
               <span className="workflow-icon"><Icon name={station.icon} size={21} /></span>
-              <span className="workflow-copy"><span className="label">{station.role}</span><strong>{station.title}</strong><span className="meta">{station.description}</span></span>
+              <span className="workflow-copy"><span className="label">{station.role} · <span className="workflow-state">{station.state}</span></span><strong>{station.title}</strong><span className="meta">{station.description}</span></span>
               <span className="workflow-link">{station.action} <Icon name="arrow" size={17} /></span>
             </a>
           </Reveal>
@@ -268,6 +273,8 @@ function Forgeries() {
     ["Submit without user verification", "UV_REQUIRED"],
     ["Sign from a look-alike website", "BAD_SIGNATURE"],
     ["Seal after the credential is revoked", "NOT_ENROLLED"],
+    ["Pool owner enrolls without the approvers", "APPROVAL_REQUIRED"],
+    ["One approver approves the same credential twice", "ALREADY_APPROVED"],
   ];
   return (
     <section id="proof" className="section rail" aria-labelledby="proof-title">
@@ -299,8 +306,9 @@ function BuiltOnMidnight() {
     ["Signature check", "P-256 ECDSA verified inside the circuit (secp256r1EcdsaVerify)"],
     ["Passkey profile", "WebAuthn rebuilt in-circuit, adapted from Midnight Passport"],
     ["Anonymity", "Merkle membership over enrolled credentials · minimum pool size enforced"],
-    ["Disclosed", "fingerprint · capture time · pool epoch"],
-    ["Tests", "26 passing in CI, including ledger indistinguishability"],
+    ["Enrollment", "k-of-n anonymous approvers · per-credential nullifiers · no owner bypass"],
+    ["Disclosed", "fingerprint · hour-window capture time · pool epoch · approval nullifiers"],
+    ["Tests", "34 passing in CI, including ledger and approver indistinguishability"],
     ["Fee strategy", "Pool-sponsored transactions planned; not live in this browser build"],
     ["License", "Apache-2.0"],
   ];

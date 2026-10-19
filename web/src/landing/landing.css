@@ -100,3 +100,4 @@
 .footer { border-top: 1px solid var(--line); padding-block: var(--s-7) var(--s-8); }
 .footer-row { display: grid; gap: var(--s-4); }
 @media (min-width: 860px) { .footer-row { grid-template-columns: auto 1fr; gap: var(--s-8); align-items: start; } }
+.workflow-state { color: var(--action); }
