@@ -3,14 +3,14 @@
 ## Brand idea: "security print"
 Unforged is about things that can't be forged, so its visual language comes from the oldest anti-forgery craft: banknotes, passports and notary seals. The product should feel like a **serious press tool**: calm, editorial, precise. The one authored moment per screen is **the seal**.
 
-**Voice:** plain, short, never crypto. Say "seal", "enrolled phone", "pool", "fingerprint". Never say wallet, token, gas or blockchain in primary UI (only in "Check it yourself").
+**Voice:** plain, short and evidence-led. Say "seal", "enrolled credential", "pool", "fingerprint" and "local review". Never turn a limited assurance into a universal authenticity claim. Explain what is established and what remains to be checked at every decision point.
 
 | Instead of | Say |
 |---|---|
 | Generate ZK proof | Prove pool membership |
 | Transaction submitted | Recorded |
-| Wallet / key pair | This device's secure chip |
-| Merkle tree membership | One of 8 enrolled phones |
+| Wallet / key pair | Passkey approval |
+| Merkle tree membership | A credential in this pool |
 | Hash | Fingerprint |
 
 ## Visual system
@@ -19,9 +19,8 @@ Tokens live in `web/src/styles/tokens.css` in three layers (primitive → semant
 **Color.** Warm newsprint paper and ink. **Cyanotype blue** (the historical photographic blueprint process) is the action color. **Carmine** is reserved for the seal and nothing else. Status colors (moss, amber, rust) always pair with an icon and text. The dark theme is a remapped darkroom, not an inversion, and it's set before first paint.
 
 **Type.** Chosen for journalism, not by default.
-- **Newsreader** (Production Type's editorial serif for news): display, headlines, page headings.
-- **Schibsted Grotesk** (named for the Norwegian publisher Schibsted): all interface and body text.
-- **IBM Plex Mono**: fingerprints, Seal IDs, refusal codes. Tabular figures are scoped to data only (they change punctuation spacing in body text).
+- **Satoshi**: upright, tightly set display and interface text. Weight changes create hierarchy; no decorative italics.
+- **Geist Mono**: fingerprints, Seal IDs, refusal codes, case numbers and technical labels. Tabular figures are scoped to data only.
 
 **Signature motif: the guilloche seal.** Every seal is a guilloche rosette (the woven line pattern of banknote printing) generated from the photo's SHA-256 (`web/src/lib/guilloche.ts`), so no two seals look alike. It is embossed (highlight up-left, shadow down-right) like a notary seal, with the Seal ID set around the rim.
 
@@ -36,17 +35,18 @@ Tokens live in `web/src/styles/tokens.css` in three layers (primitive → semant
 Durations follow 120 ms (micro) / 200 ms (transitions) / 340 ms+ (reveals), with ease-out. Every animation has a reduced-motion alternative (instant bars, static seal, no travel). Sealing stages report **real measured durations**; no artificial delay is ever added.
 
 ## Core screens
-1. **Landing:** headline "Prove it's real. Keep who took it secret." · live counter (seals, pools) · two CTAs: *Verify a photo* / *Enroll a phone*.
-2. **Verify:** a full-bleed drop zone ("Drop a photo to check its seal") → result card:
-   - **Sealed.** guilloche seal + 3 ticks (captured on an enrolled phone · approved by a person · unchanged) + time + pool size.
+1. **Landing:** editorial evidence story, photographic specimen, field → desk → public → security workflow, privacy boundary and technical detail. Never show fabricated traction counters.
+2. **Verification desk:** a local drop zone → review result:
+   - **Sealed.** guilloche seal + exact-file match + enrolled passkey approval + stated time and pool size. Alongside these, show camera-origin and scene-truth limits. Export a labeled local review JSON.
    - **No seal found.** neutral, explains it isn't proof of fake.
    - **Pool changed since.** amber note under a seal when phones were removed after it was made (epoch). It never says which phone, because nobody can know.
-   - Tabs: *What the world sees* | *What stays private* | *Check it yourself* (contract, query, CLI).
+   - Tabs: *Public record* | *Kept private* | *Verify yourself*. The last tab must distinguish local ledger lookup from a public indexer transaction.
 3. **Enroll (mobile):** invite → one-sentence promise → "Use Face ID to turn this phone into a press camera" → waiting/approved state with pool size ring.
 4. **Capture (mobile):** dark viewfinder with a safelight glow, single shutter → preview → "Seal this photo" (biometric) → developing timeline → stamp → share sheet.
 5. **Seal page `/s/:id`:** shareable public page with image (if shared), seal, facts, verify-it-yourself.
 6. **Desk:** pool overview (size ring, safety threshold, seals/day sparkline), invites (QR), approvals, revoke, sponsorship balance. **No per-device activity view, by design**, with a note explaining why.
 7. **Ledger split view (demo + education):** two columns. Left "On Midnight": fingerprint, time, root, pool size. Right "Never leaves the phone": key, signature, which phone, GPS. Items animate into their column during a seal.
+8. **Threat lab:** an incident-review workspace with eight selectable threat files, real attempt/boundary/consequence, a run action, observed result and suite summary. A prerequisite or error is never styled as a successful refusal. The file-integrity check is labeled separately from circuit refusals.
 
 ## Onboarding flows
 **Reporter (target < 3 min invite → first seal)**

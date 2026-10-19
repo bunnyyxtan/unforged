@@ -2,24 +2,36 @@
 
 | | |
 |---|---|
-| Status | v0.1, 2026-10-19 (Wave 2) |
+| Status | v0.2, 2026-10-19 (Wave 2 browser foundation; production release gated) |
 | Owner | bunnyy |
 | Related | [VISION](VISION.md) · [BUSINESS](BUSINESS.md) · [ARCHITECTURE](ARCHITECTURE.md) · [THREAT-MODEL](THREAT-MODEL.md) · [DESIGN](DESIGN.md) · [ROADMAP](ROADMAP.md) |
 
 ## 1. Problem
-Anyone can fake a photo. Signed-capture standards prove authenticity but can expose the photographer. People in danger need photos that are **verifiably real** and **unattributable**. Desks that publish them need to verify in seconds, without trusting a vendor and without learning the source.
+Newsrooms need to examine image provenance without publishing a source directory. An exact-file seal can establish that a pool credential approved particular bytes, while private membership keeps the signer out of the public record. That alone cannot establish camera origin, scene truth or total source anonymity. Unforged's product is the full trust workflow: controlled enrollment, field capture, bounded editorial review, independent verification and incident response.
+
+### Current assurance level and release gates
+| Capability | Wave 2 browser build | Production requirement |
+|---|---|---|
+| Private pool membership + passkey check | Compiled Compact contract in local runtime | Real network proofs, deployment and independent indexer reads |
+| File integrity | SHA-256 exact-byte match | Portable, independently verifiable receipt |
+| Capture origin | Browser camera or generated test frame; client can be modified | Native app and device/camera attestation |
+| Signer identity protection | Signer omitted from seal record | Relay/batching, enrollment access controls and timing analysis |
+| Revocation | Local pool epoch reset | Multi-admin policy, audit log, recovery and monitoring |
+| Editorial review | Verification desk and downloadable **local** JSON review | Case workflow, role-based access, evidence retention and integration |
+
+The interface must state these boundaries where decisions are made. Do not use “real photo”, “camera-authenticated”, “anonymous to everyone”, or “on-chain” for the current browser result.
 
 ## 2. Goals & non-goals
 **Goals**
 - G1. A reporter seals a photo in **under 30 seconds** from shutter to "Sealed" (proof time permitting).
 - G2. Anyone verifies a photo in **under 3 seconds**, with no account.
-- G3. A verifier, the pool admin, Unforged, or a chain observer **cannot learn which device** sealed a photo.
-- G4. A photo that wasn't captured and approved on an enrolled device **cannot** be sealed.
+- G3. A public verifier cannot derive the signer from the seal record; measure and mitigate timing, network and enrollment correlations before production.
+- G4. A seal requires an enrolled credential's verified approval of an exact fingerprint. Native capture attestation is a separate release gate.
 - G5. **Zero crypto vocabulary** for reporters: no wallet, seed phrase or token.
 
 **Non-goals (for now)**
 - Judging whether a scene is *true* or *in context*. We prove capture, not truth.
-- Detecting AI images by pixels. We prove the positive (real capture); we don't classify fakes.
+- Detecting AI images by pixels. A browser passkey does not prove a real camera capture.
 - Video and audio (Year 2).
 
 ## 3. Personas
@@ -32,9 +44,9 @@ Anyone can fake a photo. Signed-capture standards prove authenticity but can exp
 | **Reader** | Anyone with a link | One-glance answer | Jargon |
 
 ## 4. Core concepts (product language)
-- **Seal**: the public record that a specific image (by fingerprint) was captured by an enrolled device at a time. Shown as an embossed guilloche seal, unique to the photo, with a short Seal ID (e.g. `UF-7K3Q-9D2M`).
+- **Seal**: a record that a pool credential approved a specific file fingerprint with a stated capture time. Shown as an embossed guilloche seal, unique to the file, with a short Seal ID (e.g. `UF-7K3Q-9D2M`).
 - **Pool**: a set of enrolled devices that share anonymity. Seals say "a device in *Independent Press Pool* (412 devices)". Bigger pools are safer.
-- **Enrolled device**: a phone or laptop whose secure-chip passkey has been added to a pool.
+- **Enrolled credential**: a passkey commitment added to a pool; browser passkeys may sync across devices.
 - **Fingerprint**: SHA-256 of the exact image file.
 
 ## 5. Surfaces
@@ -69,10 +81,18 @@ Anyone can fake a photo. Signed-capture standards prove authenticity but can exp
 | ID | Story | Acceptance criteria |
 |---|---|---|
 | VE-1 | As Daniel I drop an image and get an answer | Result in < 3 s. States: **SEALED** / **NO SEAL FOUND**. A sealed result also shows the pool epoch; if phones were removed since, it says "N phones removed from this pool since". Which phone sealed is unknowable by design |
-| VE-2 | I understand what a seal proves | Three ticks: "Captured on an enrolled device" · "Approved by a person (biometric)" · "Unchanged since capture", plus time and pool size |
+| VE-2 | I understand what a seal proves | Show exact-file match, pool credential approval and stated time, next to explicit camera-origin and scene-truth limits |
 | VE-3 | "No seal" isn't read as "fake" | Copy: "No seal found. This doesn't mean it's fake, only that it wasn't sealed with Unforged, or the file was changed." |
 | VE-4 | I verify without trusting Unforged | "Check it yourself" panel: contract address, indexer query and CLI one-liner |
 | VE-5 | Batch verify | Desk: drop up to 100 files; table of results (Wave 4) |
+| VE-6 | I preserve a review record | Download a JSON summary that names the local runtime, checked fingerprint, pool state and unresolved claims; never present it as a portable network receipt |
+
+### 6.5 Assurance exercises
+| ID | Story | Acceptance criteria |
+|---|---|---|
+| AS-1 | As a security lead, I inspect a threat scenario | One focused case shows attempted action, contract or lookup boundary, consequence and observed result |
+| AS-2 | I run all relevant checks | Eight cases run sequentially; prerequisites and anonymity-floor holds are reported as such, not counted as refusals |
+| AS-3 | I understand the evidence scope | File mutation is labeled as a fingerprint lookup; seven other cases execute the compiled Compact contract locally |
 
 ### 6.4 Desk (pool admin)
 | ID | Story | Acceptance criteria |
