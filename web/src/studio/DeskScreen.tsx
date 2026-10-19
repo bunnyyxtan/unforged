@@ -138,9 +138,13 @@ function CaseFile({ c }: { c: EvidenceCase }) {
             <div><dt>Pool</dt><dd>Independent Press Pool · {evidence.poolSize} credentials</dd></div>
             <div><dt>Policy epoch</dt><dd className="data">{String(evidence.epoch)}</dd></div>
           </dl>
-          <Ladder level={rec.level} />
         </div>
       </div>
+
+      <section aria-labelledby="ladder-title" className="case-section">
+        <h3 id="ladder-title" className="label">ASSURANCE LEVEL · {rec.level} OF L5</h3>
+        <Ladder level={rec.level} />
+      </section>
 
       {evidence.removedSince > 0 && (
         <div className="status status-warn">

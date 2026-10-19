@@ -113,7 +113,7 @@ export function AttackScreen() {
 
       <div className="attack-workspace">
         <aside className="attack-index" aria-label="Threat scenarios">
-          <div className="attack-index-head"><span className="label">THREAT FILES</span><span className="data">01—08</span></div>
+          <div className="attack-index-head"><span className="label">THREAT FILES</span><span className="data">01—{String(cases.length).padStart(2, "0")}</span></div>
           <div className="attack-index-list">
             {cases.map((item, index) => {
               const row = rows[item.key];
