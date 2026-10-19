@@ -41,8 +41,12 @@ export function AttackScreen() {
   async function onePixel(): Promise<Result> {
     if (!latest) return { note: "Seal a photo first. The test needs an original file to alter.", info: true };
     const img = new Image();
-    img.src = latest.url;
-    await img.decode();
+    // onload, not decode(): decode() waits on painting and can stall in background tabs.
+    await new Promise<void>((resolve, reject) => {
+      img.onload = () => resolve();
+      img.onerror = () => reject(new Error("The sealed image could not be loaded."));
+      img.src = latest.url;
+    });
     const canvas = document.createElement("canvas");
     canvas.width = img.naturalWidth;
     canvas.height = img.naturalHeight;
