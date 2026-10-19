@@ -9,13 +9,15 @@ import { VerifyScreen } from "./VerifyScreen";
 import { AttackScreen } from "./AttackScreen";
 import { PoolScreen } from "./PoolScreen";
 import { DeskScreen } from "./DeskScreen";
+import { RelayScreen } from "./RelayScreen";
 
-const NAV: { tab: StudioTab; label: string; icon: "seal" | "desk" | "verify" | "attack" | "pool" }[] = [
+const NAV: { tab: StudioTab; label: string; icon: "seal" | "desk" | "verify" | "attack" | "pool" | "relay" }[] = [
   { tab: "seal", label: "Capture", icon: "seal" },
   { tab: "desk", label: "Desk", icon: "desk" },
   { tab: "verify", label: "Verification", icon: "verify" },
   { tab: "attacks", label: "Assurance", icon: "attack" },
   { tab: "pool", label: "Trust pool", icon: "pool" },
+  { tab: "relay", label: "Relay", icon: "relay" },
 ];
 
 /** Show a placeholder only if loading actually takes noticeable time. */
@@ -108,6 +110,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
               {tab === "verify" && <VerifyScreen />}
               {tab === "attacks" && <AttackScreen />}
               {tab === "pool" && <PoolScreen />}
+              {tab === "relay" && <RelayScreen />}
             </motion.div>
           </AnimatePresence>
         )}

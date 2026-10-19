@@ -72,7 +72,7 @@ export function VerifyScreen() {
   const mine = result?.kind === "sealed" && !!result.record?.byYou;
   const evidence: Evidence | undefined = result?.kind === "sealed" ? {
     id: result.id, fp: result.fp, takenAt: result.takenAt, epoch: result.epoch, poolSize: result.poolSize, removedSince: result.removedSince,
-    poolAddress: s.pool!.address, level: result.record?.level, case: s.cases.find((c) => c.sealId === result.id),
+    poolAddress: s.pool!.address, level: result.record?.level, batch: result.record?.batch, case: s.cases.find((c) => c.sealId === result.id),
   } : undefined;
 
   function exportReview() {

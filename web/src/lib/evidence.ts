@@ -13,6 +13,7 @@ export type Evidence = {
   removedSince: number;
   poolAddress: string;
   level?: Level;
+  batch?: number;
   case?: EvidenceCase;
 };
 
@@ -47,9 +48,13 @@ export function reportRows(e: Evidence): ReportRow[] {
     },
     {
       label: "Capture time",
-      value: new Date(e.takenAt * 1000).toISOString().replace(".000", ""),
+      value: e.batch
+        ? `${new Date(e.takenAt * 1000).toISOString().slice(0, 16).replace("T", " ")} UTC hour window · relay batch #${e.batch}`
+        : new Date(e.takenAt * 1000).toISOString().replace(".000", ""),
       claim: "Established",
-      note: "Bounded by ledger time: no later than sealing, no earlier than 24 h before.",
+      note: e.batch
+        ? "Published to the hour by the relay; bounded by ledger time within 24 h."
+        : "Bounded by ledger time: no later than sealing, no earlier than 24 h before.",
     },
     { label: "Source identity", value: "Withheld", claim: "Established", note: "No key, signature, path or contributor field exists in the seal record." },
     {
@@ -85,7 +90,8 @@ export function c2paAssertion(e: Evidence) {
       assurance: e.level
         ? { level: e.level, basis: levelName(e.level)!.basis, claim: "asserted by capture client" }
         : { level: null, claim: "not stated" },
-      time: { stated: new Date(e.takenAt * 1000).toISOString(), bound: "ledger time window 86400 s" },
+      time: { stated: new Date(e.takenAt * 1000).toISOString(), precision: e.batch ? "1 h (relay)" : "1 s", bound: "ledger time window 86400 s" },
+      relay: e.batch ? { batch: e.batch, shuffled: true } : null,
       signer: { disclosure: "withheld" },
       editorial: c
         ? {

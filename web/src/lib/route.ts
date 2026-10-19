@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 export type Route =
   | { page: "home" }
   | { page: "studio"; tab: StudioTab };
-export type StudioTab = "seal" | "desk" | "verify" | "attacks" | "pool";
+export type StudioTab = "seal" | "desk" | "verify" | "attacks" | "pool" | "relay";
 
-const TABS: StudioTab[] = ["seal", "desk", "verify", "attacks", "pool"];
+const TABS: StudioTab[] = ["seal", "desk", "verify", "attacks", "pool", "relay"];
 
 function parse(hash: string): Route {
   const m = hash.match(/^#\/studio(?:\/(\w+))?/);

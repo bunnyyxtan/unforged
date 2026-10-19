@@ -51,6 +51,7 @@ export type SealRecord = {
   epoch: bigint;
   byYou: boolean; // known only on this device, never on chain
   title: string;
+  batch?: number;
   privateInputs: { label: string; value: string }[];
 };
 
@@ -87,10 +88,26 @@ type State = {
   me?: Me;
   seals: SealRecord[];
   cases: EvidenceCase[];
+  batches: RelayBatch[];
   version: number;
 };
 
-let state: State = { ready: false, reporters: [], seals: [], cases: [], version: 0 };
+// ------------------------------------------------------------- relay
+
+/** Submissions per batch and the capture-time precision the relay publishes. */
+export const RELAY_BATCH = 3;
+export const RELAY_WINDOW = 3600;
+
+export type RelayBatch = {
+  no: number;
+  releasedAt: number;
+  waitedMs: number;
+  /** Order the relay submitted to the contract (shuffled), by seal ID. */
+  order: { id: string; source: "capture" | "pool" }[];
+  window: number;
+};
+
+let state: State = { ready: false, reporters: [], seals: [], cases: [], batches: [], version: 0 };
 const listeners = new Set<() => void>();
 const set = (patch: Partial<State>) => {
   state = { ...state, ...patch, version: state.version + 1 };
@@ -136,6 +153,41 @@ async function deployDemoPool() {
   }
 }
 
+type Pending = { device: DeviceSecret; assertion: Parameters<Pool["seal"]>[1]; fp: Uint8Array; source: "capture" | "pool"; queuedAt: number };
+
+/**
+ * Relay: holds submissions until a batch is full, shuffles them and submits
+ * with capture time coarsened to the hour, so arrival order and exact time
+ * no longer point at a contributor. In this evaluation runtime, simulated
+ * pool members fill the batch with their own generated test frames.
+ */
+async function relaySubmit(item: Omit<Pending, "queuedAt" | "source">): Promise<{ batch: number; takenAt: number }> {
+  const pool = state.pool!;
+  const queue: Pending[] = [{ ...item, source: "capture", queuedAt: performance.now() }];
+  const members = state.reporters.filter((r) => !r.revoked);
+  while (queue.length < RELAY_BATCH && members.length) {
+    const r = members[Math.floor(Math.random() * members.length)];
+    const fp = await sha256(new TextEncoder().encode(`pool-traffic:${toHex(random(16))}`));
+    queue.push({ device: r.key.device(), assertion: r.key.assert(pool.challengeFor(fp)), fp, source: "pool", queuedAt: performance.now() });
+  }
+  for (let i = queue.length - 1; i > 0; i--) {
+    const j = crypto.getRandomValues(new Uint32Array(1))[0] % (i + 1);
+    [queue[i], queue[j]] = [queue[j], queue[i]];
+  }
+  const takenAt = Math.floor(pool.now() / RELAY_WINDOW) * RELAY_WINDOW;
+  for (const p of queue) await pool.seal(p.device, p.assertion, p.fp, takenAt);
+  const no = state.batches.length + 1;
+  const batch: RelayBatch = {
+    no,
+    releasedAt: Date.now(),
+    waitedMs: performance.now() - Math.min(...queue.map((p) => p.queuedAt)),
+    order: queue.map((p) => ({ id: sealId(p.fp), source: p.source })),
+    window: RELAY_WINDOW,
+  };
+  set({ batches: [batch, ...state.batches] });
+  return { batch: no, takenAt };
+}
+
 let caseNo = 1040;
 function openCase(record: SealRecord, via: string) {
   const c: EvidenceCase = {
@@ -170,7 +222,7 @@ async function seedSubmissions(pool: Pool, reporters: Reporter[]) {
       await pool.seal(sample.by.key.device(), sample.by.key.assert(pool.challengeFor(fp)), fp, takenAt);
       openCase(
         { id: sealId(fp), caseId: `EC-${++caseNo}`, fp, url, bytes, takenAt, epoch: pool.ledger.epoch, byYou: false, level: "L0", title: sample.title, privateInputs: [] },
-        "pool relay (sample, simulated credential)",
+        "direct intake (sample, simulated credential)",
       );
     } catch {
       /* samples are optional; the workspace works without them */
@@ -270,14 +322,14 @@ export async function sealPhoto(
   onStage(2, times);
   await frame();
   t = clock();
-  const takenAt = pool.now() - 1;
-  await pool.seal(me.device, assertion, fp, takenAt);
+  const { batch, takenAt } = await relaySubmit({ device: me.device, assertion, fp });
   times.proof = clock() - t;
   const record: SealRecord = {
     times: times as StageTimes,
     level: me.mode === "passkey" ? "L1" : "L0",
     caseId: `EC-${++caseNo}`,
     title: "Field capture, this device",
+    batch,
     id: sealId(fp),
     fp,
     url,
@@ -293,7 +345,7 @@ export async function sealPhoto(
       { label: "Authenticator data", value: short(toHex(assertion.authenticatorData)) },
     ],
   };
-  openCase(record, me.mode === "passkey" ? "capture client (passkey)" : "capture client (evaluation credential)");
+  openCase(record, `relay batch #${batch} from ${me.mode === "passkey" ? "a passkey capture client" : "an evaluation capture client"}`);
   onStage(3, times);
   return record;
 }

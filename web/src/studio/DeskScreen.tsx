@@ -97,6 +97,7 @@ function CaseFile({ c }: { c: EvidenceCase }) {
     removedSince: Number(l.epoch - (onLedger?.epoch ?? rec.epoch)),
     poolAddress: pool.address,
     level: rec.level,
+    batch: rec.batch,
     case: c,
   };
   const rows = reportRows(evidence);

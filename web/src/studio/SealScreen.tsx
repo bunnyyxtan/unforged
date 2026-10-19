@@ -5,7 +5,7 @@ import { Seal } from "../components/Seal";
 import { PoolRing } from "../components/PoolRing";
 import { refusalCode } from "../engine/pool";
 import { href } from "../lib/route";
-import { enrollMe, MIN_POOL, realPasskeysAvailable, sealPhoto, useStore, type SealRecord, type StageTimes } from "../store";
+import { enrollMe, MIN_POOL, RELAY_BATCH, realPasskeysAvailable, sealPhoto, useStore, type SealRecord, type StageTimes } from "../store";
 import { PageHead } from "./Studio";
 import { toast } from "./toast";
 
@@ -152,7 +152,7 @@ const STAGES = [
   { title: "Fingerprint the photo", detail: "SHA-256 of the exact file" },
   { title: "Sign with a passkey", detail: "Approve with your face, fingerprint or PIN" },
   { title: "Prove pool membership", detail: "Zero-knowledge: one enrolled credential, not which one" },
-  { title: "Record the seal", detail: "Fingerprint and stated capture time join the local ledger" },
+  { title: "Relay and record", detail: `Batched with ${RELAY_BATCH - 1} other submissions, shuffled, time coarsened to the hour` },
 ];
 
 function ms(n?: number) {
@@ -315,6 +315,7 @@ function Capture() {
               <button className="btn btn-quiet btn-sm" onClick={() => { void navigator.clipboard?.writeText(sealed.id); toast("Seal ID copied"); }}><Icon name="copy" size={16} /> Copy</button>
             </div>
             <Stages stage={4} times={timeFor} simulated={s.me?.mode === "simulated"} />
+            {sealed.batch && <p className="meta" style={{ margin: 0 }}>Released in <a href={href({ page: "studio", tab: "relay" })}>relay batch #{sealed.batch}</a> with {RELAY_BATCH - 1} other submissions; capture time is published to the hour.</p>}
             <p className="meta" style={{ margin: 0 }}>
               The circuit ran on Midnight's runtime in your browser. On the network, proving takes longer (each signature check needs ~250 MB of proving keys).
             </p>
