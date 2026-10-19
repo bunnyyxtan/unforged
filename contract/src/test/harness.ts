@@ -87,11 +87,12 @@ export class Pool {
     this.privateState = { adminSecret };
   }
 
-  static async deploy(opts: { minPoolSize?: bigint; address?: string; adminSecret?: Uint8Array; witnesses?: typeof witnesses; module?: ContractModule } = {}) {
+  static async deploy(opts: { minPoolSize?: bigint; threshold?: bigint; address?: string; adminSecret?: Uint8Array; witnesses?: typeof witnesses; module?: ContractModule } = {}) {
     const pool = new Pool(opts.address ?? "11".repeat(32), opts.adminSecret ?? bytes(32, 1), opts.witnesses, opts.module);
     const init = await pool.contract.initialState(
       createConstructorContext(pool.privateState, pool.coinPk as never),
       opts.minPoolSize ?? 2n,
+      opts.threshold ?? 0n,
     );
     pool.state = (init.currentContractState as any).data as StateValue;
     return pool;
@@ -109,7 +110,7 @@ export class Pool {
     return pureCircuits.sealChallenge({ bytes: this.addressBytes }, fp);
   }
 
-  async call(circuit: "enroll" | "revoke" | "seal", ...args: unknown[]) {
+  async call(circuit: "enroll" | "revoke" | "seal" | "addApprover" | "approve", ...args: unknown[]) {
     const ctx = createCircuitContext<UnforgedPrivateState>({
       circuitId: circuit,
       contractAddress: this.address,
@@ -126,6 +127,17 @@ export class Pool {
   enroll(commitment: Uint8Array, asAdmin = this.adminSecret) {
     this.privateState = { adminSecret: asAdmin };
     return this.call("enroll", commitment);
+  }
+
+  addApprover(commitment: Uint8Array, asAdmin = this.adminSecret) {
+    this.privateState = { adminSecret: asAdmin };
+    return this.call("addApprover", commitment);
+  }
+
+  /** One anonymous approval: only the approver holds `approverSecret`. */
+  approve(commitment: Uint8Array, approverSecret: Uint8Array) {
+    this.privateState = { approverSecret };
+    return this.call("approve", commitment);
   }
 
   revoke(index: bigint, asAdmin = this.adminSecret) {

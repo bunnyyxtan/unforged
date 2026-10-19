@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import { beforeEach, describe, expect, it } from "vitest";
 import { witnesses } from "../witnesses.js";
+import { pureCircuits } from "../managed/unforged/contract/index.js";
 import { bytes, fingerprint, NOW, Passkey, policy, Pool } from "./harness.js";
 
 const PHOTO = fingerprint("protest-square-1402.jpg");
@@ -190,6 +191,77 @@ describe("revoke", () => {
   it("refuses anyone but the admin (NOT_ADMIN)", async () => {
     const { pool } = await poolOf(3);
     await expect(pool.revoke(0n, bytes(32, 9))).rejects.toThrow(/NOT_ADMIN/);
+  });
+});
+
+describe("approve: threshold enrollment", () => {
+  const A = bytes(32, 21), B = bytes(32, 22), C = bytes(32, 23);
+
+  /** A 2-of-3 pool: three anonymous approvers, owner cannot enroll directly. */
+  async function thresholdPool() {
+    const pool = await Pool.deploy({ threshold: 2n, minPoolSize: 1n });
+    for (const s of [A, B, C]) await pool.addApprover(pureCircuits.approverCommitment(s));
+    return pool;
+  }
+
+  it("enrolls a device after k distinct approvals, which can then seal", async () => {
+    const pool = await thresholdPool();
+    const k = new Passkey();
+    await pool.approve(k.commitment(), A);
+    expect(pool.ledger.deviceCount).toBe(0n);
+    expect(pool.ledger.approvals.lookup(k.commitment())).toBe(1n);
+    await pool.approve(k.commitment(), C);
+    expect(pool.ledger.deviceCount).toBe(1n);
+    expect(pool.ledger.approvals.member(k.commitment())).toBe(false);
+    await pool.seal(k, PHOTO);
+    expect(pool.ledger.seals.member(PHOTO)).toBe(true);
+  });
+
+  it("the public record is identical whichever approvers approved", async () => {
+    const k = new Passkey();
+    const views: string[] = [];
+    for (const pair of [[A, B], [B, C]]) {
+      const pool = await thresholdPool();
+      for (const s of pair) await pool.approve(k.commitment(), s);
+      const l = pool.ledger;
+      views.push(JSON.stringify([l.devices.root(), l.deviceCount, l.approverCount, [...l.nullifiers].length], (_k, v) => (typeof v === "bigint" ? v.toString() : v)));
+    }
+    expect(views[0]).toBe(views[1]);
+  });
+
+  it("an approver's nullifiers are unlinkable across devices", () => {
+    const n1 = pureCircuits.approvalNullifier(A, new Passkey().commitment());
+    const n2 = pureCircuits.approvalNullifier(A, new Passkey().commitment());
+    expect(hex(n1)).not.toBe(hex(n2));
+    expect(hex(n1)).not.toBe(hex(pureCircuits.approverCommitment(A)));
+  });
+
+  it("ALREADY_APPROVED: one approver cannot count twice", async () => {
+    const pool = await thresholdPool();
+    const k = new Passkey();
+    await pool.approve(k.commitment(), A);
+    await expect(pool.approve(k.commitment(), A)).rejects.toThrow(/ALREADY_APPROVED/);
+  });
+
+  it("NOT_APPROVER: a secret outside the approver set", async () => {
+    const pool = await thresholdPool();
+    await expect(pool.approve(new Passkey().commitment(), bytes(32, 99))).rejects.toThrow(/NOT_APPROVER/);
+  });
+
+  it("APPROVAL_REQUIRED: the owner cannot bypass a threshold policy", async () => {
+    const pool = await thresholdPool();
+    await expect(pool.enroll(new Passkey().commitment())).rejects.toThrow(/APPROVAL_REQUIRED/);
+  });
+
+  it("NO_APPROVAL_POLICY: approvals are refused when the pool has no threshold", async () => {
+    const pool = await Pool.deploy();
+    await pool.addApprover(pureCircuits.approverCommitment(A));
+    await expect(pool.approve(new Passkey().commitment(), A)).rejects.toThrow(/NO_APPROVAL_POLICY/);
+  });
+
+  it("NOT_ADMIN: only the owner registers approvers", async () => {
+    const pool = await thresholdPool();
+    await expect(pool.addApprover(pureCircuits.approverCommitment(bytes(32, 5)), bytes(32, 9))).rejects.toThrow(/NOT_ADMIN/);
   });
 });
 

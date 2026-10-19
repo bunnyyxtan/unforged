@@ -15,6 +15,8 @@ const cases = [
   { key: "backdate", family: "TIME INTEGRITY", title: "A false capture time", question: "Can a reporter move an event two days into the past?", method: "Submit a capture time 48 hours before the pool clock.", boundary: "24-hour capture window", impact: "A valid image could be used to support a false chronology." },
   { key: "nobio", family: "HUMAN APPROVAL", title: "No user verification", question: "Can malware seal without a human approving?", method: "Submit an assertion with user presence but without WebAuthn's user-verification flag.", boundary: "WebAuthn UV requirement", impact: "A compromised client could quietly issue seals." },
   { key: "phishing", family: "ORIGIN BINDING", title: "A look-alike origin", question: "Can a phishing page reuse a reporter's passkey?", method: "Use an assertion bound to a look-alike site origin.", boundary: "Signed WebAuthn origin", impact: "A counterfeit site could issue seals as the real newsroom." },
+  { key: "bypass", family: "ENROLLMENT POLICY", title: "An owner bypass", question: "Can the pool owner add a credential alone?", method: "Use the owner key to enroll a fresh credential directly while the pool requires 2 of 3 approvals.", boundary: "Threshold enrollment policy", impact: "One compromised administrator could add an attacker's device to a trusted pool." },
+  { key: "doublevote", family: "ENROLLMENT POLICY", title: "A duplicate approval", question: "Can one approver supply both approvals?", method: "Approve a pending credential, then approve it again with the same approver secret.", boundary: "Anonymous approval nullifier", impact: "A single insider could satisfy a multi-person policy." },
   { key: "stolen", family: "INCIDENT RESPONSE", title: "A revoked credential", question: "Can a removed signer keep sealing?", method: "Revoke one simulated signer, then attempt another seal using its old membership.", boundary: "Current pool epoch", impact: "A lost credential could keep issuing trusted records after an incident." },
 ] as const;
 
@@ -98,7 +100,7 @@ export function AttackScreen() {
           <p className="lede">Exercise the failure paths an editor, source-protection lead, or verifier needs to understand before relying on a seal.</p>
         </div>
         <button className="btn btn-primary" onClick={() => void runAll()} disabled={all || running} aria-busy={all}>
-          {all ? <><span className="spinner" /> Running suite</> : <>Run all eight <Icon name="arrow" size={17} /></>}
+          {all ? <><span className="spinner" /> Running suite</> : <>Run all ten <Icon name="arrow" size={17} /></>}
         </button>
       </header>
 
@@ -159,7 +161,7 @@ export function AttackScreen() {
           </AnimatePresence>
         </section>
       </div>
-      <footer className="attack-footnote"><Icon name="info" size={17} /><p>The changed-image case checks exact-file fingerprint lookup. The other seven execute compiled Compact circuits in a local simulator. This is reproducible engineering evidence, not a public network transaction or a camera-origin attestation.</p></footer>
+      <footer className="attack-footnote"><Icon name="info" size={17} /><p>The changed-image case checks exact-file fingerprint lookup. The other nine execute compiled Compact circuits in a local simulator. This is reproducible engineering evidence, not a public network transaction or a camera-origin attestation.</p></footer>
     </div>
   );
 }

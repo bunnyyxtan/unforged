@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Icon } from "../components/Icon";
 import { PoolRing } from "../components/PoolRing";
-import { MIN_POOL, revokeReporter, useStore } from "../store";
+import { APPROVERS, MIN_POOL, revokeReporter, THRESHOLD, useStore } from "../store";
 import { PageHead } from "./Studio";
 import { toast } from "./toast";
 
@@ -12,6 +12,7 @@ export function PoolScreen() {
   const l = s.pool!.ledger;
   const phones = Number(l.deviceCount);
   const atFloor = phones <= MIN_POOL;
+  const pending = Number(l.approvals.size());
 
   async function remove(index: number, name: string) {
     setBusy(index);
@@ -38,7 +39,7 @@ export function PoolScreen() {
             <div><dt>Seals issued</dt><dd>{String(l.sealCount).padStart(2, "0")}</dd><span>current browser</span></div>
             <div><dt>Policy epoch</dt><dd>{String(l.epoch).padStart(2, "0")}</dd><span>revocation state</span></div>
           </dl>
-          <div className="pool-policy"><Icon name="lock" size={18} /><div><span className="label">FEE & ACCESS POLICY</span><strong>Pool-sponsored operation</strong><p>Reporters do not need tokens. Production sponsorship and administrator controls are roadmap work.</p></div></div>
+          <div className="pool-policy"><Icon name="lock" size={18} /><div><span className="label">ENROLLMENT POLICY · ENFORCED IN CIRCUIT</span><strong>{THRESHOLD} of {APPROVERS.length} anonymous approvals</strong><p>{APPROVERS.join(", ")}. Each approval proves approver membership and spends a nullifier; the record never shows which approvers approved. {pending > 0 ? `${pending} credential${pending > 1 ? "s" : ""} awaiting approval.` : "No credentials awaiting approval."} The owner key alone cannot enroll.</p></div></div>
         </section>
 
         <section aria-labelledby="devices-title" className="device-registry">
@@ -84,7 +85,7 @@ export function PoolScreen() {
 
         <div className="pool-privacy">
           <Icon name="lock" />
-          <div><span className="label">PRIVACY BOUNDARY</span><h3>Identity is governed; authorship stays private.</h3><p>The registry stores opaque credential commitments. A seal contains no signer-to-file link, location, or hardware identifier. Administrators may know enrollment identities, while timing and network metadata still require operational safeguards.</p></div>
+          <div><span className="label">PRIVACY BOUNDARY</span><h3>Identity is governed; authorship stays private.</h3><p>The registry stores opaque credential commitments. A seal contains no signer-to-file link, location, or hardware identifier. Approvers may know whom they approved, while the relay reduces timing and ordering signals.</p></div>
         </div>
       </div>
     </>

@@ -2,7 +2,9 @@
 //
 // Unforged: anonymous, hardware-signed photo seals.
 //
-// A pool admin enrolls devices as opaque commitments in a Merkle tree. To seal
+// Devices join a pool as opaque commitments in a Merkle tree, either directly
+// by the pool owner or, under a threshold policy, once k anonymous approvers
+// have each approved the commitment. To seal
 // a photo, a device's passkey (P-256, held in the phone's secure chip) signs a
 // challenge bound to this pool and the photo's SHA-256 fingerprint. The seal
 // circuit proves, in zero knowledge, that the signer is SOME enrolled device:
@@ -35,6 +37,15 @@ export ledger epoch: Counter;                                // bumps on every r
 export ledger seals: Map<Bytes<32>, Seal>;                   // fingerprint -> seal
 export ledger sealCount: Counter;
 
+// Threshold enrollment. Approvers are anonymous members of their own tree; an
+// approval publishes a nullifier unique to (approver, commitment), so nobody
+// can approve twice and nobody can tell which approvers approved.
+export ledger approvers: MerkleTree<4, Bytes<32>>;           // approver commitments
+export ledger approverCount: Counter;
+export ledger approvalThreshold: Uint<8>;                    // 0 = owner enrolls directly
+export ledger approvals: Map<Bytes<32>, Uint<8>>;            // pending commitment -> approvals
+export ledger nullifiers: Set<Bytes<32>>;                    // spent (approver, commitment) pairs
+
 // A photo must be sealed within this many seconds of its claimed capture time.
 // Generous to allow offline capture; the claimed time can never be in the future.
 export pure circuit sealWindow(): Uint<64> {
@@ -50,11 +61,21 @@ witness devicePolicy(): WebAuthnPolicy;
 witness devicePath(leaf: Bytes<32>): MerkleTreePath<16, Bytes<32>>;
 witness assertionData(challenge: Bytes<32>): Bytes<37>;
 witness assertionSignature(challenge: Bytes<32>): Secp256r1EcdsaSignature;
+witness approverSecret(): Bytes<32>;
+witness approverPath(leaf: Bytes<32>): MerkleTreePath<4, Bytes<32>>;
 
 // ---- Derivations (shared with the client via pureCircuits) ------------------
 
 export pure circuit adminCommitment(secret: Bytes<32>): Bytes<32> {
   return persistentHash<Vector<2, Bytes<32>>>([pad(32, "unforged:admin:v1"), secret]);
+}
+
+export pure circuit approverCommitment(secret: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<2, Bytes<32>>>([pad(32, "unforged:approver:v1"), secret]);
+}
+
+export pure circuit approvalNullifier(secret: Bytes<32>, commitment: Bytes<32>): Bytes<32> {
+  return persistentHash<Vector<3, Bytes<32>>>([pad(32, "unforged:approval:v1"), secret, commitment]);
 }
 
 export pure circuit deviceCommitment(pk: Secp256r1Point, salt: Bytes<32>, policy: WebAuthnPolicy): Bytes<32> {
@@ -72,9 +93,10 @@ export pure circuit sealChallenge(pool: ContractAddress, fingerprint: Bytes<32>)
 
 // ---- Circuits ----------------------------------------------------------------
 
-constructor(minimumPoolSize: Uint<16>) {
+constructor(minimumPoolSize: Uint<16>, threshold: Uint<8>) {
   admin = disclose(adminCommitment(adminSecret()));
   minPoolSize = disclose(minimumPoolSize);
+  approvalThreshold = disclose(threshold);
 }
 
 circuit requireAdmin(): [] {
@@ -82,11 +104,50 @@ circuit requireAdmin(): [] {
 }
 
 // Add a device. The commitment is opaque: it reveals nothing about the key.
+// Under a threshold policy the owner cannot bypass the approvers.
 export circuit enroll(commitment: Bytes<32>): [] {
   requireAdmin();
+  assert(approvalThreshold == 0, "APPROVAL_REQUIRED");
+  addDevice(disclose(commitment));
+}
+
+circuit addDevice(commitment: Bytes<32>): [] {
   assert(!devices.isFull(), "POOL_FULL");
-  devices.insert(disclose(commitment));
+  devices.insert(commitment);
   deviceCount.increment(1);
+}
+
+// Register an approver by commitment; the approver's secret never leaves them.
+export circuit addApprover(commitment: Bytes<32>): [] {
+  requireAdmin();
+  assert(!approvers.isFull(), "APPROVERS_FULL");
+  approvers.insert(disclose(commitment));
+  approverCount.increment(1);
+}
+
+// One anonymous approval of a device commitment. The k-th distinct approval
+// enrolls the device. Public: the commitment, a nullifier and the tally.
+export circuit approve(commitment: Bytes<32>): [] {
+  assert(approvalThreshold > 0, "NO_APPROVAL_POLICY");
+  const c = disclose(commitment);
+  const secret = approverSecret();
+  const leaf = approverCommitment(secret);
+  const path = approverPath(leaf);
+  assert(path.leaf == leaf, "NOT_APPROVER");
+  assert(approvers.checkRoot(disclose(merkleTreePathRoot<4, Bytes<32>>(path))), "NOT_APPROVER");
+
+  const n = disclose(approvalNullifier(secret, c));
+  assert(!nullifiers.member(n), "ALREADY_APPROVED");
+  nullifiers.insert(n);
+
+  const prior = approvals.member(c) ? approvals.lookup(c) : 0 as Uint<8>;
+  const count = (prior + 1) as Uint<8>;
+  if (count >= approvalThreshold) {
+    approvals.remove(c);
+    addDevice(c);
+  } else {
+    approvals.insert(c, count);
+  }
 }
 
 // Remove the device at `index` (the admin's own enrolment record). Resetting

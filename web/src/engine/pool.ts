@@ -12,7 +12,7 @@ const VARIANTS: Record<number, ContractModule> = { 21: Unforged21, 28: Unforged2
 import { witnesses, type DeviceSecret, type PreparedAssertion, type UnforgedPrivateState } from "../../../contract/src/witnesses";
 import { fromHex, random, toHex } from "./bytes";
 
-export type CircuitName = "enroll" | "revoke" | "seal";
+export type CircuitName = "enroll" | "revoke" | "seal" | "addApprover" | "approve";
 
 export type Disclosure = { label: string; value: string };
 
@@ -23,22 +23,31 @@ export class Pool {
   private readonly coinPk = { bytes: random(32) };
   private readonly adminSecret = random(32);
   readonly address = toHex(random(32));
+  /** Approver secrets. In production each approver holds only their own. */
+  private approverSecrets: Uint8Array[] = [];
 
-  private constructor(private readonly mod: ContractModule) {
+  private constructor(private readonly mod: ContractModule, readonly threshold: number) {
     this.contract = new mod.Contract<UnforgedPrivateState>(witnesses as never);
   }
 
   /** `originLength` selects the compiled variant matching the WebAuthn origin. */
-  static async deploy(minPoolSize: number, originLength: number): Promise<Pool> {
+  static async deploy(minPoolSize: number, originLength: number, threshold = 0, approvers = 0): Promise<Pool> {
     const mod = VARIANTS[originLength];
     if (!mod) throw new Error(`No contract variant for ${originLength}-byte origins`);
-    const pool = new Pool(mod);
+    const pool = new Pool(mod, threshold);
     pool.privateState = { adminSecret: pool.adminSecret };
     const init = await pool.contract.initialState(
       createConstructorContext(pool.privateState, pool.coinPk as never),
       BigInt(minPoolSize),
+      BigInt(threshold),
     );
     pool.state = (init.currentContractState as any).data as StateValue;
+    for (let i = 0; i < approvers; i++) {
+      const secret = random(32);
+      pool.privateState = { adminSecret: pool.adminSecret };
+      await pool.call("addApprover", mod.pureCircuits.approverCommitment(secret));
+      pool.approverSecrets.push(secret);
+    }
     return pool;
   }
 
@@ -71,12 +80,38 @@ export class Pool {
     this.state = r.context.callContext.currentQueryContext.state;
   }
 
-  /** Admin enrolls a device. Returns its leaf index (the admin's private record). */
+  /**
+   * Enroll a device. Under a threshold policy, `threshold` randomly chosen
+   * approvers each run the anonymous approve circuit; otherwise the owner
+   * enrolls directly. Returns the leaf index (the operator's private record).
+   */
   async enroll(d: DeviceSecret): Promise<number> {
     const index = Number(this.ledger.devices.firstFree());
-    this.privateState = { adminSecret: this.adminSecret };
-    await this.call("enroll", this.commitmentOf(d));
+    const c = this.commitmentOf(d);
+    if (this.threshold === 0) {
+      this.privateState = { adminSecret: this.adminSecret };
+      await this.call("enroll", c);
+      return index;
+    }
+    const picks = [...this.approverSecrets].sort(() => Math.random() - 0.5).slice(0, this.threshold);
+    for (const secret of picks) await this.approveAs(secret, c);
     return index;
+  }
+
+  /** One approval by approver `i` (or by an arbitrary secret, for refusal exercises). */
+  async approve(c: Uint8Array, approver: number | Uint8Array): Promise<void> {
+    await this.approveAs(typeof approver === "number" ? this.approverSecrets[approver] : approver, c);
+  }
+
+  private async approveAs(secret: Uint8Array, c: Uint8Array) {
+    this.privateState = { approverSecret: secret };
+    await this.call("approve", c);
+  }
+
+  /** The owner tries to enroll directly (refused under a threshold policy). */
+  async ownerEnroll(c: Uint8Array): Promise<void> {
+    this.privateState = { adminSecret: this.adminSecret };
+    await this.call("enroll", c);
   }
 
   async revoke(index: number): Promise<void> {
@@ -105,7 +140,7 @@ export class Pool {
 /** Map a contract refusal to the code shown in the UI. */
 export function refusalCode(e: unknown): string {
   const m = e instanceof Error ? e.message : String(e);
-  for (const code of ["ALREADY_SEALED", "NOT_ENROLLED", "BAD_SIGNATURE", "BAD_TIME", "POOL_TOO_SMALL", "NOT_ADMIN", "POOL_FULL"]) {
+  for (const code of ["ALREADY_SEALED", "NOT_ENROLLED", "BAD_SIGNATURE", "BAD_TIME", "POOL_TOO_SMALL", "NOT_ADMIN", "POOL_FULL", "APPROVAL_REQUIRED", "ALREADY_APPROVED", "NOT_APPROVER", "NO_APPROVAL_POLICY", "APPROVERS_FULL"]) {
     if (m.includes(code)) return code;
   }
   if (/UP and UV/.test(m)) return "UV_REQUIRED";

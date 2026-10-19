@@ -274,7 +274,7 @@ function Forgeries() {
       <div className="forgeries">
         <Reveal className="section-head" >
           <h2 id="proof-title" className="headline">Put every claim <em>under pressure.</em></h2>
-          <p className="body-2">Seven cases challenge compiled Compact circuits with real P-256 assertions; the changed-file case challenges the fingerprint lookup. Run them and inspect the observed response.</p>
+          <p className="body-2">Nine cases challenge compiled Compact circuits with real P-256 assertions and anonymous approvals; the changed-file case challenges the fingerprint lookup. Run them and inspect the observed response.</p>
           <a className="btn btn-secondary" style={{ justifySelf: "start" }} href={attacks}>Run the attacks yourself <Icon name="arrow" size={18} /></a>
         </Reveal>
         <Reveal delay={0.1}>

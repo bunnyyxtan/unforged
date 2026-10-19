@@ -93,6 +93,12 @@ Every Compact `disclose()` must correspond to this table.
 | Pool epoch | Yes | Communicates revocation generation | Reveals that pool membership changed, not which signer sealed |
 | Fingerprint | Yes | Binds the public record to exact bytes | Anyone holding candidate media can test for a match |
 | Stated seal time/window | Yes | Supports freshness checks | Timing can aid correlation; relay and coarse windows are production controls |
+| Approval threshold | Yes | Verifiers and members must know the enrollment policy | Policy is public; approvers are not |
+| Approver commitment | Yes | Approver membership tree | Does not expose the approver secret or identity |
+| Approval nullifier | Yes | Prevents one approver counting twice | Unique per (approver, credential); unlinkable across credentials and to the approver commitment |
+| Pending approval tally | Yes | Enrollment completes on the k-th approval | Shows how many approvals a commitment has, never which approvers |
+| Merkle root of approver path | Yes | `checkRoot` against the approver tree | Shared by every approver; does not identify one |
+| Approver secret and path | No | Approval witness | Disclosure identifies the approver |
 | Credential public key | No | Unnecessary for public verification | Would link all records from one credential |
 | Salt | No | Commitment-hiding input | Disclosure permits commitment recomputation |
 | Merkle path/index | No | Membership witness | Disclosure identifies the credential position |
@@ -106,6 +112,8 @@ Every cryptographic hash has a 32-byte padded domain separator:
 - `unforged:admin:v1`
 - `unforged:device:v1`
 - `unforged:seal:v1`
+- `unforged:approver:v1`
+- `unforged:approval:v1`
 
 The seal challenge includes contract context and the file fingerprint so an assertion cannot be moved between pools or files.
 

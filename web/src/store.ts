@@ -12,6 +12,9 @@ import {
 import { Pool, refusalCode } from "./engine/pool";
 
 export const MIN_POOL = 5;
+/** Enrollment policy: k of these approvers must each approve a credential. */
+export const APPROVERS = ["Standards editor", "Security lead", "Photo desk chief"];
+export const THRESHOLD = 2;
 // Simulated phones use this page's origin when a contract variant exists for it.
 const SIM_ORIGIN = typeof location !== "undefined" && supportedOrigin(location.origin) ? location.origin : "http://localhost:5173";
 const SIM_RP = new URL(SIM_ORIGIN).hostname;
@@ -135,7 +138,7 @@ export const bootstrap = () => (booting ??= deployDemoPool());
 /** Deploy the demo pool and enroll seven simulated reporters. */
 async function deployDemoPool() {
   try {
-    const pool = await Pool.deploy(MIN_POOL, new TextEncoder().encode(SIM_ORIGIN).length);
+    const pool = await Pool.deploy(MIN_POOL, new TextEncoder().encode(SIM_ORIGIN).length, THRESHOLD, APPROVERS.length);
     const reporters: Reporter[] = [];
     const names = ["Kharkiv desk", "Gaza stringer", "Lagos fixer", "Manipur reporter", "Caracas photo", "Dhaka citizen", "Tbilisi student"];
     for (const name of names) {
@@ -455,6 +458,26 @@ export const attacks: Record<string, { title: string; story: string; run: () => 
       const r = activeReporter();
       const fp = await freshPhoto("phish");
       return refuse(() => pool.seal(r.key.device(), r.key.assert(pool.challengeFor(fp), { origin: "https://unf0rged.xyz" }), fp), "The circuit rebuilds the signed origin; a different site produces a different message.");
+    },
+  },
+  bypass: {
+    title: "Owner bypasses the approvers",
+    story: "The pool owner's key tries to add a credential without approvals.",
+    run: async () => {
+      const pool = state.pool!;
+      const k = new SoftPasskey(SIM_RP, SIM_ORIGIN);
+      return refuse(() => pool.ownerEnroll(pool.commitmentOf(k.device())), `Under the ${THRESHOLD}-of-${APPROVERS.length} policy the owner key alone cannot add a credential.`);
+    },
+  },
+  doublevote: {
+    title: "One approver votes twice",
+    story: "A single approver tries to supply both required approvals.",
+    run: async () => {
+      const pool = state.pool!;
+      const c = pool.commitmentOf(new SoftPasskey(SIM_RP, SIM_ORIGIN).device());
+      await pool.approve(c, 0);
+      set({});
+      return refuse(() => pool.approve(c, 0), "The approval nullifier is already spent. Each approver counts once, and the record never shows which approver it was.");
     },
   },
   stolen: {

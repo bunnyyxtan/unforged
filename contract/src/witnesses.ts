@@ -2,7 +2,8 @@
 //
 // Private state and witness implementations for unforged.compact.
 // Everything here stays on the prover's device; the circuit only ever
-// discloses the photo fingerprint, the capture time and a Merkle root.
+// discloses the photo fingerprint, the capture time, Merkle roots and
+// approval nullifiers.
 
 import type { WitnessContext } from "@midnight-ntwrk/compact-runtime";
 import type { Ledger } from "./managed/unforged/contract/index.js";
@@ -27,6 +28,7 @@ export type PreparedAssertion = {
 
 export type UnforgedPrivateState = {
   adminSecret?: Uint8Array;
+  approverSecret?: Uint8Array;
   device?: DeviceSecret;
   assertion?: PreparedAssertion;
 };
@@ -63,6 +65,15 @@ export const witnesses = {
   devicePath: ({ privateState, ledger }: Ctx, leaf: Uint8Array) => {
     const path = ledger.devices.findPathForLeaf(leaf);
     if (!path) throw new Error("NOT_ENROLLED");
+    return [privateState, path] as const;
+  },
+
+  approverSecret: ({ privateState }: Ctx): [UnforgedPrivateState, Uint8Array] =>
+    [privateState, need(privateState.approverSecret, "approver secret")],
+
+  approverPath: ({ privateState, ledger }: Ctx, leaf: Uint8Array) => {
+    const path = ledger.approvers.findPathForLeaf(leaf);
+    if (!path) throw new Error("NOT_APPROVER");
     return [privateState, path] as const;
   },
 
