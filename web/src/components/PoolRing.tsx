@@ -20,7 +20,7 @@ export function PoolRing({ size, min, px = 104 }: { size: number; min: number; p
         x2={50 + Math.cos((floor * Math.PI) / 180) * 50} y2={50 + Math.sin((floor * Math.PI) / 180) * 50}
         stroke="var(--text)" strokeWidth="2"
       />
-      <text x="50" y="52" textAnchor="middle" fontFamily="Newsreader, Georgia, serif" fontSize="30" fill="var(--text)">{size}</text>
+      <text x="50" y="52" textAnchor="middle" fontFamily="Satoshi, system-ui, sans-serif" fontWeight="700" fontSize="28" fill="var(--text)">{size}</text>
       <text x="50" y="66" textAnchor="middle" fontSize="8" fill="var(--text-2)">phones</text>
     </svg>
   );

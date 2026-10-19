@@ -193,8 +193,8 @@ function Capture() {
     grd.addColorStop(1, `hsl(${(hue + 40) % 360} 25% 9%)`);
     g.fillStyle = grd; g.fillRect(0, 0, 1600, 1200);
     for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(255,255,255,${Math.random() * 0.07})`; g.fillRect(Math.random() * 1600, Math.random() * 1200, 2, 2); }
-    g.fillStyle = "rgba(241,234,223,.92)"; g.font = "italic 92px Newsreader, Georgia, serif"; g.fillText("Test shot", 90, 170);
-    g.font = "34px 'IBM Plex Mono', monospace"; g.fillText(new Date().toISOString(), 92, 230);
+    g.fillStyle = "rgba(241,234,223,.92)"; g.font = "700 88px Satoshi, system-ui, sans-serif"; g.fillText("Test shot", 90, 170);
+    g.font = "34px 'Geist Mono', monospace"; g.fillText(new Date().toISOString(), 92, 230);
     await keep(c, true);
   }
 
@@ -225,7 +225,7 @@ function Capture() {
           {shot ? <img src={shot.url} alt="The photo you just took" /> : stream ? <video ref={video} playsInline muted aria-label="Camera preview" /> : (
             <div className="vf-empty">
               <Icon name="camera" size={28} />
-              <span className="serif" style={{ font: "italic 400 1.6rem/1.1 var(--font-display)", color: "#f1eadf" }}>The darkroom is ready.</span>
+              <span className="serif" style={{ font: "700 1.5rem/1.1 var(--font-display)", letterSpacing: "-0.03em", color: "#f1eadf" }}>The darkroom is ready.</span>
               <p>Photos are taken here, never imported from a gallery, so the seal always starts at the shutter.</p>
             </div>
           )}
