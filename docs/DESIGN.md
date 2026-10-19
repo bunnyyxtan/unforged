@@ -79,6 +79,19 @@ Navigation language:
 
 The environment badge must state `Local evaluation`, `Preprod` or `Mainnet`; it must never imply a network state indirectly.
 
+### Wave 2 implementation record — 19 October 2026
+
+The current React workspace implements the shell and four connected operational surfaces:
+
+| Surface | Implemented composition | Evidence state |
+|---|---|---|
+| Capture | Credential-enrollment step rail, dominant passkey path, separate evaluation path, enrollment receipt and pool-readiness strip | Live local flow |
+| Verification | Evidence intake, browser-local indicator, three-stage resolution pipeline, structured review output and bounded export | Live local flow |
+| Assurance | Suite metrics, indexed threat files, selected-case method and exact observed verdict | Eight runnable cases |
+| Trust pool | Operational health, aggregate metrics, credential registry, guarded revocation and privacy boundary | Live local flow |
+
+The desktop canvas uses a 256 px workflow rail and scales to a 1560 px maximum content width. At the reviewed 1265×710 viewport, the layout uses the available horizontal space without a permanent empty right column. Darkroom and paper themes preserve the same hierarchy.
+
 ## Core workflows
 
 ### Enrollment
@@ -238,13 +251,13 @@ Avoid user-facing terms such as witness stack, Merkle path, ZKIR, transaction pa
 
 Before a screen is complete:
 
-- [ ] One primary decision is visually obvious.
-- [ ] Wide screens use the available canvas intentionally.
-- [ ] Alignment anchors repeat across header and content.
-- [ ] Paragraphs have been converted to structured evidence where useful.
-- [ ] Empty, loading, error, success and unavailable states are rendered.
+- [x] One primary decision is visually obvious.
+- [x] Wide screens use the available canvas intentionally.
+- [x] Alignment anchors repeat across header and content.
+- [x] Paragraphs have been converted to structured evidence where useful.
+- [x] Empty, loading, error, success and unavailable states are rendered for the Wave 2 journey.
 - [ ] Dark/light and 390/768/1440/1920 px layouts are inspected.
-- [ ] Keyboard and reduced-motion flows work.
-- [ ] Current assurance level is visible at the decision point.
-- [ ] Contract actions and displayed state agree.
-- [ ] No placeholder metric or fabricated traction appears.
+- [x] Keyboard semantics and reduced-motion branches are implemented; a formal accessibility audit remains.
+- [x] Current assurance level is visible at the decision point.
+- [x] Contract actions and displayed state agree in the tested local journey.
+- [x] No placeholder metric or fabricated traction appears.

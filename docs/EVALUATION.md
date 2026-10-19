@@ -9,7 +9,7 @@ This file maps the repository to the official judging rubric. **Target** describ
 | Engineering & Implementation | 40 | Compiling Compact contract, meaningful private state, explicit dual-ledger boundary, complete end-to-end integration and reproducible setup | Compact 0.35 contract; private witnesses; anonymous Merkle membership; in-circuit P-256 WebAuthn; enroll/revoke/seal; generated runtime used by React app; CI compile | Public ledger-9 deployment and independent indexer verification when supported |
 | Quality Assurance & Reliability | 15 | Happy path and every refusal tested with realistic crypto; deterministic CI; operational errors represented honestly | 26 simulator tests; real P-256 vectors; eight-case browser Threat Lab; typecheck and build in CI | Network integration suite, persistence/recovery tests, performance measurements and external security review |
 | Product & Vision | 15 | Clear global problem, Midnight-native advantage, credible scope and staged expansion | Source-safe evidence thesis; C2PA privacy-layer strategy; defined personas, assurance ladder, release gates and multi-wave roadmap | Customer interviews, design partners and measured demand |
-| User Experience & Design | 15 | Intuitive end-to-end workflow connected to the contract, responsive and accessible | Passkey/test enrollment; capture; staged sealing; verification; local review export; threat exercises; pool controls; light/dark themes | Complete newsroom case workflow, accessibility audit and production usability testing |
+| User Experience & Design | 15 | Intuitive end-to-end workflow connected to the contract, responsive and accessible | Unified evidence-operations shell; staged passkey/test enrollment; capture; measured sealing; exact-file verification; bounded review export; threat console; aggregate pool controls; dark/paper themes | Complete newsroom case workflow, formal accessibility audit, full breakpoint matrix and production usability testing |
 | Communication | 10 | Concise deck and video showing problem, proof, failure paths, limits and roadmap | Deck PDF, deck outline, README architecture and evidence map | Record final video against clean build; update deck with current screenshots and measured timings |
 | Business Development & Viability | 5 | Specific buyer, urgent workflow, pricing hypothesis, adoption path and defensible platform expansion | Beachhead, buyer map, business model, competitive position, pilot plan and success metrics | Partner conversations, LOI or pilot agreement and validated pricing |
 
@@ -35,6 +35,8 @@ The public ledger stores commitments, pool size, epoch and seal facts. Private w
 ### Product integration
 
 The React application imports generated contract code and executes the same circuits represented in the tests. The UI distinguishes local runtime execution from a public Midnight transaction.
+
+The live browser journey was exercised on commit `475abca`: enroll an evaluation credential, generate a camera-free test frame, seal it through the compiled contract runtime, open Verification, and resolve the original bytes to a sealed result. The workspace reported eight pool credentials after enrollment and preserved the explicit local-runtime boundary throughout.
 
 ## QA evidence
 
@@ -72,6 +74,23 @@ The strongest judge path is a single high-stakes story:
 6. run the outsider, replay, time, user-verification, origin and revocation scenarios;
 7. show that the record identifies the pool while withholding the credential;
 8. state the browser and local-network limitations before showing the production roadmap.
+
+## Wave 2 interface evidence
+
+| Area | Delivered evidence |
+|---|---|
+| Information architecture | Persistent workflow rail: Capture → Verification → Assurance → Trust pool |
+| Enrollment | Recommended passkey route and clearly subordinate L0 evaluation credential route |
+| Evidence review | Separate input and output zones, exact-file pipeline, established/unresolved boundary and local review export |
+| Adversarial proof | Eight threat files with run state, method, protected boundary, consequence and observed code |
+| Administration | Aggregate pool metrics, anonymity floor, opaque commitments and guarded revocation |
+| Visual system | Responsive full-width canvas, structured metrics/tables, darkroom and paper themes, reduced-motion handling |
+
+Verification completed locally and in CI:
+
+- production web build passed;
+- contract simulator suite passed 26/26;
+- [CI run 39216501848](https://github.com/bunnyyxtan/unforged/actions/runs/39216501848) passed on commit `475abca`.
 
 ## Submission checklist
 

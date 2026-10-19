@@ -153,6 +153,12 @@ Capture SDK, Verify API, CMS plugin, CLI, C2PA bridge, self-hosting controls and
 | PO-3 | The interface resists deanonymization | No per-device seal history exists |
 | PO-4 | Pool floor protects members | Revocation is held when it would violate the configured floor |
 
+### Wave 2 implementation status — 19 October 2026
+
+All acceptance criteria above are represented in the current local evaluation interface. The tested primary path is evaluation enrollment → generated test frame → domain-bound approval → Compact seal → exact-file verification. Capture, Verification, Assurance and Trust Pool share one evidence-operations shell and consistently label the runtime as local.
+
+The implementation remains pre-production. Public network inclusion, durable records, hardware camera attestation, production enrollment approval, relay privacy, monitoring and newsroom case management remain gated to later phases.
+
 ## 9. Protocol requirements
 
 | ID | Requirement |

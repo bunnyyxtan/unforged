@@ -20,8 +20,10 @@ The roadmap advances through evidence gates. Dates define build windows; capabil
 - [x] Enrollment, revocation, time, uniqueness and anonymity-floor controls.
 - [x] Real P-256 simulator fixtures and refusal tests.
 - [x] Browser capture/test frame, seal, verify, Threat Lab and pool administration.
+- [x] Unified evidence-operations workspace with structured Capture, Verification, Assurance and Trust Pool surfaces.
 - [x] Local review export with explicit assurance boundaries.
 - [x] CI compilation, tests, typecheck and production web build.
+- [x] Complete camera-free browser walkthrough on submitted UI: enrollment → test capture → seal → exact-file verification.
 - [ ] Final submission video recorded from submitted commit.
 - [ ] Deck updated with final interface and measured local timings.
 - [ ] GitHub repository public with `midnightntwrk` topic.
