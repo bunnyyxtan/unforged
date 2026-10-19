@@ -54,7 +54,7 @@ export function Capture({ onVerify }: { onVerify: (r: SealRecord) => void }) {
           </div>
           {!real && (
             <p className="notice" style={{ marginTop: 16 }}>
-              Real passkeys need this page on <span className="mono">http://localhost:5173</span> (the contract's WebAuthn profile fixes the origin length).
+              Real passkeys work on the hosted demo and on <span className="mono">http://localhost:5173</span> (the contract's WebAuthn profile fixes the origin length).
               Here you'll use a <b>simulated secure chip</b> that signs the exact same bytes.
             </p>
           )}

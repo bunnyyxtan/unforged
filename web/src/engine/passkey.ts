@@ -7,15 +7,15 @@ import { sha256 as nobleSha256 } from "@noble/hashes/sha2.js";
 import type { DeviceSecret, P256Point, P256Signature, PreparedAssertion, WebAuthnPolicy } from "../../../contract/src/witnesses";
 import { base64url, bigintFrom, equal, fromBase64url, random, utf8 } from "./bytes";
 
-/** The contract's WebAuthn profile fixes the origin length (WebAuthn<21>). */
-export const ORIGIN_BYTES = 21;
+/** The WebAuthn profile fixes the origin length at compile time; we ship one contract per length. */
+export const ORIGIN_LENGTHS = [21, 28] as const; // http://localhost:5173 · https://bunnyyxtan.github.io
+export const supportedOrigin = (origin: string) => (ORIGIN_LENGTHS as readonly number[]).includes(utf8(origin).length);
 
 export function policyFor(rpId: string, origin: string): WebAuthnPolicy {
-  const bytes = utf8(origin);
-  if (bytes.length !== ORIGIN_BYTES) {
-    throw new Error(`This build accepts ${ORIGIN_BYTES}-byte origins; "${origin}" is ${bytes.length}. Open http://localhost:5173.`);
+  if (!supportedOrigin(origin)) {
+    throw new Error(`Unsupported origin length for "${origin}". Open http://localhost:5173 or the hosted demo.`);
   }
-  return { rp_id_hash: nobleSha256(utf8(rpId)), origin: bytes };
+  return { rp_id_hash: nobleSha256(utf8(rpId)), origin: utf8(origin) };
 }
 
 export function expectedClientData(challenge: Uint8Array, origin: string): Uint8Array {

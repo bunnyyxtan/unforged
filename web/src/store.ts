@@ -6,13 +6,15 @@ import {
   deviceFromStored,
   realAssertion,
   SoftPasskey,
-  ORIGIN_BYTES,
+  supportedOrigin,
   type StoredCredential,
 } from "./engine/passkey";
 import { Pool, refusalCode } from "./engine/pool";
 
 export const MIN_POOL = 5;
-const SIM_ORIGIN = "http://localhost:5173";
+// Simulated phones use this page's origin when a contract variant exists for it.
+const SIM_ORIGIN = typeof location !== "undefined" && supportedOrigin(location.origin) ? location.origin : "http://localhost:5173";
+const SIM_RP = new URL(SIM_ORIGIN).hostname;
 const STORAGE_KEY = "unforged:passkey:v1";
 
 export type Reporter = { name: string; key: SoftPasskey; index: number; revoked: boolean; commitment: string };
@@ -69,7 +71,7 @@ export const realPasskeysAvailable = () =>
   typeof window !== "undefined" &&
   window.isSecureContext &&
   !!window.PublicKeyCredential &&
-  new TextEncoder().encode(location.origin).length === ORIGIN_BYTES;
+  supportedOrigin(location.origin);
 
 const short = (h: string) => `${h.slice(0, 10)}…${h.slice(-6)}`;
 
@@ -79,11 +81,11 @@ export const bootstrap = () => (booting ??= deployDemoPool());
 /** Deploy the demo pool and enroll seven simulated reporters. */
 async function deployDemoPool() {
   try {
-    const pool = await Pool.deploy(MIN_POOL);
+    const pool = await Pool.deploy(MIN_POOL, new TextEncoder().encode(SIM_ORIGIN).length);
     const reporters: Reporter[] = [];
     const names = ["Kharkiv desk", "Gaza stringer", "Lagos fixer", "Manipur reporter", "Caracas photo", "Dhaka citizen", "Tbilisi student"];
     for (const name of names) {
-      const key = new SoftPasskey("localhost", SIM_ORIGIN);
+      const key = new SoftPasskey(SIM_RP, SIM_ORIGIN);
       const index = await pool.enroll(key.device());
       reporters.push({ name, key, index, revoked: false, commitment: toHex(pool.commitmentOf(key.device())) });
     }
@@ -106,7 +108,7 @@ export async function enrollMe(existing?: StoredCredential, simulated = false) {
     const index = await pool.enroll(device);
     me = { mode: "passkey", device, index, stored, commitment: toHex(pool.commitmentOf(device)) };
   } else {
-    const soft = new SoftPasskey("localhost", SIM_ORIGIN);
+    const soft = new SoftPasskey(SIM_RP, SIM_ORIGIN);
     const index = await pool.enroll(soft.device());
     me = { mode: "simulated", device: soft.device(), index, soft, commitment: toHex(pool.commitmentOf(soft.device())) };
   }
@@ -203,7 +205,7 @@ export const attacks: Record<string, { title: string; story: string; run: () => 
     story: "An attacker's own phone tries to seal a fake.",
     run: async () => {
       const pool = state.pool!;
-      const outsider = new SoftPasskey("localhost", SIM_ORIGIN);
+      const outsider = new SoftPasskey(SIM_RP, SIM_ORIGIN);
       const fp = await freshPhoto("fake");
       return refuse(() => pool.seal(outsider.device(), outsider.assert(pool.challengeFor(fp)), fp), "Not in the pool's Merkle tree, so no membership proof exists.");
     },

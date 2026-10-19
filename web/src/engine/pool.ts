@@ -3,7 +3,12 @@
 // chain; only the network is simulated.
 
 import { createCircuitContext, createConstructorContext, type StateValue } from "@midnight-ntwrk/compact-runtime";
-import { Contract, ledger, pureCircuits, type Ledger } from "../../../contract/src/managed/unforged/contract/index.js";
+import * as Unforged21 from "../../../contract/src/managed/unforged/contract/index.js";
+import * as Unforged28 from "../../../contract/src/managed/unforged28/contract/index.js";
+import type { Ledger } from "../../../contract/src/managed/unforged/contract/index.js";
+
+type ContractModule = typeof Unforged21;
+const VARIANTS: Record<number, ContractModule> = { 21: Unforged21, 28: Unforged28 as unknown as ContractModule };
 import { witnesses, type DeviceSecret, type PreparedAssertion, type UnforgedPrivateState } from "../../../contract/src/witnesses";
 import { fromHex, random, toHex } from "./bytes";
 
@@ -14,13 +19,20 @@ export type Disclosure = { label: string; value: string };
 export class Pool {
   private state!: StateValue;
   private privateState: UnforgedPrivateState = {};
-  private readonly contract = new Contract<UnforgedPrivateState>(witnesses as never);
+  private readonly contract: InstanceType<ContractModule["Contract"]>;
   private readonly coinPk = { bytes: random(32) };
   private readonly adminSecret = random(32);
   readonly address = toHex(random(32));
 
-  static async deploy(minPoolSize: number): Promise<Pool> {
-    const pool = new Pool();
+  private constructor(private readonly mod: ContractModule) {
+    this.contract = new mod.Contract<UnforgedPrivateState>(witnesses as never);
+  }
+
+  /** `originLength` selects the compiled variant matching the WebAuthn origin. */
+  static async deploy(minPoolSize: number, originLength: number): Promise<Pool> {
+    const mod = VARIANTS[originLength];
+    if (!mod) throw new Error(`No contract variant for ${originLength}-byte origins`);
+    const pool = new Pool(mod);
     pool.privateState = { adminSecret: pool.adminSecret };
     const init = await pool.contract.initialState(
       createConstructorContext(pool.privateState, pool.coinPk as never),
@@ -31,7 +43,7 @@ export class Pool {
   }
 
   get ledger(): Ledger {
-    return ledger(this.state);
+    return this.mod.ledger(this.state);
   }
 
   now(): number {
@@ -39,11 +51,11 @@ export class Pool {
   }
 
   challengeFor(fingerprint: Uint8Array): Uint8Array {
-    return pureCircuits.sealChallenge({ bytes: fromHex(this.address) }, fingerprint);
+    return this.mod.pureCircuits.sealChallenge({ bytes: fromHex(this.address) }, fingerprint);
   }
 
   commitmentOf(d: DeviceSecret): Uint8Array {
-    return pureCircuits.deviceCommitment(d.pk, d.salt, d.policy);
+    return this.mod.pureCircuits.deviceCommitment(d.pk, d.salt, d.policy);
   }
 
   private async call(circuit: CircuitName, ...args: unknown[]) {
