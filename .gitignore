@@ -13,3 +13,7 @@ AGENTS.md
 CLAUDE.md
 MEMORY.md
 docs/DECK-OUTLINE.md
+
+# local tooling
+.claude/
+web/dist/

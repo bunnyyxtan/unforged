@@ -5,7 +5,8 @@
   "license": "Apache-2.0",
   "type": "module",
   "workspaces": [
-    "contract"
+    "contract",
+    "web"
   ],
   "overrides": {
     "@midnightntwrk/onchain-runtime-v4": "4.0.0-rc.4"
