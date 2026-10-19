@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Unforged · Deck</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  @page { size: 13.333in 7.5in; margin: 0; }
+  :root { --bg:#0e0d0c; --surface:#171513; --surface2:#1d1a17; --ink:#ede8de; --muted:#9a938a; --seal:#ff5a36; --sealed:#3fc79a; --line:#2a2724; --danger:#ff6b5e; }
+  * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  html, body { margin: 0; background: #000; }
+  body { font: 20px/1.45 Inter, sans-serif; color: var(--ink); }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.7in 0.85in; background: var(--bg); position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+  .slide::after { content: attr(data-n); position: absolute; right: 0.85in; bottom: 0.4in; font: 13px JetBrains Mono, monospace; color: var(--muted); }
+  .brand { position: absolute; left: 0.85in; bottom: 0.4in; font: 15px Inter; color: var(--muted); display: flex; gap: 8px; align-items: center; }
+  .brand i { width: 14px; height: 14px; border-radius: 50%; background: var(--seal); display: inline-block; box-shadow: inset 0 0 0 3px var(--seal), inset 0 0 0 4.5px var(--bg); }
+  .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
+  h1, h2 { font-family: "Instrument Serif", serif; font-weight: 400; margin: 0; letter-spacing: -0.015em; }
+  h1 { font-size: 96px; line-height: .98; }
+  h2 { font-size: 58px; line-height: 1.02; margin-bottom: 22px; }
+  em { color: var(--seal); }
+  .muted { color: var(--muted); }
+  .mono { font-family: "JetBrains Mono", monospace; font-size: .85em; }
+  .grid { display: grid; gap: 22px; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; }
+  .card h3 { margin: 0 0 6px; font-size: 21px; }
+  .card p { margin: 0; color: var(--muted); font-size: 17px; }
+  .big { font-family: "Instrument Serif", serif; font-size: 64px; line-height: 1; color: var(--ink); }
+  .big small { display: block; font: 15px Inter; color: var(--muted); margin-top: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 17px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
+  .ok { color: var(--sealed); font-weight: 700; } .no { color: var(--danger); font-weight: 700; }
+  .code { font: 600 14px JetBrains Mono, monospace; color: var(--danger); background: #2d1311; padding: 2px 8px; border-radius: 6px; }
+  img.shot { width: 100%; max-height: 2.25in; object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); display: block; }
+  .step { display: grid; grid-template-columns: 54px 1fr; gap: 14px; align-items: start; }
+  .step b.n { width: 54px; height: 54px; border-radius: 50%; border: 2px solid var(--seal); display: grid; place-items: center; font: 26px "Instrument Serif"; color: var(--seal); }
+  .card p.quote, .quote { font-family: "Instrument Serif", serif; font-size: 36px; line-height: 1.18; color: var(--ink); }
+  .src { font-size: 12.5px; color: var(--muted); margin-top: auto; padding-top: 12px; }
+  ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  ul.clean li::before { content: "✓  "; color: var(--sealed); font-weight: 700; }
+  .step p { font-size: 17px !important; }
+  table.tight td, table.tight th { padding: 6px 10px; }
+  table.tight { font-size: 15px !important; }
+  .stamp { position: absolute; right: 0.9in; top: 0.8in; width: 2.4in; height: 2.4in; transform: rotate(-8deg); }
+  .pill { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:14px; color:var(--muted); margin-right:8px; }
+</style>
+</head>
+<body>
+
+<!-- 1. Title -->
+<section class="slide" data-n="01">
+  <svg class="stamp" viewBox="0 0 120 120"><defs><path id="r" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
+    <circle cx="60" cy="60" r="56" fill="none" stroke="#ff5a36" stroke-width="3"/><circle cx="60" cy="60" r="35" fill="none" stroke="#ff5a36" stroke-width="1.5"/>
+    <text fill="#ff5a36" font-family="JetBrains Mono" font-size="8.2" letter-spacing="1.2"><textPath href="#r">UF-7K3Q-9D2M · UNFORGED · UF-7K3Q-9D2M · UNFORGED ·</textPath></text>
+    <text x="60" y="60" text-anchor="middle" fill="#ff5a36" font-family="Instrument Serif" font-size="17">SEALED</text>
+    <text x="60" y="74" text-anchor="middle" fill="#ff5a36" font-family="Inter" font-size="6.5" letter-spacing="1">ON MIDNIGHT</text></svg>
+  <div style="margin-top:auto">
+    <div class="eyebrow">Unforged · Midnight Buildathon · Wave 2</div>
+    <h1>Prove it's real.<br/><em><i>Keep who took it secret.</i></em></h1>
+    <p class="muted" style="font-size:24px;max-width:9in;margin:26px 0 0">Anonymous, hardware-signed photo seals. A phone's secure chip signs the photo; a zero-knowledge proof on Midnight shows it came from one of a pool's enrolled phones, never which one.</p>
+  </div>
+  <div style="height:0.4in"></div>
+  <div class="brand"><i></i>github.com/bunnyyxtan/unforged</div>
+</section>
+
+<!-- 2. Problem -->
+<section class="slide" data-n="02">
+  <div class="eyebrow">The problem</div>
+  <h2>Fakes are free. Proof of real <em>exposes people.</em></h2>
+  <div class="grid g3" style="margin-top:10px">
+    <div class="card"><div class="big">$893M<small>2025 US losses in FBI complaints with an AI nexus</small></div></div>
+    <div class="card"><div class="big">1 in 5<small>biometric fraud attempts are deepfakes (Entrust 2026)</small></div></div>
+    <div class="card"><div class="big">17+<small>cameras and phones now sign photos at capture (C2PA, Pixel 10)</small></div></div>
+  </div>
+  <div class="card" style="margin-top:22px">
+    <p class="quote" style="color:var(--ink)">Signed capture proves a photo is real, but its metadata can reveal the photographer, the device and the location. For a reporter in a conflict zone, that's a physical danger.</p>
+  </div>
+  <p style="margin:22px 0 0;font-size:24px">Today you choose: <b>authentic and traceable</b>, or <b>anonymous and unverifiable</b>.</p>
+  <div class="src">Sources: FBI IC3 2025; Entrust 2026 Identity Fraud Report; C2PA adoption trackers 2026; SMPTE 2025 "Privacy vulnerabilities in C2PA"; WITNESS. Links in docs/RESEARCH.md.</div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 3. Who -->
+<section class="slide" data-n="03">
+  <div class="eyebrow">Who needs it</div>
+  <h2>The people whose photos matter most.</h2>
+  <div class="grid g3">
+    <div class="card"><h3>Stringers & citizen journalists</h3><p>Need to be believed without being identified. Their safety depends on it.</p></div>
+    <div class="card"><h3>Fact-checkers & photo desks</h3><p>Need a one-second answer: real capture, unedited? Without learning the source.</p></div>
+    <div class="card"><h3>Platforms, insurers, marketplaces</h3><p>Must label real vs synthetic (EU AI Act Art. 50 since Aug 2026; India IT Rules since Feb 2026) without hoarding personal data.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card"><h3>Regulatory tailwind</h3><p>EU AI Act Article 50 transparency duties apply from 2 Aug 2026. India's 2026 IT Rules amendment asks platforms to label synthetic media and embed provenance.</p></div>
+    <div class="card"><h3>Our first design partners</h3><p>Indian fact-checking organisations (IFCN signatories), then press-freedom NGOs and newsrooms with stringer networks.</p></div>
+  </div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 4. Solution -->
+<section class="slide" data-n="04">
+  <div class="eyebrow">The solution</div>
+  <h2>A seal for human-captured media.</h2>
+  <div class="grid g3" style="margin-top:6px">
+    <div class="step"><b class="n">1</b><div><h3 style="margin:6px 0">Enroll</h3><p class="muted" style="margin:0">A phone creates a passkey in its secure chip (Secure Enclave, StrongBox, TPM). The pool stores only an opaque commitment in a Merkle tree.</p></div></div>
+    <div class="step"><b class="n">2</b><div><h3 style="margin:6px 0">Seal</h3><p class="muted" style="margin:0">Face ID approves; the chip signs H(pool, SHA-256(photo)). A ZK proof shows the signer is <i>one of</i> the enrolled phones.</p></div></div>
+    <div class="step"><b class="n">3</b><div><h3 style="margin:6px 0">Verify</h3><p class="muted" style="margin:0">Anyone drops the photo: <span class="ok">Sealed</span>, with time and pool size. Photographer: hidden. Nobody can know.</p></div></div>
+  </div>
+  <div class="grid g2" style="margin-top:22px;align-items:start">
+    <img class="shot" src="img/sealed.jpg" alt="Sealed photo" />
+    <img class="shot" src="img/verify.jpg" alt="Verify result" />
+  </div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 5. How on Midnight -->
+<section class="slide" data-n="05">
+  <div class="eyebrow">Built on Midnight</div>
+  <h2>The chip's signature is verified <em>inside</em> the proof.</h2>
+  <div class="grid g2">
+    <div class="card">
+      <h3>unforged.compact · Compact 0.35 · ZKIR v3</h3>
+      <table>
+        <tr><th>Circuit</th><th>Guarantees</th></tr>
+        <tr><td class="mono">enroll</td><td>Admin adds an opaque device commitment to a HistoricMerkleTree</td></tr>
+        <tr><td class="mono">seal</td><td>Anonymous membership + in-circuit WebAuthn <span class="mono">secp256r1EcdsaVerify</span> over this pool + this photo, UP+UV, pool ≥ minimum, 24 h window</td></tr>
+        <tr><td class="mono">revoke</td><td>Removes a phone and resets accepted roots</td></tr>
+      </table>
+    </div>
+    <div class="card">
+      <h3>Privacy boundary</h3>
+      <table>
+        <tr><th>Public on Midnight</th><th>Never leaves the phone</th></tr>
+        <tr><td>Photo fingerprint</td><td>Which phone sealed it</td></tr>
+        <tr><td>Capture time</td><td>Device key and salt</td></tr>
+        <tr><td>Pool size, epoch</td><td>Merkle path</td></tr>
+        <tr><td>Opaque commitments</td><td>Passkey signature, authenticator data</td></tr>
+      </table>
+    </div>
+  </div>
+  <p class="muted" style="margin:20px 0 0;font-size:17px">WebAuthn profile reused from Midnight Passport (Apache-2.0): clientDataJSON rebuilt in-circuit, RP and origin bound. Midnight's founder publicly floated a "ZK proof a photo was taken by a real Apple phone"; this is it, generalised to any passkey.</p>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 6. Why Midnight -->
+<section class="slide" data-n="06">
+  <div class="eyebrow">Why only Midnight</div>
+  <h2>Authentic, anonymous, and checkable by anyone.</h2>
+  <table style="font-size:20px">
+    <tr><th></th><th>Central database</th><th>Public chain</th><th>C2PA alone</th><th>Midnight</th></tr>
+    <tr><td>Proves real capture</td><td class="no">trust vendor</td><td class="ok">yes</td><td class="ok">yes</td><td class="ok">yes</td></tr>
+    <tr><td>Hides the photographer</td><td class="no">operator sees all</td><td class="no">key on-chain</td><td class="no">metadata leaks</td><td class="ok">ZK membership</td></tr>
+    <tr><td>Verifiable without trust</td><td class="no">no</td><td class="ok">yes</td><td>trust list</td><td class="ok">yes</td></tr>
+    <tr><td>Selective disclosure</td><td class="no">manual</td><td class="no">no</td><td class="no">no</td><td class="ok">native</td></tr>
+    <tr><td>No crypto for users</td><td class="ok">yes</td><td class="no">wallet + gas</td><td class="ok">yes</td><td class="ok">sponsored DUST</td></tr>
+  </table>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 7. Proof it works -->
+<section class="slide" data-n="07">
+  <div class="eyebrow">Proof it works</div>
+  <h2>Every attack is refused by the circuit.</h2>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <table class="tight">
+        <tr><th>Attack</th><th>Result</th></tr>
+        <tr><td>Phone outside the pool</td><td><span class="code">NOT_ENROLLED</span></td></tr>
+        <tr><td>Borrowed membership path</td><td><span class="code">NOT_ENROLLED</span></td></tr>
+        <tr><td>Edited photo, reused signature</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
+        <tr><td>Replay from another pool</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
+        <tr><td>Stolen public key, no chip</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
+        <tr><td>Phishing origin / other website</td><td><span class="code">REFUSED</span></td></tr>
+        <tr><td>No Face ID / PIN (UV)</td><td><span class="code">REFUSED</span></td></tr>
+        <tr><td>Same photo twice</td><td><span class="code">ALREADY_SEALED</span></td></tr>
+        <tr><td>Backdated / future photo</td><td><span class="code">BAD_TIME</span></td></tr>
+        <tr><td>Pool too small to hide anyone</td><td><span class="code">POOL_TOO_SMALL</span></td></tr>
+        <tr><td>Revoked phone</td><td><span class="code">NOT_ENROLLED</span></td></tr>
+      </table>
+    </div>
+    <div class="grid">
+      <div class="grid g2">
+        <div class="card"><div class="big">26<small>tests, real P-256 passkey assertions</small></div></div>
+        <div class="card"><div class="big">0<small>bytes differ in public state, whichever phone sealed</small></div></div>
+      </div>
+      <img class="shot" src="img/attacks.jpg" alt="Attack lab" />
+    </div>
+  </div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 8. Business -->
+<section class="slide" data-n="08">
+  <div class="eyebrow">Business model</div>
+  <h2>Verification is free. Sealing is the product.</h2>
+  <div class="grid g4">
+    <div class="card"><h3>Verify</h3><p>Free forever for anyone. API free tier. The public good that drives adoption.</p></div>
+    <div class="card"><h3>Pools</h3><p>Newsrooms & NGOs pay per enrolled device / month (hypothesis $8–15). Independent journalists ride NGO-sponsored pools free.</p></div>
+    <div class="card"><h3>Capture SDK</h3><p>Insurers, marketplaces, KYC: per sealed capture (hypothesis $0.05–0.50).</p></div>
+    <div class="card"><h3>Verify API</h3><p>Platforms labelling real vs synthetic at scale.</p></div>
+  </div>
+  <div class="grid g2" style="margin-top:22px">
+    <div class="card"><h3>Moat: an anonymity network effect</h3><p>A bigger pool hides everyone better, so shared pools get more valuable with every organisation that joins. Like Tor, for photographers.</p></div>
+    <div class="card"><h3>Competition</h3><p>Truepic, ProofMode, Numbers ProofSnap, OpenOrigins and native C2PA prove authenticity. None hides the signer while staying publicly verifiable. We are the privacy layer for content credentials.</p></div>
+  </div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 9. Roadmap -->
+<section class="slide" data-n="09">
+  <div class="eyebrow">Roadmap</div>
+  <h2>From seal to the trust layer for real media.</h2>
+  <div class="grid g4">
+    <div class="card" style="border-color:var(--seal)"><h3>Wave 2 <span class="ok">· shipped</span></h3><p>Contract with in-circuit P-256 + anonymous membership. 26 tests. Web app with real passkeys, verify, attack lab, pool desk. Founding docs.</p></div>
+    <div class="card"><h3>Wave 3</h3><p>Ledger-9 network deploy (Preprod after the fork), phone PWA, Desk v1, sponsored fees, submission relay, 1–3 design partners sealing real photos.</p></div>
+    <div class="card"><h3>Wave 4</h3><p>Native iOS/Android with App Attest / Key Attestation (camera-bound pixels), device-bound keys, paid attribution ("claim this seal").</p></div>
+    <div class="card"><h3>2027</h3><p>C2PA bridge (Pixel, Leica → anonymous seal), coarse-location disclosure, edit-tolerant seals, video, Verify API and insurer pilots.</p></div>
+  </div>
+  <div class="card" style="margin-top:22px"><h3>Honest limits today</h3><p>A web passkey proves a person approved on an enrolled authenticator, not that the camera sensor produced the pixels; native attestation closes this in Wave 4. Anonymity is as strong as the pool is large; the contract enforces a minimum.</p></div>
+  <div class="brand"><i></i>Unforged</div>
+</section>
+
+<!-- 10. Close -->
+<section class="slide" data-n="10">
+  <div style="margin:auto 0">
+    <div class="eyebrow">Unforged</div>
+    <h1 style="font-size:84px">Seal reality.<br/><em><i>Protect the people who capture it.</i></em></h1>
+    <p style="margin-top:30px;font-size:22px"><span class="pill">github.com/bunnyyxtan/unforged</span><span class="pill">Built on Midnight</span><span class="pill">Apache-2.0</span></p>
+  </div>
+  <div class="brand"><i></i>bunnyy · Midnight Buildathon 2026</div>
+</section>
+
+</body>
+</html>
