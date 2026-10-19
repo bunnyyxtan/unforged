@@ -108,7 +108,7 @@ Verification completed locally and in CI:
 - [ ] CI badge green on submitted commit
 - [x] Compact source and generated-code workflow documented
 - [ ] README setup succeeds from a clean checkout
-- [ ] Slide deck matches the submitted product
+- [x] Slide deck matches the submitted product
 - [ ] Video uses the submitted commit and shows real interactions
 - [ ] AKINDO progress statement names work completed in this Wave
 - [ ] Contract address and explorer links included only when a real deployment exists

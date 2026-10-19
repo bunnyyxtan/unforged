@@ -30,7 +30,7 @@ The roadmap advances through evidence gates. Dates define build windows; capabil
 - [x] CI compilation, tests, typecheck and production web build.
 - [x] Complete camera-free browser walkthrough on submitted UI: enrollment → test capture → seal → exact-file verification.
 - [ ] Final submission video recorded from submitted commit.
-- [ ] Deck updated with final interface and measured local timings.
+- [x] Deck updated with final interface and measured local timings.
 - [ ] GitHub repository public with `midnightntwrk` topic.
 
 ## Wave 3 workstreams

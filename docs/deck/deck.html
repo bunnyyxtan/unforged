@@ -3,232 +3,246 @@
 <head>
 <meta charset="utf-8" />
 <title>Unforged · Deck</title>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&family=Schibsted+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   @page { size: 13.333in 7.5in; margin: 0; }
-  :root { --bg:#f7f3ea; --surface:#fdfbf6; --surface2:#efe9dc; --ink:#14110d; --muted:#564e43; --seal:#98202b; --action:#1d3f75; --sealed:#2c5a37; --line:#d3c9b4; --danger:#9b2d16; --danger-tint:#f6e0d8; }
+  :root { --bg:#f7f3ea; --surface:#fdfbf6; --sunken:#efe9dc; --ink:#14110d; --muted:#564e43; --faint:#6b6254; --seal:#98202b; --seal-tint:#f3dfde; --action:#1d3f75; --action-tint:#dde4ef; --ok:#2c5a37; --ok-tint:#dfe9da; --warn:#84560b; --warn-tint:#f3e6c8; --line:#d3c9b4; --soft:#e4dccb; }
   * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   html, body { margin: 0; background: #000; }
-  body { font: 20px/1.45 'Schibsted Grotesk', sans-serif; color: var(--ink); }
-  .slide { width: 13.333in; height: 7.5in; padding: 0.7in 0.85in; background: var(--bg); position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
-  .slide::after { content: attr(data-n); position: absolute; right: 0.85in; bottom: 0.4in; font: 13px 'IBM Plex Mono', monospace; color: var(--muted); }
-  .brand { position: absolute; left: 0.85in; bottom: 0.4in; font: 15px 'Schibsted Grotesk'; color: var(--muted); display: flex; gap: 8px; align-items: center; }
-  .brand i { width: 14px; height: 14px; border-radius: 50%; background: var(--seal); display: inline-block; box-shadow: inset 0 0 0 2px var(--seal), inset 0 0 0 4px var(--bg); background: var(--bg); border: 1.5px solid var(--seal); }
-  .eyebrow { text-transform: uppercase; letter-spacing: .14em; font-size: 14px; color: var(--muted); font-weight: 600; margin-bottom: 14px; }
-  h1, h2 { font-family: "Newsreader", serif; font-weight: 400; margin: 0; letter-spacing: -0.015em; }
-  h1 { font-size: 96px; line-height: .98; }
-  h2 { font-size: 58px; line-height: 1.02; margin-bottom: 22px; }
-  em { color: var(--action); font-style: italic; }
+  body { font: 20px/1.45 'Satoshi', sans-serif; color: var(--ink); }
+  em, i { font-style: normal; }
+  .slide { width: 13.333in; height: 7.5in; padding: 0.62in 0.8in 0.75in; background: var(--bg); position: relative; overflow: hidden; page-break-after: always; display: flex; flex-direction: column; }
+  .slide::after { content: attr(data-n); position: absolute; right: 0.8in; bottom: 0.34in; font: 12px 'Geist Mono', monospace; color: var(--faint); letter-spacing: .08em; }
+  .foot { position: absolute; left: 0.8in; bottom: 0.34in; font: 12px 'Geist Mono', monospace; color: var(--faint); letter-spacing: .08em; display: flex; gap: 10px; align-items: center; text-transform: uppercase; }
+  .foot b { width: 11px; height: 11px; border-radius: 50%; border: 1.5px solid var(--seal); display: inline-block; }
+  .eyebrow { font: 500 13px 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: .12em; color: var(--action); margin-bottom: 14px; }
+  h1, h2, h3 { margin: 0; font-weight: 700; }
+  h1 { font-size: 92px; line-height: .98; letter-spacing: -0.045em; }
+  h2 { font-size: 50px; line-height: 1.04; letter-spacing: -0.04em; margin-bottom: 24px; max-width: 11in; }
+  h3 { font-size: 20px; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .accent { color: var(--seal); }
   .muted { color: var(--muted); }
-  .mono { font-family: "IBM Plex Mono", monospace; font-size: .85em; }
-  .grid { display: grid; gap: 22px; }
-  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); }
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px 24px; box-shadow: 0 18px 40px -26px rgba(20,17,13,.35); }
-  .card h3 { margin: 0 0 6px; font-size: 21px; }
-  .card p { margin: 0; color: var(--muted); font-size: 17px; }
-  .big { font-family: "Newsreader", serif; font-size: 64px; line-height: 1; color: var(--ink); }
-  .big small { display: block; font: 15px 'Schibsted Grotesk'; color: var(--muted); margin-top: 8px; }
-  table { width: 100%; border-collapse: collapse; font-size: 17px; }
-  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
-  th { color: var(--muted); font-weight: 600; font-size: 14px; text-transform: uppercase; letter-spacing: .08em; }
-  .ok { color: var(--sealed); font-weight: 700; } .no { color: var(--danger); font-weight: 700; }
-  .code { font: 500 13px 'IBM Plex Mono', monospace; color: var(--danger); background: var(--danger-tint); padding: 3px 8px; border-radius: 4px; }
-  img.shot { width: 100%; max-height: 2.25in; box-shadow: 0 18px 40px -26px rgba(20,17,13,.45); object-fit: cover; object-position: top; border-radius: 12px; border: 1px solid var(--line); display: block; }
-  .step { display: grid; grid-template-columns: 54px 1fr; gap: 14px; align-items: start; }
-  .step b.n { width: 54px; height: 54px; border-radius: 50%; border: 1.5px solid var(--seal); display: grid; place-items: center; font: 26px "Newsreader"; color: var(--seal); }
-  .card p.quote, .quote { font-family: "Newsreader", serif; font-size: 36px; line-height: 1.18; color: var(--ink); }
-  .src { font-size: 12.5px; color: var(--muted); margin-top: auto; padding-top: 12px; }
-  ul.clean { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
-  ul.clean li::before { content: "✓  "; color: var(--sealed); font-weight: 700; }
-  .step p { font-size: 17px !important; }
-  table.tight td, table.tight th { padding: 6px 10px; }
-  table.tight { font-size: 15px !important; }
-  .stamp { position: absolute; right: 0.9in; top: 0.8in; width: 2.4in; height: 2.4in; transform: rotate(-8deg); }
-  .pill { display:inline-block; border:1px solid var(--line); border-radius:999px; padding:4px 12px; font-size:14px; color:var(--muted); margin-right:8px; }
+  .mono { font-family: 'Geist Mono', monospace; font-size: .82em; }
+  .grid { display: grid; gap: 18px; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); } .g4 { grid-template-columns: repeat(4, 1fr); } .g6 { grid-template-columns: repeat(6, 1fr); }
+  .panel { background: var(--surface); border: 1px solid var(--line); padding: 20px 22px; }
+  .panel p { margin: 0; color: var(--muted); font-size: 16px; line-height: 1.45; }
+  .num { font-size: 76px; font-weight: 700; letter-spacing: -0.05em; line-height: .95; font-variant-numeric: tabular-nums; }
+  .num small { display: block; font-size: 15px; font-weight: 500; letter-spacing: 0; color: var(--muted); margin-top: 10px; line-height: 1.4; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--soft); vertical-align: top; }
+  th { font: 500 11.5px 'Geist Mono', monospace; text-transform: uppercase; letter-spacing: .1em; color: var(--faint); border-bottom: 1.5px solid var(--ink); }
+  .code { font: 500 12.5px 'Geist Mono', monospace; color: var(--seal); background: var(--seal-tint); padding: 3px 8px; white-space: nowrap; }
+  .chip { display: inline-block; font: 500 11.5px 'Geist Mono', monospace; letter-spacing: .06em; text-transform: uppercase; padding: 3px 8px; border: 1px solid currentColor; }
+  .live { color: var(--ok); background: var(--ok-tint); } .draft { color: var(--warn); background: var(--warn-tint); } .asserted { color: var(--action); background: var(--action-tint); }
+  .yes { color: var(--ok); font-weight: 700; } .no { color: var(--seal); font-weight: 700; }
+  img.shot { width: 100%; display: block; border: 1px solid var(--line); box-shadow: 0 2px 4px rgba(20,17,13,.08), 0 24px 48px -28px rgba(20,17,13,.45); object-fit: cover; object-position: top left; }
+  .src { font-size: 12px; color: var(--faint); margin-top: auto; padding-top: 10px; }
+  .rule { border-top: 2px solid var(--ink); }
+  .ladder { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .ladder div { border-top: 4px solid var(--line); padding: 12px 12px 0; }
+  .ladder div.on { border-top-color: var(--action); background: var(--action-tint); padding-bottom: 12px; }
+  .ladder b { font: 600 15px 'Geist Mono', monospace; display: block; margin-bottom: 4px; }
+  .ladder span { font-size: 15px; color: var(--muted); line-height: 1.35; display: block; }
+  .stamp { position: absolute; right: 0.85in; top: 0.75in; width: 2.7in; height: 2.7in; }
+  .pill { display: inline-block; border: 1px solid var(--line); padding: 6px 12px; font: 500 13px 'Geist Mono', monospace; color: var(--muted); margin-right: 8px; background: var(--surface); }
+  .flow { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .flow figure { margin: 0; display: grid; gap: 10px; }
+  .flow figcaption { font-size: 15px; color: var(--muted); }
+  .flow figcaption b { color: var(--ink); display: block; font-size: 17px; }
+  ul.tight { margin: 0; padding-left: 18px; color: var(--muted); font-size: 16px; display: grid; gap: 5px; }
 </style>
 </head>
 <body>
 
 <!-- 1. Title -->
 <section class="slide" data-n="01">
-  <svg class="stamp" viewBox="0 0 120 120"><defs><path id="r" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0"/></defs>
-    <circle cx="60" cy="60" r="56" fill="none" stroke="#98202b" stroke-width="3"/><circle cx="60" cy="60" r="35" fill="none" stroke="#98202b" stroke-width="1.5"/>
-    <text fill="#98202b" font-family="IBM Plex Mono" font-size="8.2" letter-spacing="1.2"><textPath href="#r">UF-7K3Q-9D2M · UNFORGED · UF-7K3Q-9D2M · UNFORGED ·</textPath></text>
-    <text x="60" y="60" text-anchor="middle" fill="#98202b" font-family="Newsreader" font-size="17">SEALED</text>
-    <text x="60" y="74" text-anchor="middle" fill="#98202b" font-family="Schibsted Grotesk" font-size="6.5" letter-spacing="1">ON MIDNIGHT</text></svg>
+  <svg class="stamp" viewBox="-60 -60 120 120" aria-hidden="true">
+    <defs><path id="r" d="M0,0 m-45,0 a45,45 0 1,1 90,0 a45,45 0 1,1 -90,0"/></defs>
+    <circle r="56" fill="none" stroke="#98202b" stroke-width="2.2"/><circle r="50" fill="none" stroke="#98202b" stroke-width=".7"/>
+    <circle r="33" fill="none" stroke="#98202b" stroke-width="1.2"/>
+    <g stroke="#98202b" stroke-width=".8" fill="none">
+      <ellipse rx="28" ry="9" transform="rotate(0)"/><ellipse rx="28" ry="9" transform="rotate(30)"/><ellipse rx="28" ry="9" transform="rotate(60)"/>
+      <ellipse rx="28" ry="9" transform="rotate(90)"/><ellipse rx="28" ry="9" transform="rotate(120)"/><ellipse rx="28" ry="9" transform="rotate(150)"/>
+    </g>
+    <circle r="5" fill="none" stroke="#98202b" stroke-width="1.4"/>
+    <text fill="#98202b" font-family="Geist Mono" font-size="6.6" letter-spacing="1.1"><textPath href="#r">SEALED ON MIDNIGHT · UF-0F85-704P · SIGNER WITHHELD · POOL VERIFIED ·</textPath></text>
+  </svg>
   <div style="margin-top:auto">
     <div class="eyebrow">Unforged · Midnight Buildathon · Wave 2</div>
-    <h1>Proof a photo is real.<br/><em><i>Not proof of who took it.</i></em></h1>
-    <p class="muted" style="font-size:24px;max-width:9in;margin:26px 0 0">Anonymous, hardware-signed photo seals. A phone's secure chip signs the photo; a zero-knowledge proof on Midnight shows it came from one of a pool's enrolled phones, never which one.</p>
+    <h1>Evidence<br/>without <span class="accent">exposure.</span></h1>
+    <p class="muted" style="font-size:24px;max-width:9.2in;margin:28px 0 0;line-height:1.4">Unforged proves that digital evidence came through an authorized capture and editorial workflow, without exposing the person or device behind it. A source-safe privacy and authorization layer for C2PA, built on Midnight.</p>
+    <p style="margin:26px 0 0"><span class="pill">github.com/bunnyyxtan/unforged</span><span class="pill">Compact 0.35 · ZKIR v3</span><span class="pill">34 tests · CI green</span></p>
   </div>
-  <div style="height:0.4in"></div>
-  <div class="brand"><i></i>github.com/bunnyyxtan/unforged</div>
+  <div style="height:.3in"></div>
+  <div class="foot"><b></b>bunnyy · Team Vertex</div>
 </section>
 
 <!-- 2. Problem -->
 <section class="slide" data-n="02">
-  <div class="eyebrow">The problem</div>
-  <h2>Fakes are free. Proof of real <em>exposes people.</em></h2>
-  <div class="grid g3" style="margin-top:10px">
-    <div class="card"><div class="big">$893M<small>2025 US losses in FBI complaints with an AI nexus</small></div></div>
-    <div class="card"><div class="big">1 in 5<small>biometric fraud attempts are deepfakes (Entrust 2026)</small></div></div>
-    <div class="card"><div class="big">17+<small>cameras and phones now sign photos at capture (C2PA, Pixel 10)</small></div></div>
-  </div>
-  <div class="card" style="margin-top:22px">
-    <p class="quote" style="color:var(--ink)">Signed capture proves a photo is real, but its metadata can reveal the photographer, the device and the location. For a reporter in a conflict zone, that's a physical danger.</p>
-  </div>
-  <p style="margin:22px 0 0;font-size:24px">Today you choose: <b>authentic and traceable</b>, or <b>anonymous and unverifiable</b>.</p>
-  <div class="src">Sources: FBI IC3 2025; Entrust 2026 Identity Fraud Report; C2PA adoption trackers 2026; SMPTE 2025 "Privacy vulnerabilities in C2PA"; WITNESS. Links in docs/RESEARCH.md.</div>
-  <div class="brand"><i></i>Unforged</div>
-</section>
-
-<!-- 3. Who -->
-<section class="slide" data-n="03">
-  <div class="eyebrow">Who needs it</div>
-  <h2>The people whose photos matter most.</h2>
+  <div class="eyebrow">The provenance privacy gap</div>
+  <h2>Provenance needs a trusted signer. <span class="accent">Naming the signer can get them jailed.</span></h2>
   <div class="grid g3">
-    <div class="card"><h3>Stringers & citizen journalists</h3><p>Need to be believed without being identified. Their safety depends on it.</p></div>
-    <div class="card"><h3>Fact-checkers & photo desks</h3><p>Need a one-second answer: real capture, unedited? Without learning the source.</p></div>
-    <div class="card"><h3>Platforms, insurers, marketplaces</h3><p>Must label real vs synthetic (EU AI Act Art. 50 since Aug 2026; India IT Rules since Feb 2026) without hoarding personal data.</p></div>
+    <div class="panel"><div class="num">330<small>journalists imprisoned at the end of 2025 (CPJ prison census)</small></div></div>
+    <div class="panel"><div class="num">129<small>journalists and media workers killed in 2025, CPJ's highest annual total</small></div></div>
+    <div class="panel"><h3>The default today</h3><p>Public signatures build durable identity and activity graphs. Centralized verifiers see every signer-to-file link. C2PA itself lists privacy, harms and human rights as design goals.</p></div>
   </div>
-  <div class="grid g2" style="margin-top:22px">
-    <div class="card"><h3>Regulatory tailwind</h3><p>EU AI Act Article 50 transparency duties apply from 2 Aug 2026. India's 2026 IT Rules amendment asks platforms to label synthetic media and embed provenance.</p></div>
-    <div class="card"><h3>Our first design partners</h3><p>Indian fact-checking organisations (IFCN signatories), then press-freedom NGOs and newsrooms with stringer networks.</p></div>
+  <div class="rule" style="margin-top:26px;padding-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:30px">
+    <p style="margin:0;font-size:23px;font-weight:700;letter-spacing:-.01em">Newsrooms must choose: authentic and traceable, or anonymous and unverifiable.</p>
+    <p style="margin:0;font-size:18px" class="muted">Unforged removes the choice: the public record proves the file came from an authorized pool and passed a defined workflow, and withholds who approved it.</p>
   </div>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="src">Sources: CPJ 2025 prison census; CPJ 2026 report on 2025 killings; C2PA 2.3 specification. Links in docs/RESEARCH.md.</div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 4. Solution -->
+<!-- 3. Why Midnight -->
+<section class="slide" data-n="03">
+  <div class="eyebrow">Why this needs Midnight</div>
+  <h2>Verification stays public. <span class="accent">Authorization stays private.</span></h2>
+  <div class="grid" style="grid-template-columns:1.05fr 1fr;gap:28px;align-items:start">
+    <table>
+      <tr><th></th><th>Central service</th><th>Public chain</th><th>C2PA alone</th><th>Unforged</th></tr>
+      <tr><td>Proves organizational authority</td><td>trust vendor</td><td class="yes">yes</td><td class="yes">yes</td><td class="yes">in ZK</td></tr>
+      <tr><td>Hides which member signed</td><td class="no">operator sees</td><td class="no">key on-chain</td><td class="no">signer cert</td><td class="yes">yes</td></tr>
+      <tr><td>Hides which admins approved</td><td class="no">no</td><td class="no">no</td><td class="no">no</td><td class="yes">nullifiers</td></tr>
+      <tr><td>Independently checkable</td><td class="no">no</td><td class="yes">yes</td><td>trust list</td><td class="yes">yes</td></tr>
+      <tr><td>No tokens for contributors</td><td class="yes">yes</td><td class="no">wallet</td><td class="yes">yes</td><td class="yes">sponsored</td></tr>
+    </table>
+    <div class="grid g2" style="gap:14px">
+      <div class="panel"><h3>Public on the ledger</h3><p>File fingerprint · hour-window capture time · pool epoch · opaque commitments · approval tally and nullifiers</p></div>
+      <div class="panel" style="background:var(--ink);border-color:var(--ink)"><h3 style="color:var(--bg)">Never leaves the prover</h3><p style="color:#d3c9b4">P-256 key and salt · passkey signature and authenticator data · Merkle path · approver secret · contributor identity</p></div>
+      <div class="panel" style="grid-column:1/-1"><p>Without private execution, a provenance system either publishes credentials or trusts a central verifier. Compact verifies the P-256 signature and two Merkle memberships inside one proof and discloses only what the contract selects.</p></div>
+    </div>
+  </div>
+  <div class="foot"><b></b>Unforged</div>
+</section>
+
+<!-- 4. Platform -->
 <section class="slide" data-n="04">
-  <div class="eyebrow">The solution</div>
-  <h2>A seal for human-captured media.</h2>
-  <div class="grid g3" style="margin-top:6px">
-    <div class="step"><b class="n">1</b><div><h3 style="margin:6px 0">Enroll</h3><p class="muted" style="margin:0">A phone creates a passkey in its secure chip (Secure Enclave, StrongBox, TPM). The pool stores only an opaque commitment in a Merkle tree.</p></div></div>
-    <div class="step"><b class="n">2</b><div><h3 style="margin:6px 0">Seal</h3><p class="muted" style="margin:0">Face ID approves; the chip signs H(pool, SHA-256(photo)). A ZK proof shows the signer is <i>one of</i> the enrolled phones.</p></div></div>
-    <div class="step"><b class="n">3</b><div><h3 style="margin:6px 0">Verify</h3><p class="muted" style="margin:0">Anyone drops the photo: <span class="ok">Sealed</span>, with time and pool size. Photographer: hidden. Nobody can know.</p></div></div>
+  <div class="eyebrow">The platform · Wave 2 build</div>
+  <h2>Six products. One trust boundary.</h2>
+  <div class="grid g3" style="gap:14px">
+    <div class="panel"><span class="chip live">Live · L0–L1</span><h3 style="margin-top:12px">Capture</h3><p>Passkey or labeled test credential approves the exact bytes. Native attestation and C2PA capture next.</p></div>
+    <div class="panel"><span class="chip live">Live</span><h3 style="margin-top:12px">Desk</h3><p>Every seal becomes a case: evidence matrix, checklist-gated approval, hold reasons, decision log, publication package.</p></div>
+    <div class="panel"><span class="chip live">Live · 2 of 3</span><h3 style="margin-top:12px">Trust Pools</h3><p>Anonymous threshold enrollment in circuit, revocation epochs, anonymity floor. The owner key alone cannot enroll.</p></div>
+    <div class="panel"><span class="chip live">Live</span><h3 style="margin-top:12px">Verify</h3><p>Eight-row security report: each claim labeled established, asserted, reviewed, unresolved or unavailable.</p></div>
+    <div class="panel"><span class="chip live">Live · local</span><h3 style="margin-top:12px">Relay</h3><p>Batches of three, shuffled submission order, capture time published to the hour.</p></div>
+    <div class="panel"><span class="chip draft">Draft profile</span><h3 style="margin-top:12px">Platform</h3><p>Draft C2PA <span class="mono">org.unforged.authorization</span> assertion and an offline CLI verifier. API, SDK and CMS plugins follow.</p></div>
   </div>
-  <div class="grid g2" style="margin-top:22px;align-items:start">
-    <img class="shot" src="img/sealed.jpg" alt="Sealed photo" />
-    <img class="shot" src="img/verify.jpg" alt="Verify result" />
-  </div>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 5. How on Midnight -->
+<!-- 5. Workflow -->
 <section class="slide" data-n="05">
-  <div class="eyebrow">Built on Midnight</div>
-  <h2>The chip's signature is verified <em>inside</em> the proof.</h2>
-  <div class="grid g2">
-    <div class="card">
-      <h3>unforged.compact · Compact 0.35 · ZKIR v3</h3>
-      <table>
-        <tr><th>Circuit</th><th>Guarantees</th></tr>
-        <tr><td class="mono">enroll</td><td>Admin adds an opaque device commitment to a HistoricMerkleTree</td></tr>
-        <tr><td class="mono">seal</td><td>Anonymous membership + in-circuit WebAuthn <span class="mono">secp256r1EcdsaVerify</span> over this pool + this photo, UP+UV, pool ≥ minimum, 24 h window</td></tr>
-        <tr><td class="mono">revoke</td><td>Removes a phone and resets accepted roots</td></tr>
-      </table>
-    </div>
-    <div class="card">
-      <h3>Privacy boundary</h3>
-      <table>
-        <tr><th>Public on Midnight</th><th>Never leaves the phone</th></tr>
-        <tr><td>Photo fingerprint</td><td>Which phone sealed it</td></tr>
-        <tr><td>Capture time</td><td>Device key and salt</td></tr>
-        <tr><td>Pool size, epoch</td><td>Merkle path</td></tr>
-        <tr><td>Opaque commitments</td><td>Passkey signature, authenticator data</td></tr>
-      </table>
-    </div>
+  <div class="eyebrow">One file through the workflow</div>
+  <h2>Capture. Review. Publish what readers can check.</h2>
+  <div class="flow">
+    <figure><img class="shot" style="height:3.1in" src="img/sealed.jpg" alt="Capture: sealed through the relay"/><figcaption><b>01 · Capture</b>2-of-3 approved credential seals the exact bytes; relay batch #1, hour window.</figcaption></figure>
+    <figure><img class="shot" style="height:3.1in" src="img/desk.jpg" alt="Desk: evidence case"/><figcaption><b>02 · Desk</b>A case with assurance level, withheld contributor and a checklist before approval.</figcaption></figure>
+    <figure><img class="shot" style="height:3.1in" src="img/published.jpg" alt="Publication package"/><figcaption><b>03 · Publish and verify</b>Every claim says how it is known. Scene truth is a human review, never a crypto claim.</figcaption></figure>
   </div>
-  <p class="muted" style="margin:20px 0 0;font-size:17px">WebAuthn profile reused from Midnight Passport (Apache-2.0): clientDataJSON rebuilt in-circuit, RP and origin bound. Midnight's founder publicly floated a "ZK proof a photo was taken by a real Apple phone"; this is it, generalised to any passkey.</p>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 6. Why Midnight -->
+<!-- 6. Engineering -->
 <section class="slide" data-n="06">
-  <div class="eyebrow">Why only Midnight</div>
-  <h2>Authentic, anonymous, and checkable by anyone.</h2>
-  <table style="font-size:20px">
-    <tr><th></th><th>Central database</th><th>Public chain</th><th>C2PA alone</th><th>Midnight</th></tr>
-    <tr><td>Proves real capture</td><td class="no">trust vendor</td><td class="ok">yes</td><td class="ok">yes</td><td class="ok">yes</td></tr>
-    <tr><td>Hides the photographer</td><td class="no">operator sees all</td><td class="no">key on-chain</td><td class="no">metadata leaks</td><td class="ok">ZK membership</td></tr>
-    <tr><td>Verifiable without trust</td><td class="no">no</td><td class="ok">yes</td><td>trust list</td><td class="ok">yes</td></tr>
-    <tr><td>Selective disclosure</td><td class="no">manual</td><td class="no">no</td><td class="no">no</td><td class="ok">native</td></tr>
-    <tr><td>No crypto for users</td><td class="ok">yes</td><td class="no">wallet + gas</td><td class="ok">yes</td><td class="ok">sponsored DUST</td></tr>
-  </table>
-  <div class="brand"><i></i>Unforged</div>
-</section>
-
-<!-- 7. Proof it works -->
-<section class="slide" data-n="07">
-  <div class="eyebrow">Proof it works</div>
-  <h2>Every attack is refused by the circuit.</h2>
-  <div class="grid g2" style="align-items:start">
-    <div class="card">
-      <table class="tight">
-        <tr><th>Attack</th><th>Result</th></tr>
-        <tr><td>Phone outside the pool</td><td><span class="code">NOT_ENROLLED</span></td></tr>
-        <tr><td>Borrowed membership path</td><td><span class="code">NOT_ENROLLED</span></td></tr>
-        <tr><td>Edited photo, reused signature</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
-        <tr><td>Replay from another pool</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
-        <tr><td>Stolen public key, no chip</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
-        <tr><td>Phishing origin / other website</td><td><span class="code">REFUSED</span></td></tr>
-        <tr><td>No Face ID / PIN (UV)</td><td><span class="code">REFUSED</span></td></tr>
-        <tr><td>Same photo twice</td><td><span class="code">ALREADY_SEALED</span></td></tr>
-        <tr><td>Backdated / future photo</td><td><span class="code">BAD_TIME</span></td></tr>
-        <tr><td>Pool too small to hide anyone</td><td><span class="code">POOL_TOO_SMALL</span></td></tr>
-        <tr><td>Revoked phone</td><td><span class="code">NOT_ENROLLED</span></td></tr>
-      </table>
-    </div>
-    <div class="grid">
-      <div class="grid g2">
-        <div class="card"><div class="big">26<small>tests, real P-256 passkey assertions</small></div></div>
-        <div class="card"><div class="big">0<small>bytes differ in public state, whichever phone sealed</small></div></div>
+  <div class="eyebrow">Engineering · unforged.compact</div>
+  <h2>A passkey signature and two anonymous memberships, <span class="accent">verified inside one proof.</span></h2>
+  <div class="grid" style="grid-template-columns:1.35fr 1fr;gap:26px;align-items:start">
+    <table>
+      <tr><th>Circuit</th><th>Private input</th><th>Guarantee</th></tr>
+      <tr><td class="mono">seal</td><td>P-256 key, salt, Merkle path, WebAuthn assertion</td><td>Anonymous membership + in-circuit <span class="mono">secp256r1EcdsaVerify</span> over pool and fingerprint; UP+UV; uniqueness; 24 h window; pool floor</td></tr>
+      <tr><td class="mono">approve</td><td>Approver secret, approver path</td><td>Anonymous approver membership; nullifier per (approver, credential); k-th approval enrolls</td></tr>
+      <tr><td class="mono">enroll</td><td>Owner secret</td><td>Direct enrollment only when no threshold policy exists</td></tr>
+      <tr><td class="mono">addApprover</td><td>Owner secret</td><td>Opaque approver commitment</td></tr>
+      <tr><td class="mono">revoke</td><td>Owner secret</td><td>Removes a credential, resets accepted roots, bumps the epoch</td></tr>
+    </table>
+    <div class="grid" style="gap:14px">
+      <div class="grid g2" style="gap:14px">
+        <div class="panel"><div class="num">34<small>simulator tests with real P-256 WebAuthn assertions</small></div></div>
+        <div class="panel"><div class="num">0<small>bytes of public state differ, whichever member sealed or approvers approved</small></div></div>
       </div>
-      <img class="shot" src="img/attacks.jpg" alt="Attack lab" />
+      <div class="panel"><p>Compact 0.35 · <span class="mono">--feature-zkir-v3</span> · ledger 9 · runtime 0.20. WebAuthn profile adapted from Midnight Passport (Apache-2.0). CI compiles the contract, runs every test, typechecks and builds the app on every commit. The React workspace executes the same generated circuits.</p></div>
     </div>
   </div>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 8. Business -->
+<!-- 7. Adversarial proof -->
+<section class="slide" data-n="07">
+  <div class="eyebrow">Assurance · ten exercises in the product</div>
+  <h2>Refusals are product behavior.</h2>
+  <div class="grid" style="grid-template-columns:1fr 1.1fr;gap:26px;align-items:start">
+    <table style="font-size:15px">
+      <tr><th>Attempt</th><th>Observed</th></tr>
+      <tr><td>Change one pixel of a sealed file</td><td><span class="code">NO_SEAL</span></td></tr>
+      <tr><td>Credential outside the pool</td><td><span class="code">NOT_ENROLLED</span></td></tr>
+      <tr><td>Reuse a signature for other pixels</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
+      <tr><td>Second signer claims the same file</td><td><span class="code">ALREADY_SEALED</span></td></tr>
+      <tr><td>Backdate capture by two days</td><td><span class="code">BAD_TIME</span></td></tr>
+      <tr><td>No user verification</td><td><span class="code">UV_REQUIRED</span></td></tr>
+      <tr><td>Look-alike origin</td><td><span class="code">BAD_SIGNATURE</span></td></tr>
+      <tr><td>Owner enrolls without approvers</td><td><span class="code">APPROVAL_REQUIRED</span></td></tr>
+      <tr><td>One approver approves twice</td><td><span class="code">ALREADY_APPROVED</span></td></tr>
+      <tr><td>Seal after revocation</td><td><span class="code">NOT_ENROLLED</span></td></tr>
+    </table>
+    <img class="shot" style="height:4.55in" src="img/attacks.jpg" alt="Assurance console after running all ten"/>
+  </div>
+  <div class="foot"><b></b>Unforged</div>
+</section>
+
+<!-- 8. Assurance ladder -->
 <section class="slide" data-n="08">
-  <div class="eyebrow">Business model</div>
-  <h2>Verification is free. Sealing is the product.</h2>
-  <div class="grid g4">
-    <div class="card"><h3>Verify</h3><p>Free forever for anyone. API free tier. The public good that drives adoption.</p></div>
-    <div class="card"><h3>Pools</h3><p>Newsrooms & NGOs pay per enrolled device / month (hypothesis $8–15). Independent journalists ride NGO-sponsored pools free.</p></div>
-    <div class="card"><h3>Capture SDK</h3><p>Insurers, marketplaces, KYC: per sealed capture (hypothesis $0.05–0.50).</p></div>
-    <div class="card"><h3>Verify API</h3><p>Platforms labelling real vs synthetic at scale.</p></div>
+  <div class="eyebrow">Honest assurance</div>
+  <h2>A browser passkey is not a Sony camera. <span class="accent">The verifier says so.</span></h2>
+  <div class="ladder">
+    <div class="on"><b>L0</b><span>Software test credential</span></div>
+    <div class="on"><b>L1</b><span>WebAuthn approval, UP + UV</span></div>
+    <div><b>L2</b><span>Device-bound hardware key</span></div>
+    <div><b>L3</b><span>Hardware and app attestation</span></div>
+    <div><b>L4</b><span>C2PA capture credential</span></div>
+    <div><b>L5</b><span>Sensor evidence and trusted time</span></div>
   </div>
-  <div class="grid g2" style="margin-top:22px">
-    <div class="card"><h3>Moat: an anonymity network effect</h3><p>A bigger pool hides everyone better, so shared pools get more valuable with every organisation that joins. Like Tor, for photographers.</p></div>
-    <div class="card"><h3>Competition</h3><p>Truepic, ProofMode, Numbers ProofSnap, OpenOrigins and native C2PA prove authenticity. None hides the signer while staying publicly verifiable. We are the privacy layer for content credentials.</p></div>
+  <div class="grid g2" style="margin-top:26px">
+    <div class="panel"><h3>Established in Wave 2</h3><ul class="tight"><li>Exact-file integrity and private pool authority</li><li>Credential active at the sealing epoch; anonymous k-of-n enrollment</li><li>Signer and approvers withheld from the record</li><li>Capture time bounded by ledger time, published to the hour</li></ul></div>
+    <div class="panel"><h3>Not claimed yet</h3><ul class="tight"><li>Camera-sensor origin (browser capture can be modified)</li><li>Public-network inclusion: ledger 9 is not on Preprod yet, so the contract runs on the local ledger-9 runtime</li><li>Network-level anonymity: the relay runs in the browser today</li><li>Signed C2PA manifests: the assertion is a draft profile</li></ul></div>
   </div>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 9. Roadmap -->
+<!-- 9. Company -->
 <section class="slide" data-n="09">
-  <div class="eyebrow">Roadmap</div>
-  <h2>From seal to the trust layer for real media.</h2>
-  <div class="grid g4">
-    <div class="card" style="border-color:var(--seal)"><h3>Wave 2 <span class="ok">· shipped</span></h3><p>Contract with in-circuit P-256 + anonymous membership. 26 tests. Web app with real passkeys, verify, attack lab, pool desk. Founding docs.</p></div>
-    <div class="card"><h3>Wave 3</h3><p>Ledger-9 network deploy (Preprod after the fork), phone PWA, Desk v1, sponsored fees, submission relay, 1–3 design partners sealing real photos.</p></div>
-    <div class="card"><h3>Wave 4</h3><p>Native iOS/Android with App Attest / Key Attestation (camera-bound pixels), device-bound keys, paid attribution ("claim this seal").</p></div>
-    <div class="card"><h3>2027</h3><p>C2PA bridge (Pixel, Leica → anonymous seal), coarse-location disclosure, edit-tolerant seals, video, Verify API and insurer pilots.</p></div>
+  <div class="eyebrow">Company</div>
+  <h2>Start where exposure is lethal. Scale through platforms.</h2>
+  <div class="grid g3">
+    <div class="panel"><h3>Beachhead</h3><p>Newsrooms, fact-checkers and human-rights teams that receive media from freelancers, stringers and sensitive sources. Buyer: security, standards or photo-desk leadership.</p></div>
+    <div class="panel"><h3>Expansion</h3><p>Election monitoring → insurance and legal evidence → science and supply-chain field records → marketplaces → AI training-data provenance → cameras, phones and platforms.</p></div>
+    <div class="panel"><h3>Revenue layers</h3><p>Enterprise platform (hypothesis: $1–3k/month small newsroom, $25–150k/year national) · Verify API · Capture SDK · self-hosted · OEM licensing · assurance services.</p></div>
   </div>
-  <div class="card" style="margin-top:22px"><h3>Honest limits today</h3><p>A web passkey proves a person approved on an enrolled authenticator, not that the camera sensor produced the pixels; native attestation closes this in Wave 4. Anonymity is as strong as the pool is large; the contract enforces a minimum.</p></div>
-  <div class="brand"><i></i>Unforged</div>
+  <div class="grid g2" style="margin-top:18px">
+    <div class="panel"><h3>Moat</h3><p>Private organizational authorization wired into C2PA, hardware and CMS workflows, plus an anonymity network effect: larger compatible pools protect every contributor better.</p></div>
+    <div class="panel"><h3>First-year targets</h3><p>3–5 design partners · 50–100 protected contributors · 10,000 real captures · 2 CMS integrations · first paid annual contract. Prices and targets are hypotheses until pilots.</p></div>
+  </div>
+  <div class="foot"><b></b>Unforged</div>
 </section>
 
-<!-- 10. Close -->
+<!-- 10. Next -->
 <section class="slide" data-n="10">
-  <div style="margin:auto 0">
-    <div class="eyebrow">Unforged</div>
-    <h1 style="font-size:84px">Seal what's real.<br/><em style="color:var(--seal)"><i>Protect who saw it.</i></em></h1>
-    <p style="margin-top:30px;font-size:22px"><span class="pill">github.com/bunnyyxtan/unforged</span><span class="pill">Built on Midnight</span><span class="pill">Apache-2.0</span></p>
+  <div class="eyebrow">Wave 3 · 27 Oct – 16 Nov</div>
+  <h2>From a working platform to network evidence.</h2>
+  <div class="grid g4" style="gap:14px">
+    <div class="panel"><h3>Network</h3><p>Real ledger-9 proofs, public deployment when supported, independent indexer checks, sponsored fees.</p></div>
+    <div class="panel"><h3>Capture</h3><p>Native Android prototype with hardware-backed keys and attestation (L2–L3).</p></div>
+    <div class="panel"><h3>Interop</h3><p>Signed C2PA manifests carrying the authorization assertion; public seal pages.</p></div>
+    <div class="panel"><h3>Operations</h3><p>Persistent multi-user Desk with roles, independent relays, 1–3 design partners.</p></div>
   </div>
-  <div class="brand"><i></i>bunnyy · Midnight Buildathon 2026</div>
+  <div style="margin-top:auto">
+    <p style="font-size:54px;font-weight:700;letter-spacing:-.04em;line-height:1.05;margin:0">The evidence can be public.<br/><span class="accent">The witness does not have to be.</span></p>
+    <p style="margin:22px 0 0"><span class="pill">github.com/bunnyyxtan/unforged</span><span class="pill">Built on Midnight</span><span class="pill">Apache-2.0</span></p>
+  </div>
+  <div style="height:.25in"></div>
+  <div class="foot"><b></b>bunnyy · Midnight Buildathon 2026</div>
 </section>
 
 </body>
