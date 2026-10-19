@@ -11,7 +11,7 @@ const STEPS = [
 const WORDS = [
   ["Seal", "A tamper-proof stamp on one exact photo. Change a single pixel and the seal no longer matches."],
   ["Group", "The trusted people allowed to seal. A seal proves someone in the group approved the photo, never who."],
-  ["Practice mode", "Everything runs inside your browser. Nothing is uploaded and nothing is saved when you reload."],
+  ["Your privacy", "Photos are checked on your device and never uploaded. Your passkey stays on your device."],
 ];
 
 const MORE = [
@@ -32,7 +32,7 @@ export function StartScreen() {
       <header className="start-hero">
         <span className="label">WELCOME</span>
         <h1 className="display">Make a photo <em>tamper-proof.</em></h1>
-        <p className="lede">A seal proves a photo is exactly the one a trusted group approved. Nobody can see who took it. Try it now, no account needed.</p>
+        <p className="lede">A seal proves a photo is exactly the one a trusted group approved. Nobody can see who took it.</p>
         <div className="start-actions">
           <a className="start-card start-card-primary" href={href({ page: "studio", tab: "seal" })}>
             <span className="start-card-icon"><Icon name="seal" size={26} /></span>

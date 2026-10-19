@@ -34,50 +34,18 @@ export function SealScreen() {
         title="Seal a photo"
         purpose="Pick a photo and we stamp it. Anyone can later check it has not been changed, and nobody can tell who took it."
       />
-      {s.me ? <Capture /> : <GettingReady />}
+      {s.me && <Capture />}
     </>
   );
 }
 
-/** First visit: create the practice pass automatically so there is nothing to decide. */
-function GettingReady() {
-  const [problem, setProblem] = useState<Problem>();
-  const started = useRef(false);
-
-  async function run() {
-    setProblem(undefined);
-    try {
-      await enrollMe(undefined, true);
-    } catch (e) {
-      setProblem({ title: "We couldn't get things ready.", detail: `${(e as Error).message || "Something went wrong"}. Nothing was saved. Press the button to try again.` });
-    }
-  }
-
-  useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    void run();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return (
-    <div className="ready-card" aria-live="polite">
-      {problem ? (
-        <>
-          <Icon name="alert" size={28} />
-          <h2 className="title">{problem.title}</h2>
-          <p className="meta">{problem.detail}</p>
-          <button className="btn btn-primary" onClick={() => void run()}>Try again</button>
-        </>
-      ) : (
-        <>
-          <span className="spinner" />
-          <h2 className="title">Getting your seal pass ready…</h2>
-          <p className="meta">This happens once and takes a moment.</p>
-        </>
-      )}
-    </div>
-  );
-}
+const SAMPLES = [
+  { file: "market", title: "Street market" },
+  { file: "bridge", title: "Trail bridge at dusk" },
+  { file: "suburb", title: "Old town from above" },
+  { file: "alpine", title: "Alpine valley" },
+];
+let sampleCursor = Math.floor(Math.random() * SAMPLES.length);
 
 const STAGES = [
   { title: "Reading your photo", detail: "We make a short code that belongs to this exact photo" },
@@ -96,7 +64,7 @@ function Capture() {
   const reduce = useReducedMotion();
   const video = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream>();
-  const [shot, setShot] = useState<{ bytes: Uint8Array; url: string; test: boolean; name?: string }>();
+  const [shot, setShot] = useState<{ bytes: Uint8Array; url: string; test: boolean; name?: string; title?: string }>();
   const [dragging, setDragging] = useState(false);
   const [stage, setStage] = useState(-1);
   const [times, setTimes] = useState<Partial<StageTimes>>({});
@@ -158,26 +126,44 @@ function Capture() {
     await keep(c, false);
   }
 
+  /** A real CC0 photograph. A small stamp makes each try unique so it can be sealed again. */
   async function testShot() {
-    const c = document.createElement("canvas");
-    c.width = 1600; c.height = 1200;
-    const g = c.getContext("2d")!;
-    const hue = Math.floor(Math.random() * 360);
-    const grd = g.createRadialGradient(800, 1300, 100, 800, 600, 1100);
-    grd.addColorStop(0, `hsl(${hue} 30% 32%)`);
-    grd.addColorStop(1, `hsl(${(hue + 40) % 360} 25% 9%)`);
-    g.fillStyle = grd; g.fillRect(0, 0, 1600, 1200);
-    for (let i = 0; i < 2600; i++) { g.fillStyle = `rgba(255,255,255,${Math.random() * 0.07})`; g.fillRect(Math.random() * 1600, Math.random() * 1200, 2, 2); }
-    g.fillStyle = "rgba(241,234,223,.92)"; g.font = "700 88px Satoshi, system-ui, sans-serif"; g.fillText("Test shot", 90, 170);
-    g.font = "34px 'Geist Mono', monospace"; g.fillText(new Date().toISOString(), 92, 230);
-    await keep(c, true);
+    const sample = SAMPLES[sampleCursor++ % SAMPLES.length];
+    setCameraIssue(undefined);
+    try {
+      const img = new Image();
+      await new Promise<void>((resolve, reject) => {
+        img.onload = () => resolve();
+        img.onerror = () => reject(new Error("The sample photo could not be loaded."));
+        img.src = `${import.meta.env.BASE_URL}media/samples/${sample.file}.jpg`;
+      });
+      const c = document.createElement("canvas");
+      c.width = img.naturalWidth; c.height = img.naturalHeight;
+      const g = c.getContext("2d")!;
+      g.drawImage(img, 0, 0);
+      const label = `SAMPLE · ${new Date().toISOString().slice(0, 19)}Z`;
+      g.font = `500 ${Math.round(c.width / 80)}px 'Geist Mono', monospace`;
+      const pad = Math.round(c.width / 80);
+      const w = g.measureText(label).width + pad * 2;
+      // Keep the stamp inside the 4:3 crop the capture preview shows.
+      const x = Math.round(c.width * 0.13);
+      const y = Math.round(c.height * 0.92);
+      g.fillStyle = "rgba(10,9,8,.55)";
+      g.fillRect(x, y - pad * 1.9, w, pad * 2.4);
+      g.fillStyle = "rgba(241,234,223,.95)";
+      g.fillText(label, x + pad, y - pad * 0.2);
+      await keep(c, true);
+      setShot((cur) => (cur ? { ...cur, title: `Sample · ${sample.title}` } : cur));
+    } catch (e) {
+      setCameraIssue((e as Error).message);
+    }
   }
 
   async function seal() {
     if (!shot) return;
     setProblem(undefined);
     try {
-      const rec = await sealPhoto(shot.bytes, shot.url, (st, t) => { setStage(st); setTimes({ ...t }); }, shot.name ? `Uploaded file · ${shot.name}` : undefined);
+      const rec = await sealPhoto(shot.bytes, shot.url, (st, t) => { setStage(st); setTimes({ ...t }); }, shot.name ? `Uploaded file · ${shot.name}` : shot.title);
       setSealed(rec);
       navigator.vibrate?.(20);
     } catch (e) {
@@ -288,7 +274,7 @@ function Capture() {
               <summary>What happened behind the scenes?</summary>
               <Stages stage={4} times={timeFor} simulated={s.me?.mode === "simulated"} />
               {sealed.batch && <p className="meta" style={{ margin: 0 }}>Sent in <a href={href({ page: "studio", tab: "relay" })}>batch {sealed.batch}</a> with {RELAY_BATCH - 1} other photos, and the time is rounded to the hour.</p>}
-              <p className="meta" style={{ margin: 0 }}>Practice mode runs the real contract inside your browser. On the public network it takes longer.</p>
+              <p className="meta" style={{ margin: 0 }}>The real contract ran inside your browser. On the public network sealing takes longer.</p>
               <a className="btn btn-quiet btn-sm" style={{ justifySelf: "start" }} href={href({ page: "studio", tab: "desk" })}>For teams: open {sealed.caseId} in the Review desk <Icon name="arrow" size={16} /></a>
             </details>
           </>
@@ -296,7 +282,7 @@ function Capture() {
           <>
             <h2 id="seal-panel-title" className="title">{running ? "Sealing your photo…" : shot ? "Looks good. Press Seal." : "Pick a photo to begin"}</h2>
             {!running && !shot && <p className="meta" style={{ margin: 0 }}>Choose one from your device, take one with your camera, or try a sample. Nothing leaves your browser.</p>}
-            {shot && !running && <p className="meta" style={{ margin: 0 }}>{shot.test ? "This is a sample picture made just for practice." : "We will seal this exact photo, exactly as it is."}</p>}
+            {shot && !running && <p className="meta" style={{ margin: 0 }}>{shot.test ? "A real sample photograph (public domain). A small stamp is added so you can seal it more than once." : "We will seal this exact photo, exactly as it is."}</p>}
             {running && <Stages stage={stage} times={timeFor} simulated={s.me?.mode === "simulated"} />}
             {problem && (
               <div className="status status-error" role="alert">

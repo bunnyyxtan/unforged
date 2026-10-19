@@ -4,7 +4,8 @@ import { Field } from "../components/Field";
 import { Icon, Mark } from "../components/Icon";
 import { href, type StudioTab } from "../lib/route";
 import { useTheme } from "../lib/theme";
-import { bootstrap, useStore } from "../store";
+import { bootstrap, signOut, useStore } from "../store";
+import { SignIn } from "./SignIn";
 import { StartScreen } from "./StartScreen";
 import { SealScreen } from "./SealScreen";
 import { VerifyScreen } from "./VerifyScreen";
@@ -60,32 +61,35 @@ export function Studio({ tab }: { tab: StudioTab }) {
 
   const phones = Number(s.pool?.ledger.deviceCount ?? 0);
   return (
-    <div className="studio">
+    <div className={`studio${s.me ? "" : " signed-out"}`}>
       <a className="skip" href="#studio-main">Skip to content</a>
       <header className="studio-bar">
         <a className="wordmark" href="#/" aria-label="Unforged home"><Mark size={20} />Unforged</a>
         <span className="studio-divider" aria-hidden="true" />
-        <span className="studio-name">Practice studio</span>
-        <span className="chip chip-ok pool-chip" title="This evaluation pool runs the compiled Compact contract locally">
-          <span className="dot" />{s.ready ? "Practice mode" : "Getting ready…"}
-        </span>
+        <span className="studio-name">Workspace</span>
+        
         <span className="spacer" />
-        <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
+        {s.me && <button className="btn btn-quiet btn-sm signout-btn" onClick={signOut}>Sign out</button>} <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
           <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
         </button>
       </header>
 
-      <nav className="studio-rail" aria-label="Workspace">
+      <nav className="studio-rail" aria-label="Workspace" hidden={!s.me}>
         {MAIN.map((n) => <RailLink key={n.tab} item={n} tab={tab} reduce={!!reduce} />)}
         <details className="rail-more" open={MORE.some((m) => m.tab === tab) || undefined}>
           <summary><span className="rail-section label">For teams and experts</span></summary>
           {MORE.map((n) => <RailLink key={n.tab} item={n} tab={tab} reduce={!!reduce} />)}
         </details>
-        <div className="rail-runtime">
-          <span className="rail-runtime-mark"><Icon name="ledger" size={16} /></span>
-          <div><strong>Practice mode</strong><span>Everything runs in your browser</span></div>
-          <span className="rail-live" aria-label="Ready" />
-        </div>
+        {s.me && (
+          <div className="rail-account">
+            <span className="rail-avatar" aria-hidden="true"><Mark size={22} /></span>
+            <div>
+              <strong>{s.me.mode === "passkey" ? "Signed in" : "Guest session"}</strong>
+              <span>{s.me.mode === "passkey" ? "Passkey on this device" : "Temporary key"}</span>
+            </div>
+            <button className="btn btn-quiet btn-sm" onClick={signOut}>Sign out</button>
+          </div>
+        )}
       </nav>
 
       <main id="studio-main" className="studio-main has-field dot-lattice" tabIndex={-1}>
@@ -97,7 +101,8 @@ export function Studio({ tab }: { tab: StudioTab }) {
           </div>
         )}
         {!s.ready && slow && <StudioSkeleton />}
-        {s.ready && !s.error && (
+        {s.ready && !s.error && !s.me && <SignIn />}
+        {s.ready && !s.error && s.me && (
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
               key={tab}

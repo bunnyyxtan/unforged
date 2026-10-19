@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <meta name="description" content="Proof a photo is real. Not proof of who took it. Anonymous, hardware-signed photo seals on Midnight." />
-    <meta name="theme-color" content="#f7f3ea" media="(prefers-color-scheme: light)" />
-    <meta name="theme-color" content="#100f0d" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f3ea" />
     <link rel="icon" type="image/svg+xml" href="%BASE_URL%favicon.svg" />
     <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -13,9 +12,9 @@
     <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <script>
-      // Apply the saved or system theme before first paint.
+      // Light by default; dark only when the visitor chose it.
       try {
-        var t = localStorage.getItem("unforged:theme") || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        var t = localStorage.getItem("unforged:theme") === "dark" ? "dark" : "light";
         document.documentElement.dataset.theme = t;
       } catch (e) { /* storage unavailable: CSS default (paper) applies */ }
     </script>

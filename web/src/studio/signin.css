@@ -1,0 +1,23 @@
+/* ---- Sign-in and account ---- */
+.signin { min-height: calc(100vh - 68px - 2 * var(--s-6)); display: grid; place-items: center; }
+.signin-card { width: min(460px, 100%); display: grid; gap: var(--s-4); padding: var(--s-7) var(--s-6); background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-raised); text-align: center; justify-items: stretch; }
+.signin-card .headline { font-size: clamp(1.9rem, 1.4rem + 1.4vw, 2.5rem); }
+.signin-mark { justify-self: center; }
+.signin-main { width: 100%; justify-content: center; }
+.signin-or { display: grid; grid-template-columns: 1fr auto 1fr; gap: var(--s-3); align-items: center; color: var(--text-3); font-size: .875rem; }
+.signin-or::before, .signin-or::after { content: ""; height: 1px; background: var(--line-soft); }
+.signin-facts { list-style: none; margin: var(--s-2) 0 0; padding: var(--s-4) 0 0; border-top: 1px solid var(--line-soft); display: grid; gap: 8px; text-align: left; color: var(--text-2); font-size: .875rem; }
+.signin-facts li { display: grid; grid-template-columns: 18px 1fr; gap: 8px; align-items: start; }
+.signin-facts svg { margin-top: 2px; color: var(--ok); }
+.signout-btn { color: var(--text-2); }
+.studio-rail[hidden] { display: none; }
+.rail-account { display: none; }
+@media (min-width: 900px) {
+  .rail-account { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 4px var(--s-3); align-items: center; margin-top: auto; padding: var(--s-4) var(--s-3); border-top: 1px solid var(--line-soft); }
+  .rail-avatar { grid-row: 1 / span 2; width: 36px; height: 36px; display: grid; place-items: center; border-radius: 50%; background: var(--surface-sunken); }
+  .rail-account strong { display: block; font-size: .875rem; line-height: 1.2; }
+  .rail-account div span { display: block; color: var(--text-3); font-size: .75rem; }
+  .rail-account .btn { grid-column: 1 / -1; justify-self: start; margin-left: -8px; }
+}
+.studio.signed-out { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 900px) { .signout-btn { display: none; } }

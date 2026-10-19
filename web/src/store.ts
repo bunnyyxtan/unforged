@@ -149,8 +149,6 @@ async function deployDemoPool() {
     set({ pool, reporters });
     await seedSubmissions(pool, reporters);
     set({ ready: true });
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && realPasskeysAvailable()) await enrollMe(JSON.parse(saved) as StoredCredential);
   } catch (e) {
     set({ ready: true, error: (e as Error).message });
   }
@@ -280,6 +278,34 @@ export async function enrollMe(existing?: StoredCredential, simulated = false) {
     me = { mode: "simulated", device: soft.device(), index, soft, commitment: toHex(pool.commitmentOf(soft.device())) };
   }
   set({ me });
+}
+
+/** True when this browser already holds a passkey created by a previous sign-in. */
+export function hasSavedPasskey(): boolean {
+  try { return !!localStorage.getItem(STORAGE_KEY); } catch { return false; }
+}
+
+/**
+ * Passkey sign-in. A returning user proves presence with their device (user verification
+ * required) before the saved credential is used; a first-time user creates a passkey.
+ */
+export async function signInWithPasskey() {
+  let stored: StoredCredential | undefined;
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) stored = JSON.parse(raw) as StoredCredential;
+  } catch { /* unreadable: treat as first sign-in */ }
+  if (stored) await realAssertion(stored, random(32));
+  await enrollMe(stored, false);
+}
+
+/** A temporary session with a software key. Ends when the tab closes. */
+export async function continueAsGuest() {
+  await enrollMe(undefined, true);
+}
+
+export function signOut() {
+  set({ me: undefined });
 }
 
 export function forgetPasskey() {

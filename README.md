@@ -30,7 +30,8 @@ The repository contains a complete local evaluation workflow:
 
 | Surface | Working behavior |
 |---|---|
-| **Capture** | Enroll a real passkey or a clearly labeled simulated credential (approved by 2 of 3 anonymous approvers), capture a camera frame, upload an existing photo (sealed byte for byte) or generate a test frame, and approve the exact bytes |
+| **Sign in** | Passkey sign-in (Face ID, fingerprint, Windows Hello or PIN; no password or email) or a temporary guest session. The credential is approved by 2 of 3 anonymous approvers |
+| **Capture** | Take a photo, upload an existing one (sealed byte for byte) or try a real sample photograph, then approve the exact bytes |
 | **Desk** | Every seal opens an evidence case: established / asserted / human-reviewed / unresolved matrix, editorial checklist, hold reasons, decision log and a publication package |
 | **Verify** | Drop an image, recompute SHA-256 locally and get an eight-row security report with the L0–L5 assurance ladder; export a local review or a draft C2PA `org.unforged.authorization` assertion |
 | **Trust pool** | 2-of-3 anonymous approver policy enforced in circuit, aggregate pool state, revocation guarded by the anonymity floor |
