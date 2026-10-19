@@ -115,8 +115,8 @@ export function VerifyScreen() {
                   </div>
                 </div>
                 <ul className="facts">
-                  <li><Icon name="check" size={16} /> Captured on one of <b>&nbsp;{result.poolSize} enrolled phones&nbsp;</b> in this pool</li>
-                  <li><Icon name="check" size={16} /> Approved by a person, on {new Date(result.takenAt * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</li>
+                  <li><Icon name="check" size={16} /><span>Captured on one of <b>{result.poolSize} enrolled phones</b> in this pool</span></li>
+                  <li><Icon name="check" size={16} /><span>Approved by a person, on {new Date(result.takenAt * 1000).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}</span></li>
                   <li><Icon name="check" size={16} /> Unchanged since capture, byte for byte</li>
                 </ul>
                 {result.removedSince > 0 && (
@@ -128,7 +128,7 @@ export function VerifyScreen() {
                 <div className="segmented" role="tablist" aria-label="Seal details">
                   {(["world", "private", "yourself"] as View[]).map((v) => (
                     <button key={v} role="tab" aria-selected={view === v} onClick={() => setView(v)}>
-                      {v === "world" ? "What the world sees" : v === "private" ? "What stays private" : "Check it yourself"}
+                      {v === "world" ? "Public record" : v === "private" ? "Kept private" : "Verify yourself"}
                     </button>
                   ))}
                 </div>

@@ -108,7 +108,7 @@
 .attack-table td:nth-child(2) { width: 120px; }
 .attack-table td:nth-child(3) { width: 40%; }
 .attack-result { display: grid; gap: 4px; }
-.attack-result .code { justify-self: start; }
+.attack-result > :first-child { justify-self: start; }
 @media (max-width: 760px) {
   .attack-table thead { display: none; }
   .attack-table tr { display: grid; gap: var(--s-3); padding-block: var(--s-4); border-bottom: 1px solid var(--line); }
