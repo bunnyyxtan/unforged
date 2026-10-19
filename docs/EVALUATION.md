@@ -98,7 +98,7 @@ Verification completed locally and in CI:
 
 - production web build passed;
 - contract simulator suite passed 34/34;
-- [CI run 39230865320](https://github.com/bunnyyxtan/unforgedds/actions/runs/39230865320) compiled the threshold contract and passed all tests on commit `4b2f98b`.
+- [CI run 39230865320](https://github.com/bunnyyxtan/unforged/actions/runs/39230865320) compiled the threshold contract and passed all tests on commit `4b2f98b`.
 
 ## Submission checklist
 

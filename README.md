@@ -4,7 +4,7 @@
 
 Unforged is a privacy-preserving trust layer for digital evidence. It lets an organization prove that an exact asset was approved by an authorized capture credential without publishing which contributor or device approved it.
 
-[![CI](https://github.com/bunnyyxtan/unforgedds/actions/workflows/ci.yml/badge.svg)](https://github.com/bunnyyxtan/unforgedds/actions/workflows/ci.yml)
+[![CI](https://github.com/bunnyyxtan/unforged/actions/workflows/ci.yml/badge.svg)](https://github.com/bunnyyxtan/unforged/actions/workflows/ci.yml)
 ![Compact](https://img.shields.io/badge/Compact-0.35.0%20%C2%B7%20ZKIR%20v3-1f1f1f)
 ![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 
