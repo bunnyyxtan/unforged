@@ -50,7 +50,7 @@ WebAuthn verification uses the profiled module from [midnightntwrk/passport](htt
 
 | Screen | What you can do |
 |---|---|
-| **Seal a photo** | Enroll your device with a real passkey (Face ID, Touch ID, Windows Hello, or a phone via QR), shoot with the camera, and watch the seal stamp down |
+| **Seal a photo** | Enroll your device with a real passkey (Face ID, Touch ID, Windows Hello, or a phone via QR), shoot with the camera, and watch the seal draw itself |
 | **Verify** | Drop any photo: **Sealed** (three ticks, time, pool size, photographer hidden) or **No seal found**. Tabs show what the world sees, what stays private, and how to check it yourself |
 | **Attack lab** | Run 8 attacks against the circuit (outsider, edited photo, replay, backdate, skip Face ID, phishing, stolen phone, one-pixel edit) and see each refusal code |
 | **Pool desk** | The admin view: enroll and remove phones, but never see who sealed what |

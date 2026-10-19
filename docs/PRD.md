@@ -32,7 +32,7 @@ Anyone can fake a photo. Signed-capture standards prove authenticity but can exp
 | **Reader** | Anyone with a link | One-glance answer | Jargon |
 
 ## 4. Core concepts (product language)
-- **Seal**: the public record that a specific image (by fingerprint) was captured by an enrolled device at a time. Shown as a vermilion stamp with a short Seal ID (e.g. `UF-7K3Q-9D2M`).
+- **Seal**: the public record that a specific image (by fingerprint) was captured by an enrolled device at a time. Shown as an embossed guilloche seal, unique to the photo, with a short Seal ID (e.g. `UF-7K3Q-9D2M`).
 - **Pool**: a set of enrolled devices that share anonymity. Seals say "a device in *Independent Press Pool* (412 devices)". Bigger pools are safer.
 - **Enrolled device**: a phone or laptop whose secure-chip passkey has been added to a pool.
 - **Fingerprint**: SHA-256 of the exact image file.
