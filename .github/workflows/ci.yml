@@ -44,6 +44,9 @@ jobs:
         working-directory: contract
         run: npm test
 
+      - name: Build web app (runs the compiled contract in the browser)
+        run: npm run build -w web
+
       # Generated code for machines without the Compact compiler (e.g. Windows).
       - uses: actions/upload-artifact@v4
         with:
