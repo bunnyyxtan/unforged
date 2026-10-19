@@ -1,45 +1,122 @@
 # Unforged — Vision
 
-> **Prove it's real. Keep who took it secret.**
+> **The trust layer for digital evidence, with minimum necessary disclosure.**
 
 ## Mission
-Make reality provable without making people traceable.
 
-## The problem, in one paragraph
-Generative AI made a fake photo free. The industry's answer, signed capture (C2PA "Content Credentials", now shipping in Google's Pixel 10, Leica, Sony, Canon and Nikon cameras, with 6,000+ Content Authenticity Initiative members), proves an image is authentic by attaching signed metadata. That metadata can expose who took the photo, which device, and where. Researchers and press-freedom groups have flagged it as a physical danger for the people whose photos matter most: reporters in conflict zones, protesters, whistleblowers, citizen journalists. Today you choose between **authentic and traceable** or **anonymous and unverifiable**.
+Make digital evidence independently verifiable without turning provenance infrastructure into a directory of reporters, witnesses, employees, investigators or devices.
 
-## What Unforged is
-A **seal** for human-captured media:
-1. A phone's secure chip signs the photo the moment it's taken, approved with the owner's face or fingerprint.
-2. A zero-knowledge proof shows the signature came from **one of the enrolled devices in a trusted pool**, without revealing which one.
-3. The proof is checked and recorded on **Midnight**, a public blockchain built for selective disclosure. No company has to be trusted, and nobody can quietly edit the record.
-4. Anyone can verify a photo in a second: **Sealed · captured 19 Oct 2026, 14:02 · Independent Press Pool (412 devices) · photographer hidden.**
+## The category
 
-## Why now
-- **Fakes are mainstream.** The FBI counted ~$893M in 2025 US losses from complaints with an AI nexus. Deepfakes are ~1 in 5 biometric fraud attempts (Entrust 2026). Insurers report AI-altered claim photos (SAS, May 2026).
-- **Regulation demands provenance.** EU AI Act Article 50 transparency duties apply from **2 Aug 2026**. India's IT Rules amendment on "synthetically generated information" took effect **20 Feb 2026** and asks platforms to embed provenance metadata where feasible.
-- **Hardware signing exists.** Phones and cameras now ship secure-chip signing (Pixel 10 C2PA Assurance Level 2, StrongBox / Secure Enclave, passkeys).
-- **Private verification just became possible.** Midnight's Compact 0.35 / ledger 9 added in-circuit **P-256 ECDSA verification**, the curve those secure chips and passkeys use. That lets the chip's signature be checked *inside* a private proof. Midnight's founder publicly floated a "ZK proof a photo was taken by a real Apple phone" (Sep 2026).
+Unforged is privacy-preserving evidence infrastructure. It connects capture hardware, organizations, publishers and public verifiers through a shared rule:
 
-## Who it's for (in the order we'll serve them)
-1. **People who can't afford to be identified:** stringers, fixers, citizen journalists, human-rights documenters.
-2. **The desks that publish them:** fact-checkers, newsrooms, wire photo desks, OSINT teams.
-3. **Anyone who needs real photos without collecting more personal data:** insurers (claims), marketplaces (listings), platforms (labelling under the EU AI Act / India IT Rules).
+> Prove that an asset passed an authorized workflow. Reveal only the evidence the recipient needs.
+
+The initial product protects photographs contributed to newsrooms. The platform expands to video, audio, documents, insurance claims, human-rights evidence, scientific field records, marketplace listings and AI training-data provenance.
+
+## The problem
+
+Digital provenance has two incomplete defaults:
+
+1. **Public identity:** a signature establishes a known device or signer but can expose a vulnerable contributor and create a durable activity graph.
+2. **Centralized privacy:** a service hides the public identity but still sees the signer-to-asset relationship and can change, suppress or selectively report records.
+
+Organizations need a third option: publicly verifiable authorization with private membership. An editor should be able to establish that one credential in an approved pool authorized an exact asset without the public record identifying the credential.
+
+## Product promise
+
+For every asset, Unforged answers four separate questions:
+
+| Question | Product response |
+|---|---|
+| Did an authorized credential approve these bytes? | Proved by the Midnight contract |
+| What capture or editing evidence accompanies the asset? | Represented through C2PA-compatible provenance |
+| Is the credential still trusted under organization policy? | Evaluated against pool epoch, revocation and policy |
+| What remains a human judgment? | Shown explicitly: scene truth, context, intent and source safety outside the record |
+
+The product never collapses these questions into an “authentic” badge.
+
+## Why Midnight is essential
+
+Unforged depends on five Midnight properties working together:
+
+- private witness state for credential keys, salts, signatures and membership paths;
+- public contract state for commitments, policy, revocation epochs and seal records;
+- programmable disclosure that publishes a narrow result rather than the underlying identity;
+- TypeScript-aligned Compact development for product integration;
+- a public verification layer that removes Unforged as the sole source of truth.
+
+Without private smart-contract execution, the system must expose the credential, trust a centralized verifier, or create a separate cryptographic network. Midnight supplies the public/private boundary as infrastructure.
+
+## Platform products
+
+### Capture
+
+Native and SDK-based capture using hardware-protected keys, application attestation, C2PA manifests, offline queues and organization policy.
+
+### Desk
+
+An evidence workspace for validation, contextual review, approval, disclosure requests, incident response and publication.
+
+### Trust Pools
+
+Private organizational authorization networks with threshold administration, temporary credentials, revocation, minimum anonymity and aggregate operations.
+
+### Verify
+
+Public web, API, SDK, CMS and browser integrations that explain assurance level, provenance history, policy and unresolved claims.
+
+### Relay
+
+Batched and privacy-preserving submission infrastructure designed to reduce IP, timing and proof-generation correlation.
+
+### Platform
+
+Capture SDK, Verify API, C2PA privacy bridge, policy engine, self-hosted enterprise edition and OEM integrations.
+
+## C2PA strategy
+
+C2PA is the interoperability layer for media provenance. Unforged does not replace it. Unforged contributes a private organizational-authorization proof that can travel with, or be referenced from, a C2PA manifest.
+
+The intended production flow is:
+
+1. supported hardware creates capture evidence;
+2. the client creates or preserves a C2PA manifest;
+3. Midnight proves private pool membership and organization policy;
+4. a source-safe bridge binds the proof reference to the manifest;
+5. editors and public validators inspect both provenance and private authorization;
+6. soft bindings help recover provenance after metadata stripping or re-encoding.
+
+## Beachhead and expansion
+
+1. **Newsrooms and fact-checkers:** protect freelancers, stringers and sensitive contributors.
+2. **Human-rights and election organizations:** preserve evidence while reducing witness exposure.
+3. **Insurance and legal evidence:** prove authorized capture and chain of custody.
+4. **Science and supply chains:** establish field origin and approved workflow.
+5. **Platforms, camera makers and AI ecosystems:** embed private provenance verification at global volume.
+
+## Five-year ambition
+
+Unforged becomes the neutral trust layer used when an asset must be verified across organizational boundaries but the contributor, device or underlying data must remain private.
+
+The network effect comes from interoperability and trust:
+
+- more compatible capture devices increase supply;
+- more organizational pools increase useful authorization;
+- more publishers and platforms increase verification demand;
+- more verifiers make evidence portable;
+- shared standards reduce integration cost for every participant.
 
 ## Principles
-- **Privacy by construction, not by policy.** If we don't need to know something, the system makes it impossible for us to know it.
-- **Verification is a public good.** Checking a seal is free, forever, for anyone.
-- **No crypto in the user's face.** No wallets, seed phrases or tokens. Face ID and a camera.
-- **Honest claims.** A seal says exactly what was proven and nothing more. Every limit is written down.
-- **Bigger pools, safer people.** Like Tor, anonymity grows with the crowd, so pools are designed to be shared across organisations.
 
-## Where this goes (5 years)
-- **Year 1:** the seal for at-risk journalism. Design partners in fact-checking and press freedom. PWA capture, then native apps with hardware attestation.
-- **Year 2:** a C2PA bridge. Any C2PA-signed photo (Pixel, Leica, Sony…) can be converted into an **anonymous** seal, plus selective disclosure ("taken in Kharkiv oblast, 19 Oct", not GPS to the metre).
-- **Year 3:** platform and insurer APIs. A "Sealed" badge in feeds and claims systems, where verifying costs a fraction of a cent.
-- **Year 5:** the default trust layer for human-captured media: video, audio, documents, sensor data. Anyone can prove "a real person captured this, unedited" without becoming a target.
+1. **Prove narrowly.** Every result names exactly what was established.
+2. **Collect less.** Data that is unnecessary for verification is excluded by construction.
+3. **Interoperate.** Use C2PA and platform security primitives rather than inventing incompatible formats.
+4. **Make refusal visible.** Failed proofs and policy boundaries are product behavior.
+5. **Protect against operations, not only cryptography.** Network, timing, enrollment and administrator metadata belong in the threat model.
+6. **Keep users out of crypto mechanics.** Contributors see approval, evidence and status; pools sponsor fees.
+7. **Earn trust through evidence.** Compiles, tests, deployments, audits, pilots and measured reliability support every claim.
 
-## What we will never do
-- Sell, log or correlate who sealed what.
-- Put identifying data on-chain.
-- Claim a seal proves the *scene* is true. It proves the *capture* is real and untouched. Context still needs journalism.
+## Current boundary
+
+Wave 2 proves the core primitive in a local Compact runtime: anonymous pool membership plus a real P-256 WebAuthn assertion bound to an exact file fingerprint. It does not establish camera sensor origin, public-network inclusion, durable anonymity against network observers or production organizational controls. Those are explicit release gates in the [PRD](PRD.md), [Threat model](THREAT-MODEL.md) and [Roadmap](ROADMAP.md).

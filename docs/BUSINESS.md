@@ -1,51 +1,166 @@
-# Unforged — Business model & go-to-market
+# Unforged — Business model and go-to-market
 
-_All prices are **hypotheses** to test with design partners, not validated numbers._
+## Company thesis
 
-## Customers and what they buy
-| Segment | Job to be done | Buys | Pays? |
-|---|---|---|---|
-| At-risk reporters, citizen journalists, human-rights documenters | Get photos believed without being identified | Capture app | **Never.** Funded by pools |
-| Fact-checkers, newsrooms, wire photo desks | Trust incoming images fast; protect sources | Pool membership (devices) + Desk console | Yes |
-| Press-freedom NGOs & foundations | Protect the people they support | Sponsor shared anonymity pools | Yes (grants) |
-| Platforms & publishers (EU AI Act Art. 50, India IT Rules 2026) | Label real vs synthetic at scale | Verify API + "Sealed" badge SDK | Yes |
-| Insurers, marketplaces, KYC providers | Real claim/listing/selfie photos without hoarding customer data | Capture SDK + per-seal pricing | Yes |
+Unforged is the privacy-preserving authorization layer for digital evidence. It enables organizations to prove that an asset came through an approved capture or evidence workflow while withholding the contributor or device identity from the public record.
+
+The company begins with high-risk journalism, where identity exposure has immediate consequences, and expands through a reusable platform for insurance, legal evidence, human-rights documentation, science, marketplaces and AI-data provenance.
+
+## Beachhead customer
+
+### Primary buyer
+
+Newsroom security, standards, investigations or photo-desk leadership at organizations that receive media from freelancers, stringers or sensitive sources.
+
+### Primary users
+
+- contributors capturing evidence;
+- editors and fact-checkers validating it;
+- security administrators managing authorization pools;
+- readers and partner organizations verifying published assets.
+
+### Job to be done
+
+“Let us verify that a contribution came through an authorized workflow without exposing the contributor through the provenance record.”
+
+### Urgent triggers
+
+- manipulated or AI-generated evidence reaches an editorial desk;
+- a source requires anonymity;
+- a credential or device is stolen;
+- a publisher needs to explain provenance publicly;
+- an organization needs a consistent evidence policy across devices and regions.
+
+## Product packaging
+
+| Product | Buyer value | Commercial form |
+|---|---|---|
+| Capture | Hardware-backed, policy-compliant evidence intake | Mobile app and SDK license |
+| Desk | Faster, consistent evidence review and publication | Enterprise SaaS or self-hosted deployment |
+| Trust Pools | Private authorization, revocation and policy | Protected-contributor / organization plan |
+| Verify | Independent public and internal validation | Web, API, CMS and platform SDK |
+| Relay | Reduced network and timing correlation | Managed privacy infrastructure or self-hosted service |
+| C2PA Bridge | Interoperability between hardware provenance and private authorization | Enterprise/OEM integration |
 
 ## Revenue model
-1. **Verify is free forever.** The public good drives adoption; free API tier with rate limits.
-2. **Pools (newsrooms, NGOs):** per enrolled device per month. Hypothesis **$8–15/device/month**, including seals and sponsored network fees. Independent journalists ride shared NGO-sponsored pools at no cost.
-3. **Enterprise capture SDK (insurers, marketplaces, KYC):** per sealed capture. Hypothesis **$0.05–0.50/seal** plus platform fee, volume-tiered.
-4. **Verify API at scale (platforms):** per 1,000 verifications above the free tier.
 
-## Unit economics (structure; numbers to measure)
-- **Network fees:** paid in DUST, which regenerates from NIGHT held by Unforged (Midnight's dual-token model). Fees become a predictable capital cost rather than per-transaction spend, and users never touch tokens.
-- **Proving:** done on the user's device or a privacy-preserving prover. Measure proof time and size per seal in Wave 3.
-- **Infra:** indexer reads, static hosting, push notifications. Low.
-- **Target:** gross margin > 80% at pool pricing. **ESTIMATE**, validate in Wave 4.
+1. **Enterprise subscription:** annual contract by organization size, regions, protected contributors and workflow modules.
+2. **Verification API:** metered by verified assets or request volume with privacy-safe caching.
+3. **Capture and CMS SDK:** annual developer license and support agreement.
+4. **Self-hosted enterprise:** deployment, updates, support and security-response subscription.
+5. **OEM/platform licensing:** per-device, per-tenant or negotiated platform agreement.
+6. **Assurance services:** onboarding, policy design, threat modeling, interoperability testing and incident exercises.
 
-## Moat
-1. **Anonymity network effect.** A bigger pool gives every member more anonymity, so shared pools get more valuable with each organisation that joins. That's hard to copy once established.
-2. **ZK + hardware attestation know-how** on Midnight: P-256 in-circuit, WebAuthn, then App Attest, Key Attestation, and a C2PA bridge.
-3. **Trust brand** with press-freedom organisations, which is earned slowly.
+Illustrative pricing hypotheses for interviews, not validated offers:
+
+| Segment | Hypothesis |
+|---|---|
+| Small newsroom or NGO | US$1,000–3,000/month |
+| National publisher or investigation organization | US$25,000–150,000/year |
+| Global publisher, platform or sovereign deployment | Six- to seven-figure annual agreement |
+| Verification API | Volume tiers by asset or API request |
+| OEM | Negotiated integration and per-device/platform license |
+
+Newsroom SaaS establishes credibility and workflow depth. Platform, API and OEM distribution create the scale required for a very large company.
+
+## Market expansion
+
+| Stage | Use case | Shared primitive |
+|---|---|---|
+| 1 | News and fact-checking | Authorized capture with source protection |
+| 2 | Human rights and election evidence | Witness-safe chain of custody |
+| 3 | Insurance and legal evidence | Approved capture and tamper-evident review |
+| 4 | Science, environment and supply chains | Private field authority and provenance |
+| 5 | Marketplaces and brand protection | Authorized listing/media origin |
+| 6 | AI training and generated-media ecosystems | Dataset and model-workflow authorization |
+| 7 | Cameras, phones and platforms | Embedded private provenance infrastructure |
 
 ## Go-to-market
-| Phase | Who | How we reach them | Proof point |
-|---|---|---|---|
-| 1. Design partners (Wave 3) | Indian fact-checkers (IFCN signatories) and student/independent newsrooms | Direct outreach from India; the Feb 2026 IT Rules make provenance urgent | 1–3 partners seal real photos; a quote or LOI |
-| 2. Credibility | Press-freedom orgs and journalism-safety trainers | Their digital-security trainings; open-source threat model | A shared pool sponsored by an NGO |
-| 3. Newsrooms | Photo desks with stringer networks | Desk console + Verify badge | Paid pools |
-| 4. Platforms & insurers | Compliance and fraud teams | Verify API, capture SDK, C2PA bridge | Per-seal revenue |
 
-## Competition (summary; detail in RESEARCH.md §5)
-Truepic, ProofMode, Numbers ProofSnap, OpenOrigins and native C2PA all **prove authenticity**. None hides the signer while staying publicly verifiable without trusting the vendor. We position as **the privacy layer for content credentials**, complementary to C2PA rather than a rival standard.
+### Design-partner motion
 
-## Funding path
-Midnight Buildathon grants → Midnight Build Club → Midnight Accelerator / investor network. In parallel: journalism-innovation and press-freedom grants for the free tier.
+1. Interview 15–20 photo editors, digital-forensics leads, newsroom security staff and field contributors.
+2. Select 3–5 organizations with sensitive-source workflows and a technical champion.
+3. Map one existing intake and verification process end to end.
+4. Run a controlled pilot with synthetic or low-risk media before handling real sensitive evidence.
+5. Measure review time, failed submissions, proof time, support burden and policy fit.
+6. Convert at least one pilot into a paid annual agreement.
+
+### Distribution
+
+- newsroom CMS and digital-asset-management integrations;
+- fact-checking and OSINT tooling partnerships;
+- C2PA and Content Authenticity Initiative participation;
+- camera and phone OEM integration experiments;
+- open verifier and test vectors that build ecosystem trust;
+- security research, threat exercises and transparent incident reporting.
+
+## Pilot success criteria
+
+| Metric | First commercial-year target |
+|---|---:|
+| Design partners | 3–5 |
+| Protected contributors | 50–100 |
+| Real captures processed | 10,000 |
+| CMS/DAM integrations | 2 |
+| Paid annual contracts | ≥1 |
+| Median invite-to-first-seal | <3 minutes |
+| Verification p95 | <3 seconds excluding external-network delays |
+| Proof success rate | >99% after supported-device filtering |
+| Critical privacy/security findings unresolved | 0 before production handling |
+
+Targets are hypotheses until measured in pilots.
+
+## Unit economics
+
+Primary variable costs are proof generation, relay execution, indexer access, encrypted evidence storage, support and incident response. DUST sponsorship should keep contributors out of token mechanics; actual NIGHT/DUST capital requirements must be measured on a real deployment.
+
+Target model:
+
+- annual enterprise contracts cover fixed security and integration cost;
+- verification reads are highly cacheable without storing user files;
+- organizations may self-host sensitive media and proving infrastructure;
+- gross-margin targets are set only after measured proof and support costs.
+
+The prior 80% margin target remains a hypothesis, not a current result.
+
+## Competitive position
+
+| Category | Strength | Gap Unforged targets |
+|---|---|---|
+| C2PA / Content Credentials | Global provenance format and ecosystem | Organization authorization can expose or depend on signer credentials |
+| Camera OEM authenticity services | Strong hardware and sensor evidence | Vendor/device silos and limited private cross-organization authorization |
+| Centralized verification vendors | Fast integrations and managed workflow | Service can observe or control signer-to-asset relationships |
+| Public blockchain registries | Durable public records | Transparent keys and activity graphs |
+| Anonymous upload systems | Source protection | Weak public proof of organizational authorization and asset history |
+
+Unforged wins by integrating these layers: C2PA interoperability, hardware evidence, private organizational authorization, public verification and operational source protection.
+
+## Moat
+
+1. Applied cryptography and Midnight contract expertise.
+2. Hardware, WebAuthn and C2PA interoperability.
+3. Trust-pool and policy infrastructure embedded in organizational workflows.
+4. Public verification network and developer integrations.
+5. Security evidence, audits and incident history.
+6. Standards relationships and OEM/platform partnerships.
+7. Anonymity network effect: larger compatible pools improve the privacy set available to contributors.
 
 ## Key risks
-| Risk | Mitigation |
+
+| Risk | Response |
 |---|---|
-| Journalists don't value anonymity enough to switch apps | Validate in 5 desk interviews before building Desk features |
-| Hardware makers add anonymity natively | Stay chain-verifiable and cross-vendor; the C2PA bridge turns any maker's credentials into anonymous seals |
-| Ledger 9 delays on Mainnet | Run on a local ledger-9 network and Preprod when available; product UX doesn't depend on the date |
-| Small pools leak identity | Show pool size in every seal; refuse to seal into pools below a safety threshold |
+| Hardware and platform vendors implement private authorization themselves | Become the interoperable, vendor-neutral layer and integrate early |
+| Newsrooms cannot change contributor workflows | Offer SDKs and CMS adapters; prove time savings in pilots |
+| Privacy claims fail under operational correlation | Gate production on relay, policy, audit and red-team evidence |
+| C2PA metadata stripping breaks verification | Support external manifests, soft bindings and recovery workflows |
+| Midnight ledger/runtime availability delays deployment | Maintain pinned local ledger-9 integration and publish dependency status |
+| Large proving requirements harm mobile UX | Measure early; use pool-controlled proving until on-device performance is acceptable |
+| Long enterprise procurement | Begin with NGOs, fact-checkers and innovation/security teams; design for self-hosting |
+
+## Financing milestones
+
+- **Buildathon:** prove the cryptographic primitive and product story.
+- **Pre-seed:** complete public deployment, native capture prototype, C2PA bridge and 3–5 design partnerships.
+- **Seed:** convert pilots, pass independent security review, ship CMS/API integrations and establish repeatable enterprise sales.
+- **Growth:** expand OEM/platform distribution and multiple evidence verticals while maintaining a common verification network.

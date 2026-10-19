@@ -1,142 +1,255 @@
-# Unforged — Product Requirements Document
+# Unforged — Product requirements
 
 | | |
 |---|---|
-| Status | v0.2, 2026-10-19 (Wave 2 browser foundation; production release gated) |
+| Status | v0.3 — Wave 2 foundation and global platform direction |
+| Date | 19 October 2026 |
 | Owner | bunnyy |
-| Related | [VISION](VISION.md) · [BUSINESS](BUSINESS.md) · [ARCHITECTURE](ARCHITECTURE.md) · [THREAT-MODEL](THREAT-MODEL.md) · [DESIGN](DESIGN.md) · [ROADMAP](ROADMAP.md) |
+| Related | [Vision](VISION.md) · [Architecture](ARCHITECTURE.md) · [Threat model](THREAT-MODEL.md) · [Design](DESIGN.md) · [Business](BUSINESS.md) · [Roadmap](ROADMAP.md) |
 
-## 1. Problem
-Newsrooms need to examine image provenance without publishing a source directory. An exact-file seal can establish that a pool credential approved particular bytes, while private membership keeps the signer out of the public record. That alone cannot establish camera origin, scene truth or total source anonymity. Unforged's product is the full trust workflow: controlled enrollment, field capture, bounded editorial review, independent verification and incident response.
+## 1. Product definition
 
-### Current assurance level and release gates
-| Capability | Wave 2 browser build | Production requirement |
+Unforged is privacy-preserving trust infrastructure for digital evidence. It proves that an exact asset was approved by an authorized credential in an organizational pool without publishing which contributor or device approved it.
+
+The production platform combines:
+
+- hardware-backed capture and C2PA provenance;
+- private authorization and policy proofs on Midnight;
+- editorial evidence cases and review decisions;
+- independent public verification;
+- trust-pool administration, revocation and incident response;
+- privacy-preserving relay and submission infrastructure.
+
+## 2. Problem
+
+Newsrooms and evidence organizations need provenance, but signer identity, device information, location and activity can endanger contributors. Public signatures create durable identity graphs. Centralized verification services can observe the signer-to-asset relationship. Existing workflows also blur cryptographic facts with human judgments about scene truth and context.
+
+Unforged creates a narrow, independently verifiable authorization claim while keeping the signer private.
+
+## 3. Current assurance and release gates
+
+| Capability | Wave 2 evidence | Production requirement |
 |---|---|---|
-| Private pool membership + passkey check | Compiled Compact contract in local runtime | Real network proofs, deployment and independent indexer reads |
-| File integrity | SHA-256 exact-byte match | Portable, independently verifiable receipt |
-| Capture origin | Browser camera or generated test frame; client can be modified | Native app and device/camera attestation |
-| Signer identity protection | Signer omitted from seal record | Relay/batching, enrollment access controls and timing analysis |
-| Revocation | Local pool epoch reset | Multi-admin policy, audit log, recovery and monitoring |
-| Editorial review | Verification desk and downloadable **local** JSON review | Case workflow, role-based access, evidence retention and integration |
+| Private pool membership | Compiled Compact contract and local runtime | Public deployment and independent indexer reads |
+| Credential approval | Real P-256 WebAuthn profile with UP+UV | Device-bound key and supported recovery policy |
+| File integrity | Exact SHA-256 byte match | C2PA hard binding, external manifest and soft-binding recovery |
+| Camera origin | Not established by browser capture | Native capture with hardware/application attestation |
+| Signer privacy in record | Signer omitted and ledger indistinguishability tested | Relay, batching, coarse timing and operational privacy audit |
+| Revocation | Contract epoch reset and local admin flow | Threshold administration, durable audit and incident process |
+| Editorial workflow | Local verification and review JSON | Persistent cases, roles, approvals, retention and integrations |
+| Reliability | Deterministic simulator and CI | Queue recovery, network tests, monitoring, backup and SLOs |
 
-The interface must state these boundaries where decisions are made. Do not use “real photo”, “camera-authenticated”, “anonymous to everyone”, or “on-chain” for the current browser result.
+## 4. Goals
 
-## 2. Goals & non-goals
-**Goals**
-- G1. A reporter seals a photo in **under 30 seconds** from shutter to "Sealed" (proof time permitting).
-- G2. Anyone verifies a photo in **under 3 seconds**, with no account.
-- G3. A public verifier cannot derive the signer from the seal record; measure and mitigate timing, network and enrollment correlations before production.
-- G4. A seal requires an enrolled credential's verified approval of an exact fingerprint. Native capture attestation is a separate release gate.
-- G5. **Zero crypto vocabulary** for reporters: no wallet, seed phrase or token.
+### Wave 2
 
-**Non-goals (for now)**
-- Judging whether a scene is *true* or *in context*. We prove capture, not truth.
-- Detecting AI images by pixels. A browser passkey does not prove a real camera capture.
-- Video and audio (Year 2).
+- G1. Demonstrate anonymous credential membership and P-256 WebAuthn verification in one Compact seal circuit.
+- G2. Let a judge complete enroll → capture → seal → verify without crypto vocabulary.
+- G3. Make public and private fields visible at the decision point.
+- G4. Demonstrate every refusal through tests and a browser Threat Lab.
+- G5. State local-runtime, camera-origin and operational privacy limits consistently.
 
-## 3. Personas
-| Persona | Context | Needs | Fears |
-|---|---|---|---|
-| **Asha**, stringer (primary) | Freelances for 3 outlets from a protest-heavy region; Android mid-range phone; patchy network | Get paid and believed; never be identified from her photos | Police or militia tracing photos back to her phone |
-| **Daniel**, photo desk editor | Wire agency; 400 incoming images/day | Know fast whether an image is real and untouched; protect stringers | Publishing a fake; burning a source |
-| **Meera**, fact-checker | Indian IFCN fact-checking org; IT Rules 2026 pressure | Prove a viral image is (or isn't) a real capture | Being wrong in public |
-| **Sam**, pool admin | Security lead at a newsroom or NGO | Enroll and revoke devices; see pool health; control costs | A stolen phone sealing fakes; admin access becoming a deanonymisation tool |
-| **Reader** | Anyone with a link | One-glance answer | Jargon |
+### Product
 
-## 4. Core concepts (product language)
-- **Seal**: a record that a pool credential approved a specific file fingerprint with a stated capture time. Shown as an embossed guilloche seal, unique to the file, with a short Seal ID (e.g. `UF-7K3Q-9D2M`).
-- **Pool**: a set of enrolled devices that share anonymity. Seals say "a device in *Independent Press Pool* (412 devices)". Bigger pools are safer.
-- **Enrolled credential**: a passkey commitment added to a pool; browser passkeys may sync across devices.
-- **Fingerprint**: SHA-256 of the exact image file.
+- G6. Contributor invite to first protected capture in under three minutes.
+- G7. Verification result in under three seconds, excluding external-network delay.
+- G8. No wallet, seed phrase or token handling for contributors.
+- G9. C2PA-compatible provenance and edit history.
+- G10. Source privacy resilient to contract, network, timing and administrative correlation.
+- G11. Independent verification without uploading media to Unforged.
+- G12. Enterprise reliability, self-hosting and incident response.
 
-## 5. Surfaces
-1. **Capture** (mobile-first PWA → native apps): enroll, shoot, seal, history.
-2. **Verify** (public web): drop a file / paste a link / open a Seal ID → result.
-3. **Desk** (org console): pools, invites, enrollment approvals, revocation, usage.
-4. **Ledger view** (inside Verify): "What the world sees / What stays private", side by side.
-5. **API / SDK** (later): verify endpoint, badge embed, capture SDK.
+## 5. Non-goals
 
-## 6. User stories & acceptance criteria
+- Declaring that a depicted scene is true or correctly contextualized.
+- Pixel-based “AI detection” as a source of truth.
+- Claiming browser WebAuthn proves camera sensor origin.
+- Publishing contributor identity or per-device activity.
+- Replacing C2PA with a proprietary provenance format.
+- Requiring contributors to understand blockchain mechanics.
 
-### 6.1 Onboarding: reporter (Capture)
+## 6. Personas
+
+| Persona | Need | Primary fear |
+|---|---|---|
+| Asha, field contributor | Submit credible evidence and remain safe | Being identified from provenance or network metadata |
+| Daniel, photo editor | Make fast, bounded publication decisions | Publishing manipulated or misrepresented media |
+| Meera, verifier | Reproduce evidence checks independently | Relying on an opaque vendor result |
+| Sam, security administrator | Manage eligibility, incidents and cost | Creating a source-activity database |
+| Reader or partner | Understand provenance at a glance | Mistaking a badge for scene truth |
+| Developer/OEM | Integrate capture and verification | Proprietary lock-in and unstable semantics |
+
+## 7. Product surfaces
+
+### Capture
+
+Invite, device enrollment, policy status, camera, offline queue, sealing progress, evidence receipt and secure sharing.
+
+### Evidence Desk
+
+Submission inbox, assurance summary, provenance chain, editorial checklist, disclosure requests, decision log and publication package.
+
+### Trust Pools
+
+Organizations, pool policy, invites, approvals, threshold administration, credential lifecycle, anonymity health and aggregate operations.
+
+### Verify
+
+File/link/manifest input, result summary, assurance level, public/private boundary, provenance history, revocation state and independent instructions.
+
+### Threat and Incident Console
+
+Repeatable adversarial exercises, observed refusals, compromised-credential response, policy holds and audit evidence.
+
+### Platform
+
+Capture SDK, Verify API, CMS plugin, CLI, C2PA bridge, self-hosting controls and OEM integration.
+
+## 8. Wave 2 user stories and acceptance criteria
+
+### Enrollment
+
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| ON-1 | As Asha, I open an invite link and understand what Unforged does in one screen | One screen, ≤ 25 words, with an illustration: "Your photos get a seal. Nobody learns it was you." |
-| ON-2 | I turn my phone into an enrolled device with Face ID / fingerprint | A WebAuthn passkey is created with `userVerification: required`. No email, password or wallet. Done in ≤ 2 taps |
-| ON-3 | I see I'm waiting for approval, or approved | Status shows pool name and pool size. Push/poll when approved |
-| ON-4 | I take a guided first photo and see my first Seal | Tutorial overlay on the shutter; the Seal screen explains the three facts the seal proves |
-| ON-5 | I learn exactly what is and isn't hidden | "What's private" sheet: device, identity, key, GPS hidden. Fingerprint, time, pool public. Linked from every seal |
+| EN-1 | As a judge, I understand the privacy promise before enrollment | One screen explains what becomes public and what remains private |
+| EN-2 | I enroll a real passkey | `userVerification: required`; no email, wallet or seed phrase |
+| EN-3 | I can evaluate on hardware without a camera/passkey | Simulated credential is clearly labeled and executes the same contract path |
+| EN-4 | I understand pool safety | Pool size and anonymity floor are visible before sealing |
 
-### 6.2 Capture & seal
+### Capture and seal
+
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| CA-1 | I shoot inside the app | Camera-only capture (no gallery import). EXIF/GPS stripped before fingerprinting by default |
-| CA-2 | I approve the seal with biometrics | The WebAuthn assertion signs challenge = H(domain, pool, fingerprint). UP and UV flags required |
-| CA-3 | I watch progress, not a spinner | Staged progress: Fingerprinting → Chip signature → Building proof → Recording → Sealed, each with a short plain-language line |
-| CA-4 | I share the photo with its Seal ID | Share sheet with the image + `unforged.app/s/<id>` link + optional visible corner stamp |
-| CA-5 | Offline capture is queued | Signature taken immediately; proof and submission retried when online; the seal records the signing time window |
-| CA-6 | I can't seal a gallery image or an AI image | Not offered in UI. If forced via a modified client, see THREAT-MODEL T3 (closed by native attestation, roadmap) |
+| CA-1 | I capture or generate an evaluation frame | Camera path is offered; test frame is explicitly labeled |
+| CA-2 | I approve exact bytes | WebAuthn or test signer signs a domain-bound fingerprint challenge |
+| CA-3 | I see real progress | Fingerprint, signature, proof and record stages show measured durations where available |
+| CA-4 | I receive a bounded result | Result states exact-file approval and signer omission; no camera-origin claim |
+| CA-5 | Failure is recoverable | Cancellation and every contract refusal explain what happened and next action |
 
-### 6.3 Verify
+### Verify
+
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| VE-1 | As Daniel I drop an image and get an answer | Result in < 3 s. States: **SEALED** / **NO SEAL FOUND**. A sealed result also shows the pool epoch; if phones were removed since, it says "N phones removed from this pool since". Which phone sealed is unknowable by design |
-| VE-2 | I understand what a seal proves | Show exact-file match, pool credential approval and stated time, next to explicit camera-origin and scene-truth limits |
-| VE-3 | "No seal" isn't read as "fake" | Copy: "No seal found. This doesn't mean it's fake, only that it wasn't sealed with Unforged, or the file was changed." |
-| VE-4 | I verify without trusting Unforged | "Check it yourself" panel: contract address, indexer query and CLI one-liner |
-| VE-5 | Batch verify | Desk: drop up to 100 files; table of results (Wave 4) |
-| VE-6 | I preserve a review record | Download a JSON summary that names the local runtime, checked fingerprint, pool state and unresolved claims; never present it as a portable network receipt |
+| VE-1 | I verify without an account | Drop one file and receive sealed/no-seal result |
+| VE-2 | I understand the result | Established facts and unresolved claims are shown side by side |
+| VE-3 | No seal is neutral | Copy states that absence does not prove fabrication |
+| VE-4 | I inspect privacy | Public record and withheld witness fields are separated |
+| VE-5 | I preserve a review | Export names local runtime and unresolved claims; never claims public inclusion |
 
-### 6.5 Assurance exercises
+### Assurance
+
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| AS-1 | As a security lead, I inspect a threat scenario | One focused case shows attempted action, contract or lookup boundary, consequence and observed result |
-| AS-2 | I run all relevant checks | Eight cases run sequentially; prerequisites and anonymity-floor holds are reported as such, not counted as refusals |
-| AS-3 | I understand the evidence scope | File mutation is labeled as a fingerprint lookup; seven other cases execute the compiled Compact contract locally |
+| AS-1 | I challenge a security boundary | Each case names attempt, boundary, consequence and observed result |
+| AS-2 | I run the suite | Eight cases run sequentially; prerequisites and holds are not counted as passes |
+| AS-3 | I distinguish evidence types | Changed-file lookup is separate from seven Compact-circuit cases |
 
-### 6.4 Desk (pool admin)
+### Pool administration
+
 | ID | Story | Acceptance criteria |
 |---|---|---|
-| DE-1 | Create a pool | Name, safety threshold (min devices before sealing is allowed, default 20), sponsorship on |
-| DE-2 | Invite reporters | Link / QR, single-use, expiring |
-| DE-3 | Approve enrollment | Approve adds the device commitment to the pool tree. The admin sees a device nickname chosen by the reporter, never a hardware ID |
-| DE-4 | Revoke a stolen device | One action. Seals made after revocation fail. Earlier seals stay valid and record the pool epoch they were made in |
-| DE-5 | See activity without deanonymising | Aggregate counts only (seals/day). **No per-device activity** |
+| PO-1 | I see aggregate pool state | Size, floor, seals and epoch are visible |
+| PO-2 | I revoke a test credential | New seals fail; earlier seals remain valid under their recorded epoch |
+| PO-3 | The interface resists deanonymization | No per-device seal history exists |
+| PO-4 | Pool floor protects members | Revocation is held when it would violate the configured floor |
 
-## 7. Functional requirements: protocol
+## 9. Protocol requirements
+
 | ID | Requirement |
 |---|---|
-| P-1 | Device commitment = H("unforged:device:v1", pk.x, pk.y, salt). Only the commitment is public |
-| P-2 | Seal proof checks: (a) commitment ∈ pool tree (historic root accepted), (b) WebAuthn P-256 signature over challenge = H("unforged:seal:v1", contract, fingerprint), (c) UP+UV flags, (d) fingerprint not already sealed |
-| P-3 | Public outputs of a seal: fingerprint, seal time window, tree root used. **Never** the key, salt, path, signature or authenticator data |
-| P-4 | Revocation resets accepted roots, so post-revocation proofs must use the new root |
-| P-5 | Only the pool admin (proven by an admin secret in a witness) can enroll or revoke |
-| P-6 | Domain separators on every hash. Every `disclose()` is listed in ARCHITECTURE §Privacy boundary |
+| P-1 | Device commitment is domain-separated over P-256 point and random salt |
+| P-2 | Seal verifies current/historic accepted membership according to epoch policy |
+| P-3 | Seal verifies a domain-bound P-256 WebAuthn assertion over the exact fingerprint |
+| P-4 | User presence and user verification flags are mandatory |
+| P-5 | Fingerprint uniqueness and a 24-hour stated-time window are enforced |
+| P-6 | Pool must meet the anonymity floor |
+| P-7 | Enrollment and revocation require the private admin witness |
+| P-8 | Revocation resets accepted roots for future seals |
+| P-9 | Every disclosure appears in Architecture § Privacy boundary |
+| P-10 | Error codes remain stable UPPER_SNAKE identifiers mapped to product copy |
 
-## 8. Non-functional requirements
-- **Privacy:** no analytics that tie seals to devices or IPs. Submissions go through a relay with jittered delay (Wave 3).
-- **Performance:** verify < 3 s; proof generation measured and shown (target < 60 s on a mid-range phone with a remote prover, < 20 s on laptop; **ESTIMATE**).
-- **Accessibility:** WCAG 2.2 AA; seal states never conveyed by colour alone.
-- **Reliability:** offline queue; idempotent submit (fingerprint uniqueness).
-- **Openness:** contracts and verifier open source (Apache-2.0); anyone can run Verify.
+## 10. Production platform requirements
 
-## 9. Metrics
-| Metric | Why |
-|---|---|
-| Time-to-first-seal (invite → first seal) | Onboarding quality. Target < 3 min |
-| Seals per active device per week | Real use |
-| Verify lookups per seal | Seals actually get checked |
-| Pool size (median, min) | Anonymity health |
-| Proof time p50/p95 | UX feasibility |
+### Capture and provenance
 
-## 10. Scope by wave
-| Wave | In scope |
-|---|---|
-| **2 (Oct 19)** | Contract: enroll / revoke / seal with anonymous membership + in-circuit WebAuthn P-256. Simulator tests with real P-256 vectors and all refusals. Web demo: enroll a real passkey, capture with camera, seal, verify, ledger split view, attack buttons. All founding docs |
-| **3 (Nov 16)** | Real network (local ledger-9 → Preprod when forked), PWA capture on phones, Desk v1, sponsored fees, relay, 1–3 design partners, proof-time measurements |
-| **4+** | Native iOS/Android with App Attest / Key Attestation, C2PA bridge, coarse-location disclosure, VerITAS-style edit proofs, Verify API + badge, insurer pilot |
+- Native iOS and Android capture.
+- Device-bound hardware key and app attestation.
+- C2PA manifest creation, validation and preservation.
+- Metadata minimization policy.
+- External manifest and soft-binding recovery.
+- Encrypted offline queue and secure deletion.
+- Assurance level attached to every result.
 
-## 11. Open questions
-1. Minimum safe pool size? (Ask partners; default 20.)
-2. Sealing with synced passkeys (iCloud Keychain) vs device-bound keys? See THREAT-MODEL T6.
-3. Should reporters be able to *claim* a seal later (prove authorship to get paid)? Likely yes, Wave 4.
+### Privacy and policy
+
+- Relay, batching and timing-correlation controls.
+- Threshold pool administration.
+- Role and assignment eligibility proofs.
+- Organization-controlled retention.
+- Disclosure requests with purpose, scope, approval and audit.
+- No source-linked product analytics.
+
+### Reliability
+
+- Idempotent submission.
+- Durable job stages and replay-safe retries.
+- Multi-region verification reads.
+- Backup and disaster recovery.
+- Privacy-safe telemetry and SLOs.
+- External security review and responsible disclosure.
+
+### Integrations
+
+- Verify API and JavaScript SDK.
+- CMS/DAM plugin.
+- CLI verifier.
+- Webhook for case state, with no sensitive witness material.
+- Self-hosted enterprise deployment.
+- OEM capture SDK/profile.
+
+## 11. UX requirements
+
+- Each screen has one primary decision.
+- Working content uses the available canvas with a 12-column desktop grid and aligned rails.
+- Evidence is summarized before technical detail.
+- Paragraphs are limited to explanation states; operations use tables, rows, metrics and progressive disclosure.
+- All statuses combine text, icon and color.
+- Full keyboard flow for enrollment, Verify, Threat Lab and Pool.
+- WCAG 2.2 AA target.
+- Reduced-motion behavior for every animation.
+- Responsive capture for narrow phones and evidence workspaces for wide screens.
+- Empty, loading, offline, error, success, stale and revoked states are designed explicitly.
+
+## 12. Metrics
+
+| Metric | Reason | Target status |
+|---|---|---|
+| Invite-to-first-seal | Onboarding quality | <3 minutes; unmeasured |
+| Capture-to-seal time | Field usability | <30 seconds plus proving; unmeasured on network |
+| Verification p50/p95 | Desk and public utility | <1s/<3s local target |
+| Proof success and duration | Technical viability | Measure Wave 3 |
+| Weekly seals per active contributor | Real adoption | Pilot metric |
+| Verifications per published seal | Public utility | Pilot metric |
+| Pool size and floor violations | Anonymity health | Required operational metric |
+| Review time and override rate | Editorial value and trust | Pilot metric |
+| Privacy/security incidents | Safety | Zero unresolved critical findings before production |
+| Pilot-to-paid conversion | Business viability | At least one first-year contract |
+
+## 13. Scope by phase
+
+| Phase | In scope | Exit criteria |
+|---|---|---|
+| Wave 2 | Compact protocol, simulator tests, local end-to-end browser evaluation, threat exercises and complete evidence docs | CI green, clean judge walkthrough, all limits visible |
+| Wave 3 | Real ledger-9 proofs, public deployment when compatible, independent indexer, persistence, relay, C2PA adapter, partner discovery | Reproducible transactions, measured performance, 1–3 design partners |
+| Pilot | Native Android capture, hardware attestation, CMS integration, roles, incident controls and external review | Real controlled usage and paid-pilot path |
+| Platform | iOS/OEM support, Verify API, self-hosting, soft binding, video/audio and multi-vertical policy | Repeatable enterprise deployment and platform distribution |
+
+## 14. Open decisions
+
+1. Minimum anonymity floor by use case and threat level.
+2. Whether synced passkeys are permitted at L1 or excluded from production pools.
+3. C2PA assertion/reference profile for private authorization proofs.
+4. Prover ownership and witness-minimization design.
+5. Coarse time-window policy that balances verification and correlation.
+6. Data retention and legal response by deployment jurisdiction.
+7. Duress behavior and whether it can be implemented without creating new risk.

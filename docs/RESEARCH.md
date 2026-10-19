@@ -1,71 +1,129 @@
-# Unforged — Market & technical research
+# Unforged — Market and technical research
 
-_Compiled 2026-10-19. Facts are linked; anything marked **ESTIMATE** or **UNVERIFIED** is not established._
+Last reviewed: 19 October 2026. Sources are labeled by strength. Product claims rely on primary standards, vendor documentation and repository evidence where possible. Market hypotheses require interviews.
 
 ## 1. Problem evidence
-| Fact | Source |
-|---|---|
-| FBI: ~$893M adjusted 2025 US losses from 22,364 complaints with an AI nexus ($632M investment-related) | FBI IC3 via https://deepstrike.io/blog/deepfake-statistics-2025 |
-| Entrust 2026 (1B+ verification events): deepfakes ≈ 1 in 5 biometric fraud attempts; deepfaked selfies +58% in 2025 | https://deepstrike.io/blog/deepfake-statistics-2025 |
-| Insurers face AI-altered and fully synthetic claim photos | SAS, May 2026: https://www.sas.com/en_us/news/press-releases/2026/may/synthetic-images-ai-insurance-fraud.html · Debevoise, Jan 2026: https://www.debevoise.com/insights/publications/2026/01/use-of-ai-generated-images-for-fake-insurance |
-| C2PA metadata is signed, not encrypted. It can expose camera serials and GPS; field journalists "may face physical danger" if identity, location or equipment leak | SMPTE 2025: https://summit.smpte.org/2025/session/3347598/ · WITNESS: https://blog.witness.org/2022/01/potentially-systematic-provenance-and-authenticity-infrastructure/ |
-| Tension between verification and protecting vulnerable creators is unresolved in C2PA deployments | World Privacy Forum summary via https://www.longtermwiki.com/source/f98ad3ca8d4f80d2 |
 
-## 2. Regulation (tailwinds)
-| Rule | What it requires | Date | Source |
-|---|---|---|---|
-| EU AI Act Art. 50 | Machine-readable marking of synthetic media; deepfake disclosure by deployers | applies 2 Aug 2026 | https://www.traverssmith.com/knowledge/knowledge-container/is-it-a-bot-eu-ai-act-transparency-rules-take-effect-2-august-2026/ · https://www.paulweiss.com/insights/client-memos/eu-finalises-transparency-rules-for-ai-generated-content |
-| India IT Rules amendment 2026 ("synthetically generated information") | Platforms must label SGI prominently and embed provenance metadata where technically feasible | in force 20 Feb 2026 | https://ministryofcyberaffairs.com/news/deepfake-laws-how-india-eu-china-and-the-us-manage-synthetic-media-ac264a7a-4b2d-432d-a9d3-88a8285949d6 |
+### Contributor risk
 
-Implication: platforms and publishers need to tell **real** from **synthetic**. Labelling fakes is half of it; positively proving real capture is the other half.
-
-## 3. Hardware & standards landscape
-| Fact | Source |
-|---|---|
-| Pixel 10 signs captures with C2PA at Assurance Level 2; keys in StrongBox (Titan M2); Android Key Attestation; per-image certificates; Google avoided account-linked certs for privacy | https://security.googleblog.com/2025/09/pixel-android-trusted-images-c2pa-content-credentials.html |
-| ~17 cameras (Leica, Sony, Canon, Nikon) sign at capture in 2026; Canon newsroom service (May 2026); Nikon Z6 III C2PA suspended after a signing vulnerability | https://www.lumethic.com/en/articles/cameras-with-c2pa-content-credentials · https://attesttrail.com/blog/c2pa-cameras-support |
-| Content Authenticity Initiative: 6,000+ members; Google "About this image" reads C2PA | https://contentauthenticity.org/blog/the-state-of-content-authenticity-in-2026 · https://www.softwareseni.com/c2pa-adoption-in-2026-hardware-platforms-and-verification-reality/ |
-| Apple C2PA status: **UNVERIFIED** (sources conflict) | https://editorsweblog.org/2026/04/12/c2pa-adoption-tracker-platforms-content-credentials-2026 |
-| The "screenshot / re-encode" problem is unsolved: provenance is stripped when media is re-shared | same tracker; https://www.irccl.in/post/can-you-still-believe-what-you-see-rethinking-deepfake-regulation-after-article-50-of-the-eu-ai-act |
-
-## 4. Research frontier (we productise this)
-| Work | Relevance |
-|---|---|
-| VerITAS (2024): zk-SNARKs proving only permitted edits (crop, resize) were applied to a signed 30MP photo | Roadmap: seals that survive allowed edits. https://eprint.iacr.org/2024/1066 |
-| Anonymous multi-editor image provenance (eprint 2026/1914): signer's long-term key "propagates with the image" → one-time pseudonyms + zk-SNARKs | Confirms the signer-privacy gap. https://eprint.iacr.org/2026/1914.pdf |
-| Soft redaction of provenance via ZKPs (arXiv 2608.07063): replace an assertion with a predicate proof, e.g. "taken in this country" | Roadmap: coarse location disclosure. https://arxiv.org/abs/2608.07063 |
-| Christian Paquin (Mar 2026): ZK proofs over X.509 to hide identifying certificate fields, compatible with C2PA | Roadmap: C2PA bridge. https://christianpaquin.github.io/2026-03-13-privacy-for-c2pa-signers.html |
-
-All of these are papers or prototypes. **No shipped product combines hardware-signed capture, signer anonymity and public verification.** That is the gap.
-
-## 5. Competitors
-| Product | What it does | Signer privacy | Public verification without the vendor |
-|---|---|---|---|
-| Truepic (Lens SDK) | Authenticated capture SDK for insurance, KYC, newsrooms | No (vendor-held identity) | No |
-| ProofMode (Guardian Project) | Open-source capture app with signed proof bundles | Partial (PGP keys identify the device) | Partly |
-| Numbers Protocol: ProofSnap, Capture Cam | C2PA + on-chain ERC-7053 records; journalism app (2026) | No: records are public on a transparent chain | Yes |
-| OpenOrigins | Capture-time provenance + public verification portal | No | Portal-based |
-| Genuine Capture, Photo Proof, Lens | Capture apps with signatures/watermarks/GPS | No (often add GPS) | No |
-| Native C2PA (Pixel 10, Leica…) | Hardware-signed credentials | Partial (Pixel per-image certs; cert chain still reveals maker/model/app) | Yes, via the C2PA trust list |
-| World "Human" (ETHGlobal 2026) | Photos by verified humans (World ID) | Person-level anonymity, not tied to capture hardware | Yes |
-
-Sources: https://numbersprotocol.medium.com/unlocking-the-digital-media-provenance-introducing-capture-upload-with-numbers-protocol-cab5c0810bc2 · https://captureapp.xyz/products/camera/ · https://itbrief.co.uk/story/openorigins-app-aims-to-prove-photos-real-amid-deepfakes · https://apps.apple.com/us/app/-/id6466933349 · https://ethglobal.com/showcase/human-d88zt · https://blog.mean.ceo/digital-provenance-startup-statistics/
-
-**Our wedge:** the only design where the chip-level signature is verified **inside a zero-knowledge proof**, so the verifier learns "one of N trusted devices" and never which one.
-
-## 6. Midnight technical fit
-| Capability | Status | Source |
+| Finding | Source quality | Source |
 |---|---|---|
-| `secp256r1EcdsaVerify` (P-256) in Compact | Compact 0.35.0 with `--feature-zkir-v3`; ledger 9 (not yet on Mainnet/Preprod as of 2026-10-19) | https://github.com/midnightntwrk/compact/releases |
-| WebAuthn assertion verified fully in-circuit (clientDataJSON rebuilt, UP+UV flags) | Reference module in Midnight Passport (Apache-2.0) | https://github.com/midnightntwrk/passport |
-| P-256 verify cost | ~220–290 MB proving keys per verify circuit | midnightntwrk/midnight-examples `experimental/q3-ledger9` |
-| HistoricMerkleTree + `merkleTreePathRoot` for anonymous membership | Stable | Compact stdlib, `examples/zerocash.compact` |
-| App-sponsored fees (users never hold DUST) | Live (Gero Wallet sponsorship, Ura Labs Relay Club on Preprod) | https://www.thecoinrepublic.com/2026/10/02/midnight-price-gains-as-mainnet-upgrade-unlocks-new-building-possibilities/ |
-| Midnight roadmap Q4 2026: enterprise keys (ed25519, P-256), Passport SDK, mobile SDK, proof verification inside contracts | Announced | https://midnight.network/roadmap |
-| Midnight founder on the concept: "ZK proof a photo was taken by a real Apple phone" | X post, 2026-09-09 (via research summary; **verify link before quoting**) | https://x.com/i/status/2097803813264801929 |
+| CPJ counted 330 journalists imprisoned at the end of 2025; more than 300 had been imprisoned for five consecutive years | Primary NGO dataset | [CPJ 2025 prison census](https://cpj.org/special-reports/2025-journalist-jailings-remain-stubbornly-high-harsh-prison-conditions-pervasive/) |
+| CPJ recorded 129 journalists and media workers killed in 2025, its highest annual total | Primary NGO report | [CPJ 2025 killings report](https://cpj.org/2026/02/record-number-of-journalists-killed-in-2025-israel-responsible-for-two-thirds-of-deaths/) |
+| C2PA explicitly treats privacy, harms, human rights and creator control as design goals | Primary standard | [C2PA specification](https://spec.c2pa.org/specifications/specifications/2.3/specs/C2PA_Specification.html) |
 
-## 7. Open questions to validate with users
-1. Do fact-checkers and photo desks need *source anonymity*, or only authenticity? (Interview 5 desks.)
-2. What minimum pool size do at-risk reporters consider safe?
-3. Will a publisher display a third-party "Sealed" badge?
-4. What will insurers pay per verified capture? (Pricing hypotheses in BUSINESS.md.)
+These facts establish that source and contributor safety are serious. They do not prove that newsrooms will purchase Unforged; interviews and pilots must validate workflow and budget.
+
+### Provenance pressure
+
+C2PA describes provenance as a way to preserve source and edit history through cryptographically bound manifests. Its standard deliberately avoids deciding whether content is “good,” “bad,” or contextually true. That supports Unforged’s product language: verify narrow facts and leave scene truth to editorial review.
+
+Primary references:
+
+- [C2PA specifications](https://spec.c2pa.org/specifications/)
+- [C2PA security considerations](https://spec.c2pa.org/specifications/specifications/1.4/security/Security_Considerations.html)
+- [C2PA UX guidance](https://spec.c2pa.org/specifications/specifications/1.4/ux/UX_Recommendations.html)
+
+## 2. Standards landscape
+
+### C2PA
+
+C2PA 2.x provides:
+
+- signed manifests and claims;
+- hard bindings to asset bytes;
+- ingredient and edit history;
+- trusted signer certificates and trust lists;
+- timestamp and revocation information;
+- external manifests;
+- soft-binding mechanisms for recovery after metadata loss;
+- guidance for security, privacy, harms and user experience.
+
+The fundamental trust model is still associated with a signer credential. Unforged’s research question is whether organizational authority can be proved privately while preserving C2PA compatibility and understandable trust semantics.
+
+### Identity
+
+C2PA’s current recommendation directs human and organizational identity assertions toward CAWG profiles while its claim-signature mechanism focuses on generator products such as hardware, applications and services. Unforged must not invent an identity claim that conflicts with these profiles. See [C2PA Human and Organizational Identity Recommendation](https://spec.c2pa.org/specifications/specifications/2.4/identity/identity.html).
+
+## 3. Hardware and vendor landscape
+
+Sony’s Camera Authenticity Solution demonstrates an end-to-end commercial direction: hardware camera signatures, C2PA edit history, server time, image validation, reports and newsroom workflows. Sony also uses 3D depth information on supported equipment to strengthen real-scene evidence. [Sony Camera Authenticity Solution](https://authenticity.sony.net/camera/)
+
+Implications:
+
+- hardware capture assurance is becoming a real product category;
+- camera-origin evidence is stronger than browser passkey approval;
+- vendor-specific systems create an interoperability opportunity;
+- Unforged must complement hardware evidence with private organization authorization;
+- the verifier needs an assurance ladder rather than one universal “sealed” state.
+
+Additional ecosystem claims from secondary trackers, such as exact supported-device counts, should be revalidated against each manufacturer before publication.
+
+## 4. Midnight technical fit
+
+| Requirement | Midnight capability | Current repository evidence |
+|---|---|---|
+| Hide credential and membership witness | Private witness data and Compact circuits | Key, salt, signature and Merkle path remain private |
+| Publish narrow result | Explicit disclosures and public ledger state | Fingerprint, time and epoch only |
+| Verify passkey curve | Compact 0.35 ZKIR v3 P-256 primitive | `secp256r1EcdsaVerify` used in compiled contract |
+| Prove set membership | Historic Merkle tree | Enrolled commitment membership and revocation |
+| Publicly inspect policy state | Ledger commitments, count and epoch | Local runtime now; public deployment pending compatible network |
+| TypeScript product integration | Compact generated TypeScript/runtime | React app executes generated circuits |
+
+Midnight’s current roadmap includes enterprise keys, verifiable-credential/selective-disclosure tooling and further proof capabilities. Roadmap items are dependencies, not shipped Unforged functionality. [Midnight roadmap](https://midnight.network/roadmap)
+
+## 5. Competitive landscape
+
+| Category | Representative direction | Strength | Unforged opportunity |
+|---|---|---|---|
+| Open provenance standard | C2PA / Content Credentials | Interoperability and industry adoption | Add private organizational authorization |
+| Camera authenticity | Sony and other OEM capture programs | Hardware and sensor evidence | Vendor-neutral pool policy and source privacy |
+| Centralized authenticity services | Managed validation/report vendors | Operational convenience | Independent verification and reduced operator knowledge |
+| Public registries | Blockchain hash/signature records | Durable public data | Prevent signer activity graphs through ZK membership |
+| Anonymous submission | Secure drop and whistleblower tools | Source confidentiality | Add public evidence authorization and provenance chain |
+| Pixel classifiers | AI/deepfake detection | Broad input compatibility | Avoid probabilistic “truth”; prove workflow facts |
+
+Unforged is strongest as connective infrastructure across C2PA, hardware and organizational policy. A standalone photo hash registry would be easy to copy and too fragile for global use.
+
+## 6. Technical research questions
+
+1. How should a Midnight authorization proof be referenced from a C2PA manifest without creating a proprietary validator dependency?
+2. Can a pool or organization sign a C2PA claim after verifying a private proof without learning contributor identity or submission timing?
+3. Which mobile attestation primitives provide device-bound assurance without introducing persistent public identifiers?
+4. How much correlation remains after batching, relay and coarse time windows?
+5. Can soft bindings recover provenance after platform re-encoding without enabling abusive global image tracking?
+6. What is the practical proof latency and memory profile on field hardware?
+7. How should old seals verify after credential and trust-root revocation?
+8. Which disclosure mechanisms satisfy legal evidence workflows while preserving source safety?
+
+## 7. Customer research plan
+
+Interview groups:
+
+- 5 photo/video editors;
+- 5 newsroom security, standards or legal staff;
+- 5 freelancers/stringers or representative safety advocates;
+- 3 fact-checking/OSINT teams;
+- 3 human-rights/election-evidence teams;
+- 3 insurance/legal evidence operators after the journalism wedge is validated.
+
+Questions:
+
+1. How does media arrive today and where does verification fail?
+2. Which metadata must remain private, from whom and for how long?
+3. What evidence changes a publication decision?
+4. What capture devices and editing tools are already used?
+5. How is a lost or compromised device handled?
+6. What integrations are required for adoption?
+7. Who owns budget and procurement?
+8. What would make a pilot unsafe or impossible?
+9. What proof would justify an annual purchase?
+
+## 8. Evidence standards
+
+- **Verified:** primary source or reproduced repository evidence.
+- **Supported:** multiple credible sources but not reproduced directly.
+- **Hypothesis:** plausible product/business assumption requiring validation.
+- **Unavailable:** capability cannot currently be tested or deployed.
+
+Every deck statistic must preserve source, date, denominator and caveat. Vendor announcements prove market direction, not customer demand for Unforged.
