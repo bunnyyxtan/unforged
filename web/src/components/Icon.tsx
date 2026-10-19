@@ -1,3 +1,5 @@
+import { useMemo } from "react";
+import { guilloche, LOGO_FP } from "../lib/guilloche";
 // A small, consistent stroke icon family (1.6 stroke, 20 px grid).
 const P: Record<string, string> = {
   seal: "M10 2.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15Zm0 3a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Z",
@@ -34,26 +36,17 @@ export function Icon({ name, size = 20, label }: { name: keyof typeof P; size?: 
   );
 }
 
-type MarkPart = { kind: "circle"; r: number; w: number } | { kind: "line"; x1: number; y1: number; x2: number; y2: number; w: number };
-
-/** The Unforged mark: outer ring, inner ring, twelve rays. The only logo; scale 1 fits a 24-unit box. */
-export function markGeometry(scale = 1): MarkPart[] {
-  const parts: MarkPart[] = [
-    { kind: "circle", r: 11 * scale, w: 1.6 * scale },
-    { kind: "circle", r: 7.2 * scale, w: 0.8 * scale },
-  ];
-  for (let i = 0; i < 12; i++) {
-    const a = (i / 12) * Math.PI * 2;
-    const c = Math.cos(a), n = Math.sin(a);
-    parts.push({ kind: "line", x1: c * 2.6 * scale, y1: n * 2.6 * scale, x2: c * 6.2 * scale, y2: n * 6.2 * scale, w: 0.9 * scale });
-  }
-  return parts;
-}
-
+/**
+ * The Unforged logo: the guilloche seal of a fixed fingerprint. Line weights
+ * are heavier than in a full Seal so the rosette stays legible at small sizes.
+ */
 export function Mark({ size = 22 }: { size?: number }) {
+  const g = useMemo(() => guilloche(LOGO_FP), []);
+  const w = size < 40 ? 3.2 : 1.6;
   return (
-    <svg width={size} height={size} viewBox="-12 -12 24 24" aria-hidden="true" fill="none" stroke="var(--seal)" strokeLinecap="round">
-      {markGeometry().map((p, i) => (p.kind === "circle" ? <circle key={i} r={p.r} strokeWidth={p.w} /> : <line key={i} x1={p.x1} y1={p.y1} x2={p.x2} y2={p.y2} strokeWidth={p.w} />))}
+    <svg width={size} height={size} viewBox="-100 -100 200 200" aria-hidden="true" fill="none" stroke="var(--seal)" strokeLinecap="round">
+      <circle r="96" strokeWidth={w * 2} />
+      {[...g.outer.paths, ...g.inner.paths, ...g.core.paths].map((d, i) => <path key={i} d={d} strokeWidth={w} />)}
     </svg>
   );
 }

@@ -40,5 +40,8 @@ export function guilloche(fp: Uint8Array) {
   };
 }
 
+/** The brand mark is the seal of this fixed fingerprint (the landing specimen photo). */
+export const LOGO_FP = Uint8Array.from("fb3b7962cb058b56f6eb68aab4003a7f8effbdc987c67c0606950d063dddb289".match(/../g)!, (h) => parseInt(h, 16));
+
 /** A stable placeholder pattern before a real fingerprint exists. */
 export const SPECIMEN = new Uint8Array(Array.from({ length: 32 }, (_, i) => (i * 73 + 41) % 256));
