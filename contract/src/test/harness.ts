@@ -11,7 +11,11 @@ import {
 } from "@midnight-ntwrk/compact-runtime";
 import { p256 } from "@noble/curves/nist.js";
 import { sha256 } from "@noble/hashes/sha2.js";
-import { Contract, ledger, pureCircuits, type Ledger } from "../managed/unforged/contract/index.js";
+import * as Unforged21 from "../managed/unforged/contract/index.js";
+import { pureCircuits, type Ledger } from "../managed/unforged/contract/index.js";
+
+/** A compiled contract module; variants differ only in the WebAuthn origin length. */
+export type ContractModule = typeof Unforged21;
 import {
   witnesses,
   type DeviceSecret,
@@ -75,16 +79,16 @@ export class Pool {
   state!: StateValue;
   privateState: UnforgedPrivateState;
   time = NOW;
-  private readonly contract: Contract<UnforgedPrivateState>;
+  private readonly contract: InstanceType<ContractModule["Contract"]>;
   private readonly coinPk = { bytes: bytes(32, 7) };
 
-  private constructor(readonly address: string, readonly adminSecret: Uint8Array, w = witnesses) {
-    this.contract = new Contract<UnforgedPrivateState>(w as never);
+  private constructor(readonly address: string, readonly adminSecret: Uint8Array, w = witnesses, private readonly mod: ContractModule = Unforged21) {
+    this.contract = new mod.Contract<UnforgedPrivateState>(w as never);
     this.privateState = { adminSecret };
   }
 
-  static async deploy(opts: { minPoolSize?: bigint; address?: string; adminSecret?: Uint8Array; witnesses?: typeof witnesses } = {}) {
-    const pool = new Pool(opts.address ?? "11".repeat(32), opts.adminSecret ?? bytes(32, 1), opts.witnesses);
+  static async deploy(opts: { minPoolSize?: bigint; address?: string; adminSecret?: Uint8Array; witnesses?: typeof witnesses; module?: ContractModule } = {}) {
+    const pool = new Pool(opts.address ?? "11".repeat(32), opts.adminSecret ?? bytes(32, 1), opts.witnesses, opts.module);
     const init = await pool.contract.initialState(
       createConstructorContext(pool.privateState, pool.coinPk as never),
       opts.minPoolSize ?? 2n,
@@ -94,7 +98,7 @@ export class Pool {
   }
 
   get ledger(): Ledger {
-    return ledger(this.state);
+    return this.mod.ledger(this.state);
   }
 
   get addressBytes() {
@@ -130,9 +134,9 @@ export class Pool {
   }
 
   /** The full reporter flow: passkey signs the pool+photo challenge, then the seal circuit runs. */
-  seal(key: Passkey, fp: Uint8Array, opts: { takenAt?: number; assertion?: ReturnType<Passkey["assert"]>; overrides?: AssertionOverrides } = {}) {
+  seal(key: Passkey, fp: Uint8Array, opts: { takenAt?: number; assertion?: ReturnType<Passkey["assert"]>; overrides?: AssertionOverrides; policy?: WebAuthnPolicy } = {}) {
     const assertion = opts.assertion ?? key.assert(this.challengeFor(fp), opts.overrides);
-    this.privateState = { device: key.device(), assertion };
+    this.privateState = { device: key.device(opts.policy), assertion };
     return this.call("seal", fp, BigInt(opts.takenAt ?? this.time - 60));
   }
 }

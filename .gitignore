@@ -17,3 +17,4 @@ docs/DECK-OUTLINE.md
 # local tooling
 .claude/
 web/dist/
+contract/src/unforged[0-9]*.compact
