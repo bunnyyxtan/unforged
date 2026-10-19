@@ -11,17 +11,17 @@ export function PoolRing({ size, min, px = 104 }: { size: number; min: number; p
       <circle cx="50" cy="50" r={r} fill="none" stroke="var(--line)" strokeWidth="8" />
       <circle
         cx="50" cy="50" r={r} fill="none"
-        stroke={safe ? "var(--sealed)" : "var(--warn)"} strokeWidth="8" strokeLinecap="round"
+        stroke={safe ? "var(--ok)" : "var(--warn)"} strokeWidth="8" strokeLinecap="round"
         strokeDasharray={`${filled} ${c}`} transform="rotate(-90 50 50)"
         style={{ transition: "stroke-dasharray .5s ease" }}
       />
       <line
         x1={50 + Math.cos((floor * Math.PI) / 180) * 34} y1={50 + Math.sin((floor * Math.PI) / 180) * 34}
         x2={50 + Math.cos((floor * Math.PI) / 180) * 50} y2={50 + Math.sin((floor * Math.PI) / 180) * 50}
-        stroke="var(--ink)" strokeWidth="2"
+        stroke="var(--text)" strokeWidth="2"
       />
-      <text x="50" y="52" textAnchor="middle" fontFamily="Instrument Serif, serif" fontSize="30" fill="var(--ink)">{size}</text>
-      <text x="50" y="66" textAnchor="middle" fontSize="8" fill="var(--muted)">phones</text>
+      <text x="50" y="52" textAnchor="middle" fontFamily="Newsreader, Georgia, serif" fontSize="30" fill="var(--text)">{size}</text>
+      <text x="50" y="66" textAnchor="middle" fontSize="8" fill="var(--text-2)">phones</text>
     </svg>
   );
 }

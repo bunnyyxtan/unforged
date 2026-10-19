@@ -1,0 +1,125 @@
+/* Unforged design tokens: primitive → semantic → component.
+   Art direction "security print": newsprint paper, ink, cyanotype action blue,
+   carmine reserved for the seal. Components consume semantic tokens only. */
+
+:root {
+  /* ---- primitives: paper & ink (light) ---- */
+  --paper-0: #fdfbf6;
+  --paper-50: #f7f3ea;
+  --paper-100: #efe9dc;
+  --paper-200: #e4dccb;
+  --paper-300: #d3c9b4;
+  --ink-950: #14110d;
+  --ink-800: #2d2821;
+  --ink-600: #564e43;
+  --ink-500: #6b6254;
+  --cyan-800: #17325e;
+  --cyan-700: #1d3f75;
+  --cyan-600: #285398;
+  --cyan-100: #dde4ef;
+  --carmine-700: #98202b;
+  --carmine-100: #f3dfde;
+  --moss-700: #2c5a37;
+  --moss-100: #dfe9da;
+  --amber-700: #84560b;
+  --amber-100: #f3e6c8;
+  --rust-700: #9b2d16;
+  --rust-100: #f6e0d8;
+
+  /* ---- semantic ---- */
+  --bg: var(--paper-50);
+  --surface: var(--paper-0);
+  --surface-sunken: var(--paper-100);
+  --tint: var(--paper-100);
+  --line: var(--paper-300);
+  --line-soft: var(--paper-200);
+  --text: var(--ink-950);
+  --text-2: var(--ink-600);
+  --text-3: var(--ink-500);
+  --action: var(--cyan-700);
+  --action-hover: var(--cyan-800);
+  --action-text: #ffffff;
+  --action-tint: var(--cyan-100);
+  --seal: var(--carmine-700);
+  --seal-tint: var(--carmine-100);
+  --ok: var(--moss-700);
+  --ok-tint: var(--moss-100);
+  --warn: var(--amber-700);
+  --warn-tint: var(--amber-100);
+  --danger: var(--rust-700);
+  --danger-tint: var(--rust-100);
+  --focus: var(--cyan-600);
+  --redact: var(--ink-950);
+  --emboss-light: rgba(255, 255, 255, 0.85);
+  --emboss-dark: rgba(20, 17, 13, 0.18);
+  --shadow-raised: 0 1px 0 rgba(20, 17, 13, 0.04), 0 18px 40px -24px rgba(20, 17, 13, 0.28);
+  --shadow-print: 0 2px 4px rgba(20, 17, 13, 0.08), 0 24px 48px -28px rgba(20, 17, 13, 0.45);
+  --grain-opacity: 0.05;
+
+  /* ---- type ---- */
+  --font-display: "Newsreader", "Iowan Old Style", Georgia, serif;
+  --font-ui: "Schibsted Grotesk", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+
+  --t-display: clamp(2.9rem, 1.6rem + 5.4vw, 6.4rem);
+  --t-headline: clamp(2rem, 1.3rem + 2.6vw, 3.6rem);
+  --t-heading: clamp(1.5rem, 1.25rem + 0.9vw, 2rem);
+  --t-title: 1.125rem;
+  --t-body: 1rem;
+  --t-small: 0.875rem;
+  --t-micro: 0.75rem;
+  --t-data: 0.8125rem;
+
+  /* ---- space (4 px base) ---- */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 144px;
+
+  /* ---- shape by role ---- */
+  --r-media: 3px;     /* prints */
+  --r-control: 10px;  /* buttons, fields */
+  --r-surface: 16px;  /* panels */
+  --r-chip: 999px;    /* status chips only */
+
+  /* ---- motion ---- */
+  --dur-micro: 120ms;
+  --dur-base: 200ms;
+  --dur-reveal: 340ms;
+  --ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  --rail: 1200px;
+  color-scheme: light;
+}
+
+/* Darkroom: remapped, not inverted. Set on <html> before first paint (index.html). */
+:root[data-theme="dark"] {
+  --bg: #100f0d;
+  --surface: #181613;
+  --surface-sunken: #0c0b09;
+  --tint: #1f1c18;
+  --line: #36302a;
+  --line-soft: #26221d;
+  --text: #ece5d8;
+  --text-2: #b4ab9b;
+  --text-3: #8f877a;
+  --action: #9cb7e8;
+  --action-hover: #b8ccf0;
+  --action-text: #0e1a2e;
+  --action-tint: #1a2433;
+  --seal: #e2777a;
+  --seal-tint: #2c1718;
+  --ok: #93c79f;
+  --ok-tint: #17241a;
+  --warn: #e6b866;
+  --warn-tint: #2b2213;
+  --danger: #ef8f73;
+  --danger-tint: #2d1812;
+  --focus: #b8ccf0;
+  --redact: #000000;
+  --emboss-light: rgba(255, 255, 255, 0.07);
+  --emboss-dark: rgba(0, 0, 0, 0.55);
+  --shadow-raised: 0 1px 0 rgba(0, 0, 0, 0.5), 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  --shadow-print: 0 2px 6px rgba(0, 0, 0, 0.5), 0 30px 60px -30px rgba(0, 0, 0, 0.9);
+  --grain-opacity: 0.07;
+  color-scheme: dark;
+}
