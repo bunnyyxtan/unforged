@@ -23,7 +23,7 @@ const MORE = [
 
 export function StartScreen() {
   const s = useStore();
-  const sample = s.seals[0];
+  const sample = s.seals.find((r) => !r.byYou);
   function openSample() {
     if (sample) sessionStorage.setItem("unforged:verify", sample.id);
   }

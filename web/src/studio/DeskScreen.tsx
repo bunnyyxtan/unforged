@@ -61,7 +61,7 @@ export function DeskScreen() {
                     <button aria-current={current?.id === c.id ? "true" : undefined} onClick={() => setSelected(c.id)}>
                       {rec && <img src={rec.url} alt="" />}
                       <span className="desk-queue-copy">
-                        <span className="data">{c.id} · {rec?.level}</span>
+                        <span className="data">{c.id} · {rec?.level}{rec && !rec.byYou ? " · SAMPLE" : ""}</span>
                         <strong>{c.title}</strong>
                         <span className="meta">Received {time(c.receivedAt)}</span>
                       </span>

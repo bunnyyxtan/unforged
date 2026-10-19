@@ -140,7 +140,7 @@ async function deployDemoPool() {
   try {
     const pool = await Pool.deploy(MIN_POOL, new TextEncoder().encode(SIM_ORIGIN).length, THRESHOLD, APPROVERS.length);
     const reporters: Reporter[] = [];
-    const names = Array.from({ length: 7 }, (_, i) => `Field contributor ${String(i + 1).padStart(2, "0")}`);
+    const names = Array.from({ length: 7 }, (_, i) => `Demo member ${String(i + 1).padStart(2, "0")}`);
     for (const name of names) {
       const key = new SoftPasskey(SIM_RP, SIM_ORIGIN);
       const index = await pool.enroll(key.device());
@@ -209,8 +209,8 @@ function openCase(record: SealRecord, via: string) {
  */
 async function seedSubmissions(pool: Pool, reporters: Reporter[]) {
   const samples = [
-    { file: "umbrella.jpg", title: "Street protest, umbrella line", by: reporters[0] },
-    { file: "crossing.jpg", title: "Night crossing, central district", by: reporters[3] },
+    { file: "umbrella.jpg", title: "Sample · Street scene with umbrella", by: reporters[0] },
+    { file: "crossing.jpg", title: "Sample · City crossing", by: reporters[3] },
   ];
   for (const sample of samples) {
     try {

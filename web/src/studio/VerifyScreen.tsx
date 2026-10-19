@@ -127,12 +127,12 @@ export function VerifyScreen() {
                 <p><strong>We couldn't check that file.</strong>It may be empty, still downloading, or too large for this device. Choose it again, or try a different file.</p>
             </div>
           )}
-          {s.seals.length > 0 ? (
+          {s.seals.some((r) => r.byYou) ? (
             <div className="verify-recents">
-              <span className="label">PHOTOS YOU SEALED TODAY</span>
+              <span className="label">PHOTOS YOU SEALED</span>
               <div className="thumbs">
-                {s.seals.slice(0, 10).map((r) => (
-                  <button key={r.id} onClick={() => void check(r.bytes, `${r.id}.jpg`)} aria-label={`Verify ${r.id}`}>
+                {s.seals.filter((r) => r.byYou).slice(0, 10).map((r) => (
+                  <button key={r.id} onClick={() => void check(r.bytes, `${r.id}.jpg`)} aria-label={`Check ${r.id}`}>
                     <img src={r.url} alt="" />
                   </button>
                 ))}
@@ -140,6 +140,19 @@ export function VerifyScreen() {
             </div>
           ) : (
             <div className="verify-empty-session"><Icon name="info" size={16} /><p>You have not sealed anything yet. <a href={href({ page: "studio", tab: "seal" })}>Seal a photo</a>, or drop in any photo to check it.</p></div>
+          )}
+          {s.seals.some((r) => !r.byYou) && (
+            <div className="verify-recents">
+              <span className="label">SAMPLE PHOTOS</span>
+              <div className="thumbs">
+                {s.seals.filter((r) => !r.byYou).map((r) => (
+                  <button key={r.id} onClick={() => void check(r.bytes, `${r.id}.jpg`)} aria-label={`Check sample ${r.id}`}>
+                    <img src={r.url} alt="" />
+                  </button>
+                ))}
+              </div>
+              <p className="meta" style={{ margin: 0 }}>Sealed in advance by demo members, so you can try Check without sealing anything.</p>
+            </div>
           )}
           
         </div>
