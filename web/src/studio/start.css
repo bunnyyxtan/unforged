@@ -58,9 +58,19 @@
 .step-bar li.done .step-n { background: var(--ok); border-color: var(--ok); color: #fff; }
 .btn-big { --h: 56px; font-size: 1.0625rem; padding-inline: var(--s-5); }
 .done-mark { width: 60px; height: 60px; display: grid; place-items: center; border-radius: 50%; background: var(--ok); color: #fff; }
-.more-details { border-top: 1px solid var(--line-soft); padding-top: var(--s-3); display: grid; gap: var(--s-3); }
+.more-details { border-top: 1px solid var(--line-soft); padding-top: var(--s-3); display: block; }
+.more-details > :not(summary) { margin-top: var(--s-4); }
+.more-details > :not(summary):first-of-type { margin-top: var(--s-3); }
 .more-details > summary { cursor: pointer; font-weight: 600; color: var(--action); padding-block: 6px; }
 .more-details[open] > summary { margin-bottom: var(--s-2); }
 .big-facts { gap: 14px; font-size: 1.0625rem; line-height: 1.45; }
 .big-facts li svg { color: var(--ok); margin-top: 2px; }
 .darkroom .btn-quiet { color: #f1eadf; text-decoration: underline; text-underline-offset: 4px; }
+
+/* ---- Small screens: stack controls, tighten card padding ---- */
+@media (max-width: 560px) {
+  .darkroom { padding: var(--s-4); }
+  .darkroom-controls .btn { flex: 1 1 100%; justify-content: center; }
+  .seal-panel { padding: var(--s-5); }
+  .start-card { padding: var(--s-5); min-height: 0; }
+}
