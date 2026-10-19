@@ -25,8 +25,12 @@ flowchart LR
     LEDGER --> VERIFY[Verifier]
     CAP -. Wave 3+ .-> C2PA[C2PA manifest]
     C2PA -. proof reference .-> VERIFY
-    RELAY[Relay and batching] -. Wave 3+ .-> COMPACT
-    DESK[Evidence Desk] -. Wave 3+ .-> VERIFY
+    WIT --> RELAY[Relay: batch, shuffle, hour window]
+    RELAY --> COMPACT
+    APPR[k-of-n anonymous approvers] --> POOL
+    LEDGER --> DESK[Evidence Desk case]
+    DESK --> PKG[Publication package + draft C2PA assertion]
+    PKG --> VERIFY
 ```
 
 ## Wave 2 execution path
@@ -58,12 +62,17 @@ Toolchain: Compact **0.35.0**, `--feature-zkir-v3`, ledger 9, runtime **0.20.0**
 | `deviceCount` | `Counter` | Current pool size used by the anonymity-floor check |
 | `seals` | `Map<Bytes<32>, Seal>` | Fingerprint to seal time and epoch |
 | `epoch` | `Counter` | Revocation generation; incremented when accepted history resets |
+| `approvers` | `MerkleTree<4, Bytes<32>>` | Opaque approver commitments (up to 16) |
+| `approvalThreshold` | `Uint<8>` | k approvals required to enroll; 0 lets the owner enroll directly |
+| `approvals` | `Map<Bytes<32>, Uint<8>>` | Pending credential commitment to approval tally |
+| `nullifiers` | `Set<Bytes<32>>` | Spent (approver, credential) approval nullifiers |
 
 ### Private state and witnesses
 
 | Value | Holder | Why private |
 |---|---|---|
-| Admin secret | Pool administrator witness | Prevents unauthorized enrollment and revocation |
+| Admin secret | Pool owner witness | Registers approvers and revokes credentials |
+| Approver secret and path | Each approver's witness | Disclosure would show which approvers approved a credential |
 | P-256 secret/public key | Authenticator and client witness | Publishing the key would create a contributor activity graph |
 | Device salt | Client witness | Prevents commitment guessing and cross-pool correlation |
 | Merkle path and index | Client witness | Would identify the enrolled commitment used for a seal |
@@ -74,7 +83,9 @@ Toolchain: Compact **0.35.0**, `--feature-zkir-v3`, ledger 9, runtime **0.20.0**
 
 | Circuit | Private authorization | Public behavior | Refusals |
 |---|---|---|---|
-| `enroll` | Admin secret | Inserts an opaque device commitment | `NOT_ADMIN` |
+| `enroll` | Admin secret | Inserts an opaque device commitment when the pool has no threshold | `NOT_ADMIN`, `APPROVAL_REQUIRED`, `POOL_FULL` |
+| `addApprover` | Admin secret | Inserts an opaque approver commitment | `NOT_ADMIN`, `APPROVERS_FULL` |
+| `approve` | Approver secret and approver path | Proves approver membership, spends a nullifier, tallies; the k-th approval enrolls the credential | `NOT_APPROVER`, `ALREADY_APPROVED`, `NO_APPROVAL_POLICY`, `POOL_FULL` |
 | `revoke` | Admin secret | Removes a leaf, increments epoch and resets accepted history | `NOT_ADMIN`, floor/index guards |
 | `seal` | Credential key, salt, path, assertion and authenticator data | Records a unique fingerprint, time and epoch | `NOT_ENROLLED`, `BAD_SIGNATURE`, `ALREADY_SEALED`, `POOL_TOO_SMALL`, `BAD_TIME` plus WebAuthn profile guards |
 
@@ -125,10 +136,10 @@ The seal challenge includes contract context and the file fingerprint so an asse
 | Credential | WebAuthn passkey or labeled software signer | Device-bound hardware credential with attestation and recovery policy |
 | Provenance | Exact SHA-256 file binding | C2PA manifest, hard binding, soft-binding recovery and edit history |
 | Proving | Browser local simulator | Pool-controlled/self-hosted proof service, then on-device proving when feasible |
-| Submission | Direct local call | Stateless relay, batching, jitter and no source-linked logs |
-| Storage | Browser memory | Encrypted organization-controlled evidence cases with retention policy |
-| Verification | Local ledger lookup | Independent indexer, public verifier, API, CMS SDK and CLI |
-| Administration | Single private test admin | Multi-admin threshold policy, roles, recovery and audit trail |
+| Submission | Local relay in the browser: batches of three, shuffled order, capture time published to the hour | Independent relays receiving finished proofs over an anonymizing transport, timer-closed batches, jitter and no source-linked logs |
+| Storage | Browser memory; Evidence Desk cases with checklist, decision log and publication package | Encrypted organization-controlled evidence cases with roles and retention policy |
+| Verification | Local ledger lookup; eight-row security report; offline CLI (`tools/unforged-verify.mjs`) for the draft assertion | Independent indexer, public verifier, API, CMS SDK |
+| Administration | 2-of-3 anonymous approver threshold for enrollment; single owner key registers approvers and revokes | Threshold revocation and approver rotation, roles, recovery and audit trail |
 | Fees | None in local simulation | Pool-sponsored DUST; contributors never manage tokens |
 
 ## C2PA bridge direction

@@ -6,7 +6,7 @@ The roadmap advances through evidence gates. Dates define build windows; capabil
 
 | Phase | Window | Deliverables | Exit evidence |
 |---|---|---|---|
-| **Wave 2 — Private authorization primitive** | Through 19 Oct 2026 | Compact enroll/revoke/seal; anonymous Merkle membership; in-circuit WebAuthn P-256; local React workflow; eight-case Threat Lab; product, security and business documentation | CI compiles; 26 tests pass; judge completes enroll → seal → verify → attacks; limits visible |
+| **Wave 2 — Private authorization primitive** | Through 19 Oct 2026 | Compact enroll/revoke/seal; anonymous Merkle membership; in-circuit WebAuthn P-256; local React workflow; ten-case Threat Lab, threshold enrollment, Evidence Desk, local relay, draft C2PA assertion; product, security and business documentation | CI compiles; 34 tests pass; judge completes enroll → seal → verify → attacks; limits visible |
 | **Wave 3 — Operational evidence system** | 27 Oct–16 Nov 2026 | Real ledger-9 proofs; public deployment when supported; independent indexer verification; persistence; sponsored fees; relay prototype; C2PA adapter; Evidence Desk foundation; partner discovery | Reproducible transaction evidence; measured proof/verify times; 1–3 design partners or documented interviews |
 | **Controlled pilot** | Q1–Q2 2027 | Native Android capture; device/app attestation; threshold administration; CMS/DAM integration; encrypted cases; incident runbooks; external security review | Real low-risk use, zero unresolved critical findings, paid-pilot path |
 | **Commercial v1** | H2 2027 | iOS, self-hosting, Verify API/SDK, soft-binding recovery, SLOs, support and billing | First annual contracts, repeatable deployment and renewal signal |
@@ -20,6 +20,11 @@ The roadmap advances through evidence gates. Dates define build windows; capabil
 - [x] Enrollment, revocation, time, uniqueness and anonymity-floor controls.
 - [x] Real P-256 simulator fixtures and refusal tests.
 - [x] Browser capture/test frame, seal, verify, Threat Lab and pool administration.
+- [x] Threshold enrollment: k-of-n anonymous approvers with per-credential nullifiers, enforced in circuit.
+- [x] Evidence Desk: case queue, evidence matrix, checklist, hold reasons, decision log and publication package.
+- [x] Verify security report with L0–L5 assurance ladder.
+- [x] Local relay: batching, shuffled submission and hour-window capture time.
+- [x] Draft C2PA `org.unforged.authorization` assertion and offline CLI verifier.
 - [x] Unified evidence-operations workspace with structured Capture, Verification, Assurance and Trust Pool surfaces.
 - [x] Local review export with explicit assurance boundaries.
 - [x] CI compilation, tests, typecheck and production web build.

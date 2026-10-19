@@ -39,10 +39,10 @@ An authorized organization should be able to verify that an eligible credential 
 | T6 | Stolen device continues sealing | User verification required; admin can revoke and reset accepted roots | Biometrics/PIN can be coerced or compromised; incident latency matters | Contract path tested |
 | T7 | Synced passkey is treated as one physical camera | UI and docs call it an enrolled credential | Device-bound native keys and attestation required for device claims | Open production blocker |
 | T8 | Remote prover learns credential witnesses | Wave 2 proves locally in simulator | Pool-controlled/self-hosted proving, witness minimization and on-device proving required | Open design gate |
-| T9 | IP and timing reveal the contributor | No public network submission in Wave 2 | Relay, batching, jitter, coarse windows, no logs and correlation testing required | Open production blocker |
+| T9 | IP and timing reveal the contributor | No public network submission in Wave 2; local relay batches three submissions, shuffles order and publishes capture time to the hour | Relay, batching, jitter, coarse windows, no logs and correlation testing required | Open production blocker |
 | T10 | Enrollment admin maps every contributor and later correlates activity | Public seal omits member identifier; no per-device activity UI | Organizational separation of duties, threshold administration and privacy audit required | Partially mitigated |
 | T11 | Small pool makes anonymity meaningless | Contract enforces minimum pool size | Pool composition and external context still reduce anonymity | Implemented; threshold needs partner validation |
-| T12 | Malicious admin enrolls unauthorized credentials | Admin witness gates writes | Multi-admin approvals, auditable enrollment policy and recovery required | Single-admin Wave 2 limitation |
+| T12 | Malicious admin enrolls unauthorized credentials | k-of-n anonymous approver threshold enforced in circuit; owner cannot bypass (`APPROVAL_REQUIRED`); per-credential nullifiers stop double approval (`ALREADY_APPROVED`) | Multi-admin approvals, auditable enrollment policy and recovery required | Single-admin Wave 2 limitation |
 | T13 | Revocation history invalidates legitimate old seals | Seal stores epoch/root context; prior seals remain readable | Public verifier and retention policy must preserve historical verification | Implemented locally |
 | T14 | Media metadata exposes source despite private seal | Product does not publish GPS/device identity | Browser capture and downloads need verified stripping policy; C2PA assertions require review | Open production blocker |
 | T15 | Verifier presents “sealed” as scene truth | UI separates established facts and unresolved claims | Training, API semantics and third-party embeds can still overstate | Product control implemented; governance needed |
@@ -54,7 +54,7 @@ An authorized organization should be able to verify that an eligible credential 
 
 ## Abuse cases shown in the product
 
-The Threat Lab exercises eight reviewable scenarios:
+The Threat Lab exercises ten reviewable scenarios:
 
 1. one decoded pixel changes and exact-file lookup returns `NO_SEAL`;
 2. an unregistered signer receives `NOT_ENROLLED`;
@@ -63,7 +63,9 @@ The Threat Lab exercises eight reviewable scenarios:
 5. a stale timestamp receives `BAD_TIME`;
 6. missing user verification is refused;
 7. a look-alike origin fails WebAuthn binding;
-8. a revoked credential cannot use old membership.
+8. the pool owner enrolling without approvers receives `APPROVAL_REQUIRED`;
+9. one approver approving the same credential twice receives `ALREADY_APPROVED`;
+10. a revoked credential cannot use old membership.
 
 The changed-file case is a file lookup, not a Compact refusal. A held revocation at the anonymity floor is reported as a policy hold, not a security pass.
 

@@ -141,8 +141,8 @@ Capture SDK, Verify API, CMS plugin, CLI, C2PA bridge, self-hosting controls and
 | ID | Story | Acceptance criteria |
 |---|---|---|
 | AS-1 | I challenge a security boundary | Each case names attempt, boundary, consequence and observed result |
-| AS-2 | I run the suite | Eight cases run sequentially; prerequisites and holds are not counted as passes |
-| AS-3 | I distinguish evidence types | Changed-file lookup is separate from seven Compact-circuit cases |
+| AS-2 | I run the suite | Ten cases run sequentially; prerequisites and holds are not counted as passes |
+| AS-3 | I distinguish evidence types | Changed-file lookup is separate from nine Compact-circuit cases |
 
 ### Pool administration
 
@@ -157,7 +157,9 @@ Capture SDK, Verify API, CMS plugin, CLI, C2PA bridge, self-hosting controls and
 
 All acceptance criteria above are represented in the current local evaluation interface. The tested primary path is evaluation enrollment → generated test frame → domain-bound approval → Compact seal → exact-file verification. Capture, Verification, Assurance and Trust Pool share one evidence-operations shell and consistently label the runtime as local.
 
-The implementation remains pre-production. Public network inclusion, durable records, hardware camera attestation, production enrollment approval, relay privacy, monitoring and newsroom case management remain gated to later phases.
+Added the same day as the first platform release: an Evidence Desk (case queue, evidence matrix, editorial checklist, hold reasons, decision log, publication package); an eight-row Verify security report with the L0–L5 ladder; a draft C2PA `org.unforged.authorization` assertion and offline CLI verifier; a local relay that batches, shuffles and coarsens capture time; and threshold enrollment, where k anonymous approvers must approve a credential inside the circuit.
+
+The implementation remains pre-production. Public network inclusion, durable records, hardware camera attestation, independent relays over anonymizing transport, multi-user roles, monitoring and signed C2PA manifests remain gated to later phases.
 
 ## 9. Protocol requirements
 

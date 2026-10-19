@@ -87,7 +87,9 @@ The current React workspace implements the shell and four connected operational 
 |---|---|---|
 | Capture | Credential-enrollment step rail, dominant passkey path, separate evaluation path, enrollment receipt and pool-readiness strip | Live local flow |
 | Verification | Evidence intake, browser-local indicator, three-stage resolution pipeline, structured review output and bounded export | Live local flow |
-| Assurance | Suite metrics, indexed threat files, selected-case method and exact observed verdict | Eight runnable cases |
+| Desk | Case queue, case file with media and seal, assurance ladder, four-column evidence matrix, checklist-gated approval, hold reasons, decision log, publication package | Live local flow |
+| Relay | Release log of shuffled batches, who-sees-what boundary, evaluation limits | Live local flow |
+| Assurance | Suite metrics, indexed threat files, selected-case method and exact observed verdict | Ten runnable cases |
 | Trust pool | Operational health, aggregate metrics, credential registry, guarded revocation and privacy boundary | Live local flow |
 
 The desktop canvas uses a 256 px workflow rail and scales to a 1560 px maximum content width. At the reviewed 1265×710 viewport, the layout uses the available horizontal space without a permanent empty right column. Darkroom and paper themes preserve the same hierarchy.
@@ -157,7 +159,7 @@ Long explanations move behind “Technical detail.” The default view is operat
 - earlier-seal behavior and floor consequence appear at confirmation;
 - no per-device seal/activity history exists.
 
-### Evidence Desk — Wave 3
+### Evidence Desk — Wave 2 foundation, Wave 3 multi-user
 
 - case queue with assurance and urgency filters;
 - case header with asset, contributor privacy state and publication status;
