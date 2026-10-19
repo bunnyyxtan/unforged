@@ -32,7 +32,7 @@ export function SealScreen() {
     <>
       <PageHead
         title={s.me ? "Seal a photo" : "Set up this device"}
-        purpose={s.me ? "Take a photo, approve with your face or fingerprint, and the pool records a seal that proves it's real without naming you." : "Turn this device into an enrolled camera. It takes one approval and creates no account."}
+        purpose={s.me ? `Capture a file, approve its fingerprint with ${s.me.mode === "passkey" ? "your passkey" : "a local test signer"}, and create a record the desk can check without a public signer identity.` : "Enroll a passkey in the source pool. This browser exercise creates no account; production enrollment will require newsroom approval."}
       />
       {s.me ? <Capture /> : <Onboarding />}
     </>
@@ -51,7 +51,7 @@ function Onboarding() {
     setProblem(undefined);
     try {
       await enrollMe(undefined, simulated);
-      toast(simulated ? "Simulated phone enrolled" : "This device is now an enrolled camera");
+      toast(simulated ? "Local test credential enrolled" : "Passkey enrolled in the local pool");
     } catch (e) {
       const err = e as Error;
       setProblem(
@@ -75,9 +75,9 @@ function Onboarding() {
       <div className="stack" style={{ "--gap": "16px" } as React.CSSProperties}>
         <div className="choices">
           <section className="panel choice primary" aria-labelledby="c-passkey">
-            <h2 id="c-passkey" className="title"><Icon name="chip" /> Use this device's secure chip</h2>
+            <h2 id="c-passkey" className="title"><Icon name="chip" /> Use a passkey</h2>
             <p className="body-2" style={{ margin: 0 }}>
-              Creates a passkey with Windows Hello, Face ID, Touch ID or your phone. The private key never leaves the chip; the pool only stores a commitment to it.
+              Creates a passkey with Windows Hello, Face ID, Touch ID or your phone. The pool records a commitment, not the public key. Some passkeys sync between devices; device-bound attestation is a production milestone.
             </p>
             {real ? (
               <button className="btn btn-primary" onClick={() => enroll(false)} aria-busy={busy === "passkey"} disabled={!!busy}>
@@ -95,7 +95,7 @@ function Onboarding() {
           <section className="panel choice" aria-labelledby="c-sim">
             <h2 id="c-sim" className="title"><Icon name="seal" /> Use a simulated phone</h2>
             <p className="body-2" style={{ margin: 0 }}>
-              A software chip that signs exactly the same bytes. Use it on devices without passkey support, or to explore quickly.
+              A software signer that exercises the same contract path. Use it when this device has no passkey or camera. It is never production identity evidence.
             </p>
             <button className="btn btn-secondary" onClick={() => enroll(true)} aria-busy={busy === "simulated"} disabled={!!busy}>
               {busy === "simulated" ? <><span className="spinner" /> Enrolling…</> : "Enroll a simulated phone"}
@@ -114,7 +114,7 @@ function Onboarding() {
           <PoolRing size={phones} min={MIN_POOL} px={84} />
           <div className="stack" style={{ "--gap": "4px" } as React.CSSProperties}>
             <span className="title">Independent Press Pool <span className="chip" style={{ marginLeft: 6 }}>demo</span></span>
-            <span className="meta">Your seals will read "one of {phones + 1} phones". The pool admin can remove a device, but can never see which device made a seal.</span>
+            <span className="meta">Your seals will read "one of {phones + 1} credentials". The registry does not disclose which credential made a seal; the operator may still know enrollment identities.</span>
           </div>
         </div>
       </div>
@@ -124,9 +124,9 @@ function Onboarding() {
 
 const STAGES = [
   { title: "Fingerprint the photo", detail: "SHA-256 of the exact file" },
-  { title: "Sign with the secure chip", detail: "Approve with your face, fingerprint or PIN" },
-  { title: "Prove pool membership", detail: "Zero-knowledge: one of the pool's phones, not which one" },
-  { title: "Record the seal", detail: "Fingerprint and capture time join the pool's ledger" },
+  { title: "Sign with a passkey", detail: "Approve with your face, fingerprint or PIN" },
+  { title: "Prove pool membership", detail: "Zero-knowledge: one enrolled credential, not which one" },
+  { title: "Record the seal", detail: "Fingerprint and stated capture time join the local ledger" },
 ];
 
 function ms(n?: number) {
@@ -226,7 +226,7 @@ function Capture() {
             <div className="vf-empty">
               <Icon name="camera" size={28} />
               <span className="serif" style={{ font: "700 1.5rem/1.1 var(--font-display)", letterSpacing: "-0.03em", color: "#f1eadf" }}>The darkroom is ready.</span>
-              <p>Photos are taken here, never imported from a gallery, so the seal always starts at the shutter.</p>
+              <p>Capture in the browser, or generate a test frame. The file can be sealed here; browser capture alone cannot attest the camera sensor.</p>
             </div>
           )}
           <span className="vf-corner tl" /><span className="vf-corner tr" /><span className="vf-corner bl" /><span className="vf-corner br" />
@@ -283,12 +283,12 @@ function Capture() {
             <div className="sealed-head">
               <span className="chip chip-seal"><Icon name="check" size={14} /> Sealed</span>
             </div>
-            <h2 id="seal-panel-title" className="headline" style={{ fontSize: "clamp(2rem, 1.5rem + 1.4vw, 2.8rem)" }}>Sealed. <em style={{ color: "var(--text-2)" }}>Nobody can tell it was you.</em></h2>
+            <h2 id="seal-panel-title" className="headline" style={{ fontSize: "clamp(2rem, 1.5rem + 1.4vw, 2.8rem)" }}>Sealed. <em style={{ color: "var(--text-2)" }}>Signer undisclosed in the record.</em></h2>
             <div className="cluster">
               <span className="seal-id">{sealed.id}</span>
               <button className="btn btn-quiet btn-sm" onClick={() => { void navigator.clipboard?.writeText(sealed.id); toast("Seal ID copied"); }}><Icon name="copy" size={16} /> Copy</button>
             </div>
-            <Stages stage={4} times={timeFor} />
+            <Stages stage={4} times={timeFor} simulated={s.me?.mode === "simulated"} />
             <p className="meta" style={{ margin: 0 }}>
               The circuit ran on Midnight's runtime in your browser. On the network, proving takes longer (each signature check needs ~250 MB of proving keys).
             </p>
@@ -299,7 +299,7 @@ function Capture() {
         ) : (
           <>
             <h2 id="seal-panel-title" className="title">{running ? "Sealing your photo" : shot ? "Ready to seal" : "Take a photo to begin"}</h2>
-            <Stages stage={stage} times={timeFor} />
+            <Stages stage={stage} times={timeFor} simulated={s.me?.mode === "simulated"} />
             {shot?.test && !running && <p className="meta" style={{ margin: 0 }}>Test shots are generated in the browser so you can try the flow without a camera.</p>}
             {problem && (
               <div className="status status-error" role="alert">
@@ -314,7 +314,7 @@ function Capture() {
   );
 }
 
-function Stages({ stage, times }: { stage: number; times: (number | undefined)[] }) {
+function Stages({ stage, times, simulated }: { stage: number; times: (number | undefined)[]; simulated: boolean }) {
   return (
     <ol className="stages">
       {STAGES.map((st, i) => {
@@ -322,7 +322,7 @@ function Stages({ stage, times }: { stage: number; times: (number | undefined)[]
         return (
           <li key={st.title} className={`stage ${state}`}>
             <span className="dot" aria-hidden="true">{state === "done" && <Icon name="check" size={12} />}</span>
-            <span>{st.title}<small>{i === 1 && state === "active" ? "Waiting for your approval…" : st.detail}</small></span>
+            <span>{i === 1 && simulated ? "Sign with a local test key" : st.title}<small>{i === 1 && simulated ? "Software assertion; no biometric check" : i === 1 && state === "active" ? "Waiting for your approval…" : st.detail}</small></span>
             <span className="t">{state === "done" ? ms(times[i]) : ""}</span>
             <span className="sr-only">{state === "done" ? "done" : state === "active" ? "in progress" : "not started"}</span>
           </li>

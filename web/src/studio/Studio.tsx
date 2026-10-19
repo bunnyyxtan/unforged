@@ -54,9 +54,9 @@ export function Studio({ tab }: { tab: StudioTab }) {
       <header className="studio-bar">
         <a className="wordmark" href="#/" aria-label="Unforged home"><Mark size={20} />Unforged</a>
         <span className="studio-divider" aria-hidden="true" />
-        <span className="studio-name">Studio</span>
-        <span className="chip chip-ok pool-chip" title="This pool runs on Midnight's compact-runtime in your browser">
-          <span className="dot" />{s.ready ? `Demo pool · ${phones} phones · runs in your browser` : "Starting the demo pool…"}
+        <span className="studio-name">Workspace</span>
+        <span className="chip chip-ok pool-chip" title="This evaluation pool runs the compiled Compact contract locally">
+          <span className="dot" />{s.ready ? `Local evaluation · ${phones} credentials` : "Starting local pool…"}
         </span>
         <span className="spacer" />
         <button className="icon-btn" onClick={toggle} aria-label={theme === "dark" ? "Use paper theme" : "Use darkroom theme"}>
@@ -65,7 +65,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
         <a className="btn btn-quiet btn-sm back-link" href="#/"><Icon name="back" size={16} /> Site</a>
       </header>
 
-      <nav className="studio-rail" aria-label="Studio">
+      <nav className="studio-rail" aria-label="Workspace">
         {NAV.map((n) => (
           <a key={n.tab} href={href({ page: "studio", tab: n.tab })} aria-current={tab === n.tab ? "page" : undefined}>
             <Icon name={n.icon} size={20} />
@@ -74,7 +74,7 @@ export function Studio({ tab }: { tab: StudioTab }) {
             {tab === n.tab && reduce && <span className="rail-mark" />}
           </a>
         ))}
-        <p className="rail-note meta">Everything here runs the compiled Unforged contract locally. Reloading resets the demo pool.</p>
+        <p className="rail-note meta">Compiled Compact contract, local runtime. Reloading resets this evaluation pool.</p>
       </nav>
 
       <main id="studio-main" className="studio-main" tabIndex={-1}>

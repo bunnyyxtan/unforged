@@ -50,6 +50,22 @@
 }
 
 /* ---------- ledger ---------- */
+.newsroom-workflow { display: grid; gap: var(--s-7); align-items: start; }
+@media (min-width: 1000px) { .newsroom-workflow { grid-template-columns: minmax(260px, .8fr) minmax(0, 1.2fr); gap: var(--s-8); } .workflow-intro { position: sticky; top: 108px; } }
+.workflow-intro { display: grid; gap: var(--s-4); align-content: start; }
+.workflow-intro .headline em { color: var(--seal); font-weight: 700; }
+.workflow-intro .body-2 { margin: 0; }
+.workflow-stations { border-top: 2px solid var(--text); }
+.workflow-station { display: grid; grid-template-columns: 38px 38px minmax(0, 1fr); gap: var(--s-4); align-items: start; padding: var(--s-5) var(--s-3); border-bottom: 1px solid var(--line); color: var(--text); text-decoration: none; transition: background-color var(--dur-base) var(--ease-out), padding-left var(--dur-base) var(--ease-out); }
+.workflow-station:hover { color: var(--text); background: var(--surface); padding-left: var(--s-5); }
+.workflow-number { padding-top: 2px; color: var(--seal); font: 500 var(--t-data)/1.4 var(--font-data); }
+.workflow-icon { color: var(--action); }
+.workflow-copy { display: grid; gap: 4px; }
+.workflow-copy strong { font: 700 1.25rem/1.3 var(--font-display); letter-spacing: -.02em; }
+.workflow-copy .meta { max-width: 49ch; }
+.workflow-link { display: inline-flex; align-items: center; gap: 7px; grid-column: 3; color: var(--action); font-size: var(--t-small); font-weight: 600; }
+@media (max-width: 520px) { .workflow-station { grid-template-columns: 28px minmax(0, 1fr); } .workflow-icon { display: none; } .workflow-link { grid-column: 2; } }
+
 .ledger { display: grid; border: 1px solid var(--line); border-radius: var(--r-surface); overflow: hidden; background: var(--surface); }
 @media (min-width: 860px) { .ledger { grid-template-columns: 1fr 1fr; } }
 .ledger-col { padding: var(--s-6); display: grid; gap: var(--s-4); align-content: start; }

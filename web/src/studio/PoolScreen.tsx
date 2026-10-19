@@ -26,7 +26,7 @@ export function PoolScreen() {
 
   return (
     <>
-      <PageHead title="Independent Press Pool" purpose="The admin view of a demo pool. Admins enroll and remove phones. They can't see which phone made which seal, because that record doesn't exist." />
+      <PageHead title="Independent Press Pool" purpose="A local source-pool evaluation. Admins can remove credentials; the seal registry does not disclose which credential approved a file. Production enrollment and access controls remain to be built." />
       <div className="stack" style={{ "--gap": "24px" } as React.CSSProperties}>
         <section className="panel pool-summary" aria-label="Pool summary">
           <PoolRing size={phones} min={MIN_POOL} px={132} />
@@ -41,7 +41,7 @@ export function PoolScreen() {
         <section aria-labelledby="devices-title" className="stack" style={{ "--gap": "12px" } as React.CSSProperties}>
           <h2 id="devices-title" className="title">Enrolled devices</h2>
           <table className="device-table">
-            <thead><tr><th scope="col">Admin's label</th><th scope="col" className="col-commit">On Midnight</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
+            <thead><tr><th scope="col">Admin's label</th><th scope="col" className="col-commit">Local commitment</th><th scope="col">Status</th><th scope="col"><span className="sr-only">Actions</span></th></tr></thead>
             <tbody>
               {s.me && (
                 <tr>
@@ -79,7 +79,7 @@ export function PoolScreen() {
 
         <div className="status status-info">
           <Icon name="lock" />
-          <p><strong>What an admin can't see</strong>Which phone sealed which photo, where it was taken, or anything about the people using the phones. On chain, each phone is only an opaque commitment: H(key, salt, policy).</p>
+          <p><strong>What this registry withholds</strong>The seal does not contain a signer-to-file link, location or hardware identifier. Admins can know enrollment identities, and timing or network data can still reveal a source without operational protections. The local ledger stores opaque credential commitments.</p>
         </div>
       </div>
     </>
