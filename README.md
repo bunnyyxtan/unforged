@@ -45,8 +45,19 @@ The P-256 signature from the phone's secure chip is verified **inside** the circ
 
 WebAuthn verification uses the profiled module from [midnightntwrk/passport](https://github.com/midnightntwrk/passport) (Apache-2.0), which rebuilds `clientDataJSON` in-circuit and checks RP, origin and UP+UV flags.
 
+## The app
+[`web/`](web): a Vite + React app that runs the **real compiled contract** on Midnight's compact-runtime inside the browser.
+
+| Screen | What you can do |
+|---|---|
+| **Seal a photo** | Enroll your device with a real passkey (Face ID, Touch ID, Windows Hello, or a phone via QR), shoot with the camera, and watch the seal stamp down |
+| **Verify** | Drop any photo: **Sealed** (three ticks, time, pool size, photographer hidden) or **No seal found**. Tabs show what the world sees, what stays private, and how to check it yourself |
+| **Attack lab** | Run 8 attacks against the circuit (outsider, edited photo, replay, backdate, skip Face ID, phishing, stolen phone, one-pixel edit) and see each refusal code |
+| **Pool desk** | The admin view: enroll and remove phones, but never see who sealed what |
+| **How it works** | Your last seal split into "On Midnight" vs "Never leaves the phone" |
+
 ## Tests: the attacks that fail
-24 simulator tests with **real P-256 passkey assertions** (byte-exact WebAuthn encoding), run in CI on every push.
+26 simulator tests with **real P-256 passkey assertions** (byte-exact WebAuthn encoding), run in CI on every push.
 
 | Attack | Result |
 |---|---|
@@ -71,9 +82,11 @@ Requirements: Node ≥ 22, Compact toolchain **0.35.0** (Linux/macOS: `compact u
 ```bash
 npm install
 cd contract
-npm run compact      # compactc --feature-zkir-v3 --skip-zk …
+npm run compact      # compiles unforged.compact (+ the 28-byte-origin variant) with --feature-zkir-v3
 npm test
+cd .. && npm run dev -w web   # http://localhost:5173: real passkeys work on this origin
 ```
+The WebAuthn profile fixes the origin length at compile time, so `npm run compact` builds one variant per deployment origin: 21 bytes (`http://localhost:5173`) and 28 bytes (`https://bunnyyxtan.github.io`).
 Windows / no compiler: every CI run uploads the generated code as the `managed` artifact.
 ```bash
 gh run download <run-id> -n managed -D contract/src/managed && cd contract && npm test
@@ -84,11 +97,11 @@ gh run download <run-id> -n managed -D contract/src/managed && cd contract && np
 |---|---|
 | ✅ | Contract: enroll · revoke · seal with anonymous membership and in-circuit WebAuthn P-256 |
 | ✅ | Simulator test suite with real passkey assertions and every refusal path |
-| ⏳ | Web app: enroll with a real passkey, capture, seal, verify, ledger view |
+| ✅ | Web app: real passkey enrollment, camera capture, seal, verify, attack lab, pool desk, ledger view |
 | ⏳ | Ledger-9 network deployment (P-256 needs ledger 9; Preprod/Mainnet after the fork) |
 | 🔭 | Native capture with App Attest / Key Attestation, C2PA bridge, verify API |
 
-Full plan: [Roadmap](docs/ROADMAP.md) · [PRD](docs/PRD.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Business](docs/BUSINESS.md)
+Pitch deck: [docs/Unforged-Deck.pdf](docs/Unforged-Deck.pdf) · Full plan: [Roadmap](docs/ROADMAP.md) · [PRD](docs/PRD.md) · [Threat model](docs/THREAT-MODEL.md) · [Design](docs/DESIGN.md) · [Business](docs/BUSINESS.md)
 
 ## Honest limits
 - A seal proves a **real, unedited capture by an enrolled device approved by a person**. It doesn't prove what the photo *means*.
